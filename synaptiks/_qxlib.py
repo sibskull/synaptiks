@@ -34,7 +34,7 @@
 """
 
 from ctypes import cast
-from functools import partial
+from functools import wraps
 
 import sip
 from PyQt4.QtGui import QX11Info
@@ -43,11 +43,32 @@ from synaptiks._xlib import Display_p, libX11
 
 
 class QX11Display(object):
-    @property
-    def _as_parameter_(self):
-        display_address = sip.unwrapinstance(QX11Info.display())
-        return cast(display_address, Display_p)
+    """
+    Wrapper around the Qt X11 Display (as returned by
+    :meth:`PyQt4.QtGui.QX11Info.display()`) to make the display available as
+    argument for ctypes-wrapped foreign functions from Xlib.
+
+    If used as argument to a foreign function, this object is cast into a
+    proper Display pointer.
+    """
+
+    def __init__(self):
+        display = QX11Info.display()
+        if not display:
+            raise ValueError('A Qt X11 display connection is required. '
+                             'Create a QApplication object')
+        display_address = sip.unwrapinstance(display)
+        self._as_parameter_ = cast(display_address, Display_p)
 
 
-InternAtom = partial(libX11.XInternAtom, QX11Display())
-GetAtomName = partial(libX11.XGetAtomName, QX11Display())
+def _wrap_in_qx11_display(function):
+    @wraps(function)
+    def wrapped(*args, **kwargs):
+        return function(QX11Display(), *args, **kwargs)
+    return wrapped
+
+
+#: wrapper around XInternAtom, which implicitly uses :class:`QX11Display`
+InternAtom = _wrap_in_qx11_display(libX11.XInternAtom)
+#: wrapper around XGetAtomName, which implicitly uses :class:`QX11Display`
+GetAtomName = _wrap_in_qx11_display(libX11.XGetAtomName)
