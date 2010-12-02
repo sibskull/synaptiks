@@ -97,6 +97,7 @@ SIGNATURES = dict(
 
 libX11 = add_foreign_signatures(CDLL(find_library('X11')), SIGNATURES)
 
+
 # add libX11 functions to top-level namespace under pythonic names
 def free(ptr):
     """
@@ -106,6 +107,7 @@ def free(ptr):
     """
     if ptr:
         libX11.XFree(ptr)
+
 
 intern_atom = libX11.XInternAtom
 get_atom_name = libX11.XGetAtomName
