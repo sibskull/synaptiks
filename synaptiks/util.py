@@ -25,50 +25,39 @@
 
 
 """
-    synaptiks._qxlib
-    ================
+    synaptiks.util
+    ==============
 
-    Wrap libX11 functions to a automatically use the Qt X11 display.
+    General utilities used throughout synaptiks.
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
 
-from ctypes import cast
-from functools import wraps
 
-import sip
-from PyQt4.QtGui import QX11Info
-
-from synaptiks._xlib import Display_p, libX11
+import sys
 
 
-class QX11Display(object):
+def assert_byte_string(s):
     """
-    Wrapper around the Qt X11 Display (as returned by
-    :meth:`PyQt4.QtGui.QX11Info.display()`) to make the display available as
-    argument for ctypes-wrapped foreign functions from Xlib.
+    Convert ``s`` to a byte string.
 
-    If used as argument to a foreign function, this object is cast into a
-    proper Display pointer.
+    If ``s`` is already a byte string, it is returned unchanged.  If ``s``
+    is a unicode string, it is converted according to
+    :func:`sys.getfilesystemencoding()`.
     """
-
-    def __init__(self):
-        display = QX11Info.display()
-        if not display:
-            raise ValueError('A Qt X11 display connection is required. '
-                             'Create a QApplication object')
-        display_address = sip.unwrapinstance(display)
-        self._as_parameter_ = cast(display_address, Display_p)
+    if isinstance(s, unicode):
+        return s.encode(sys.getfilesystemencoding())
+    return s
 
 
-def _wrap_in_qx11_display(function):
-    @wraps(function)
-    def wrapped(*args, **kwargs):
-        return function(QX11Display(), *args, **kwargs)
-    return wrapped
+def assert_unicode_string(s):
+    """
+    Convert ``s`` to a unicode string.
 
-
-#: wrapper around XInternAtom, which implicitly uses :class:`QX11Display`
-InternAtom = _wrap_in_qx11_display(libX11.XInternAtom)
-#: wrapper around XGetAtomName, which implicitly uses :class:`QX11Display`
-GetAtomName = _wrap_in_qx11_display(libX11.XGetAtomName)
+    If ``s`` is already a unicode string, it is returned unchanged.  If
+    ``s`` is a byte string, it is converted according to
+    :func:`sys.getfilesystemencoding()`.
+    """
+    if isinstance(s, str):
+        return s.decode(sys.getfilesystemencoding())
+    return s

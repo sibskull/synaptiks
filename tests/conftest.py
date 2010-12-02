@@ -27,5 +27,15 @@
 from PyQt4.QtGui import QApplication
 
 
-def pytest_funcarg__qapp(request):
-    return request.cached_setup(lambda: QApplication([]), scope='session')
+def pytest_configure(config):
+    # make sure, that an application and consequently an X11 Display
+    # connection exists
+    config.qt_application = QApplication([])
+
+
+def pytest_funcarg__qtapp(request):
+    """
+    Return the :class:`~PyQt4.QtGui.QApplication` instance for use in the
+    tests.
+    """
+    return request.config.qt_application
