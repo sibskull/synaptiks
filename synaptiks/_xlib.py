@@ -37,6 +37,8 @@ from ctypes import (CDLL, Structure, POINTER, string_at,
                     c_uint, c_int, c_void_p, c_char_p)
 from ctypes.util import find_library
 
+from synaptiks._util import add_foreign_signatures
+
 
 # X11 types
 Atom = c_uint
@@ -81,16 +83,4 @@ SIGNATURES = dict(
     )
 
 
-def load_x11_library():
-    libX11 = CDLL(find_library('X11'))
-    for name, signature in SIGNATURES.iteritems():
-        function = getattr(libX11, name)
-        argument_types, return_type, error_checker = signature
-        function.argtypes = argument_types
-        function.restype = return_type
-        if error_checker:
-            function.errcheck = error_checker
-    return libX11
-
-
-libX11 = load_x11_library()
+libX11 = add_foreign_signatures(CDLL(find_library('X11')), SIGNATURES)
