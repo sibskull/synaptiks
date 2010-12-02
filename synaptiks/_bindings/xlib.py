@@ -34,14 +34,14 @@
 """
 
 from ctypes import (CDLL, Structure, POINTER, string_at,
-                    c_uint, c_int, c_void_p, c_char_p)
+                    c_uint32, c_int, c_void_p, c_char_p)
 from ctypes.util import find_library
 
 from synaptiks._bindings.util import add_foreign_signatures
 
 
 # X11 types
-Atom = c_uint
+Atom = c_uint32
 Atom_p = POINTER(Atom)
 Bool = c_int
 Status = c_int
