@@ -37,7 +37,7 @@ from ctypes import (CDLL, Structure, POINTER, string_at,
                     c_uint, c_int, c_void_p, c_char_p)
 from ctypes.util import find_library
 
-from synaptiks._util import add_foreign_signatures
+from synaptiks._bindings.util import add_foreign_signatures
 
 
 # X11 types
@@ -50,8 +50,10 @@ class Display(Structure):
 Display_p = POINTER(Display)
 
 
-# X11 definitions
-Success = 0
+# X11 definitions as python constants
+SUCCESS = 0
+# 0 atom
+NONE = 0
 
 
 def _convert_x11_char_p(c_string, function, args):
@@ -75,7 +77,7 @@ def _convert_x11_char_p(c_string, function, args):
     """
     if c_string:
         python_string = string_at(c_string)
-        libX11.XFree(c_string)
+        free(c_string)
         return python_string
     else:
         return None
@@ -89,3 +91,8 @@ SIGNATURES = dict(
 
 
 libX11 = add_foreign_signatures(CDLL(find_library('X11')), SIGNATURES)
+
+# add libX11 functions to top-level namespace under pythonic names
+free = libX11.XFree
+intern_atom = libX11.XInternAtom
+get_atom_name = libX11.XGetAtomName

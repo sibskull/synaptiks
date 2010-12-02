@@ -34,6 +34,8 @@
 """
 
 
+from contextlib import contextmanager
+
 
 def add_foreign_signatures(library, signatures):
     """
@@ -61,3 +63,19 @@ def add_foreign_signatures(library, signatures):
         if error_checker:
             function.errcheck = error_checker
     return library
+
+
+@contextmanager
+def scoped_pointer(pointer, deleter):
+    """
+    A "scoped pointer" for ctypes for use with the ``with`` statement::
+
+       with scoped_pointer(pointer, free) as pointer:
+           do_something(pointer)
+
+    ``pointer`` is any ctypes pointer, ``deleter`` is a callable, which
+    accepts this pointer as single argument.  This callable is called when
+    leaving the block to free the pointer.
+    """
+    yield pointer
+    deleter(pointer)
