@@ -23,13 +23,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+"""
+    synaptiks._bindings
+    ===================
 
-from synaptiks import _qxlib
+    Bindings to native libraries used throughout synaptiks
 
-
-def test_atom_roundtrip(qapp):
-    atom_name = 'FLOAT'
-    atom = _qxlib.InternAtom(atom_name, True)
-    assert atom != 0
-    assert _qxlib.GetAtomName(atom) == atom_name
-
+    .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
+"""

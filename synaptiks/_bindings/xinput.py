@@ -25,39 +25,51 @@
 
 
 """
-    synaptiks._util
-    ===============
+    synaptiks._bindings.xinput
+    ==========================
 
-    Internal utility functions.
+    ctypes-based libXi binding.
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
 
 
+from ctypes import CDLL, POINTER, Structure, c_int, c_char_p
+from ctypes.util import find_library
 
-def add_foreign_signatures(library, signatures):
-    """
-    Add ``signatures`` of a foreign ``library`` to the symbols defined in
-    this library.
+from synaptiks._bindings.xlib import Display_p
+from synaptiks._bindings.util import add_foreign_signatures
 
-    ``library`` is a :class:`~ctypes.CDLL` object, wrapping a foreign
-    library.  ``signatures`` is a dictionary, which specifies signatures for
-    symbols defined in this library.  It maps the name of a function to a
-    three element tuple ``(argument_types, return_type, error_checker)``.
-    ``argument_types`` is a list of argument types (see
-    :attr:`~ctypes._FuncPtr.argtypes`), ``return_type`` is the return type
-    (see :attr:`~ctypes._FuncPtr.restype`) and ``error_checker`` is a
-    function used as error checker (see :attr:``~ctypes._FuncPtr.errcheck`).
-    ``error_checker`` may be ``None``, in which case no error checking
-    function is defined.
 
-    Return the ``library`` object again.
-    """
-    for name, signature in signatures.iteritems():
-        function = getattr(library, name)
-        argument_types, return_type, error_checker = signature
-        function.argtypes = argument_types
-        function.restype = return_type
-        if error_checker:
-            function.errcheck = error_checker
-    return library
+c_int_p = POINTER(c_int)
+
+
+class XIAnyClassInfo(Structure):
+    pass
+
+
+XIAnyClassInfo_p = POINTER(XIAnyClassInfo_p)
+
+
+class XIDeviceInfo(Structure):
+    _fields_ = [
+        ('deviceid', c_int),
+        ('name', c_char_p),
+        ('use', c_int),
+        ('attachment', c_int),
+        ('enabled', c_int),
+        ('num_classes', c_int),
+        ('classes', POINTER(XIAnyClassInfo_p))]
+
+
+XIDeviceInfo_p = POINTER(XIDeviceInfo)
+
+
+SIGNATURES = dict(
+    XIQueryVersion=([Display_p, c_int_p, c_int_p], c_int, None),
+    XIQueryDevice=([Display_p, c_int, c_int_p], XIDeviceInfo_p, None),
+    XIFreeDeviceInfo=([XIDeviceInfo_p], None, None),
+    )
+
+
+libXi = add_foreign_signatures(CDLL(find_library('Xi')), SIGNATURES)

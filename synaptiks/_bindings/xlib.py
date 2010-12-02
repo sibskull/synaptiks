@@ -25,52 +25,67 @@
 
 
 """
-    synaptiks._xinput
-    =================
+    synaptiks._bindings.xlib
+    ========================
 
-    CTypes wrapper around libXi
+    ctypes-based xlib binding
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
 
-
-
-from ctypes import CDLL, POINTER, Structure, c_int, c_char_p
+from ctypes import (CDLL, Structure, POINTER, string_at,
+                    c_uint, c_int, c_void_p, c_char_p)
 from ctypes.util import find_library
 
-from synaptiks._xlib import Display_p
 from synaptiks._util import add_foreign_signatures
 
 
-c_int_p = POINTER(c_int)
+# X11 types
+Atom = c_uint
 
 
-class XIAnyClassInfo(Structure):
+class Display(Structure):
     pass
 
-
-XIAnyClassInfo_p = POINTER(XIAnyClassInfo_p)
-
-
-class XIDeviceInfo(Structure):
-    _fields_ = [
-        ('deviceid', c_int),
-        ('name', c_char_p),
-        ('use', c_int),
-        ('attachment', c_int),
-        ('enabled', c_int),
-        ('num_classes', c_int),
-        ('classes', POINTER(XIAnyClassInfo_p))]
+Display_p = POINTER(Display)
 
 
-XIDeviceInfo_p = POINTER(XIDeviceInfo)
+# X11 definitions
+Success = 0
+
+
+def _convert_x11_char_p(c_string, function, args):
+    """
+    Convert a X11-allocated ``c_string`` return by ``function`` to a Python
+    string.  Intended for use as ``errcheck`` attribute of foreign
+    functions.
+
+    ``c_string`` is expected to be an integer with a memory address, or a
+    :obj:`~ctypes.c_void_p`.  ``function`` is a foreign function object,
+    which returned ``c_string``.  ``args`` is a tuple containing the
+    arguments passed to the function call.  The two latter arguments are
+    present to comply with the ``errcheck`` signature, and are actually
+    unused.
+
+    The contents of the C string are copied into a python string, afterwards
+    the C string is freed using ``XFree()``.
+
+    Return a python byte string with the contents of ``c_string``, or
+    ``None``, if ``c_string`` is a ``NULL`` pointer.
+    """
+    if c_string:
+        python_string = string_at(c_string)
+        libX11.XFree(c_string)
+        return python_string
+    else:
+        return None
 
 
 SIGNATURES = dict(
-    XIQueryVersion=([Display_p, c_int_p, c_int_p], c_int, None),
-    XIQueryDevice=([Display_p, c_int, c_int_p], XIDeviceInfo_p, None),
-    XIFreeDeviceInfo=([XIDeviceInfo_p], None, None),
+    XFree=([c_void_p], c_int, None),
+    XInternAtom=([Display_p, c_char_p, c_int], Atom, None),
+    XGetAtomName=([Display_p, Atom], c_void_p, _convert_x11_char_p),
     )
 
 
-libXi = add_foreign_signatures(CDLL(find_library('Xi')), SIGNATURES)
+libX11 = add_foreign_signatures(CDLL(find_library('X11')), SIGNATURES)
