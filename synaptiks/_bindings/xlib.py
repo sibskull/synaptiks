@@ -57,6 +57,8 @@ Display_p = POINTER(Display)
 SUCCESS = 0
 # 0 atom
 NONE = 0
+# integer type
+INTEGER = 19
 
 
 def _convert_x11_char_p(c_string, function, args):
