@@ -35,7 +35,7 @@
 
 from __future__ import print_function
 
-from ctypes import (CDLL, POINTER, Structure, byref, string_at,
+from ctypes import (CDLL, POINTER, Structure, byref, string_at, cast,
                     c_int, c_char_p, c_long, c_ulong, c_byte)
 from ctypes.util import find_library
 
@@ -73,6 +73,7 @@ XIDeviceInfo_p = POINTER(XIDeviceInfo)
 # XInput defines as python constants
 ALL_DEVICES = 0
 ANY_PROPERTY_TYPE = 0
+PROP_MODE_REPLACE = 0
 
 
 SIGNATURES = dict(
@@ -83,7 +84,9 @@ SIGNATURES = dict(
     XIGetProperty=([xlib.Display_p, c_int, xlib.Atom, c_long, c_long,
                     xlib.Bool, xlib.Atom, xlib.Atom_p, c_int_p,
                     c_ulong_p, c_ulong_p, POINTER(c_byte_p)],
-                   xlib.Status, None)
+                   xlib.Status, None),
+    XIChangeProperty=([xlib.Display_p, c_int, xlib.Atom, xlib.Atom,
+                       c_int, c_int, c_byte_p, c_int], None, None),
     )
 
 
@@ -207,3 +210,16 @@ def get_property(display, deviceid, property):
             else:
                 # get some more bytes and try again
                 length += 1
+
+
+def change_property(display, deviceid, property, type, format, data):
+    """
+    Change a property
+    """
+    if format not in (8, 16, 32):
+        raise ValueError(format)
+    number_of_items = (len(data) * 8) / format
+    libXi.XIChangeProperty(
+        display, deviceid, property, type, format, PROP_MODE_REPLACE,
+        cast(c_char_p(data), c_byte_p), number_of_items)
+

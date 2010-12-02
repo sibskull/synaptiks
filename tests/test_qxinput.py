@@ -54,6 +54,14 @@ def pytest_funcarg__test_device_properties(request):
             'XTEST Device']
 
 
+def pytest_funcarg__touchpad(request):
+    """
+    The touchpad as :class:`synaptiks.qxinput.InputDevice`.
+    """
+    return next(qxinput.InputDevice.find_devices_with_property(
+        'Synaptics Off'))
+
+
 def test_assert_xinput_version():
     # just check, that no unexpected exception is raised
     try:
@@ -137,3 +145,26 @@ def test_inputdevice_getitem_non_existing_property(test_keyboard):
     with pytest.raises(KeyError) as excinfo:
         test_keyboard['Button Labels']
     assert not isinstance(excinfo.value, qxinput.UndefinedPropertyError)
+
+
+def test_input_device_set_bool_alias():
+    assert qxinput.InputDevice.set_bool == qxinput.InputDevice.set_byte
+
+
+def test_input_device_set_byte(test_keyboard):
+    property = 'Device Enabled'
+    assert test_keyboard[property] == (1,)
+    test_keyboard.set_byte(property, 0)
+    assert test_keyboard[property] == (0,)
+    test_keyboard.set_byte(property, 1)
+    assert test_keyboard[property] == (1,)
+
+
+def test_input_device_set_float(touchpad):
+    property = 'Synaptics Circular Scrolling Distance'
+    orig_value = touchpad[property]
+    print(orig_value)
+    touchpad.set_float(property, 1.0)
+    assert touchpad[property] == (1.0,)
+    touchpad.set_float(property, *orig_value)
+    assert touchpad[property] == orig_value

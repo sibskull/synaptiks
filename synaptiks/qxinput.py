@@ -358,3 +358,52 @@ class InputDevice(Mapping):
 
     def __ge__(self, other):
         raise TypeError('InputDevice not orderable')
+
+    def _set_raw(self, property, type, format, data):
+        atom = _get_property_atom(property)
+        xinput.change_property(QX11Display(), self.id, atom,
+                               type, format, data)
+
+    def set_integer(self, property, *values):
+        """
+        Set an integral ``property``.
+
+        ``property`` is the property name as string, ``values`` contains
+        *all* values of the property as integer.
+
+        Raise :exc:`UndefinedPropertyError`, if the given property is not
+        defined on the server.
+        """
+        data = struct.pack('L' * len(values), *values)
+        self._set_raw(property, xlib.INTEGER, 32, data)
+
+    def set_byte(self, property, *values):
+        """
+        Set a ``property``, whose values are single bytes.
+
+        ``property`` is the property name as string, ``values`` contains
+        *all* values of the property as integer, which must of course all be
+        in the range of byte values.
+
+        Raise :exc:`UndefinedPropertyError`, if the given property is not
+        defined on the server.
+        """
+        data = struct.pack('B' * len(values), *values)
+        self._set_raw(property, xlib.INTEGER, 8, data)
+
+    set_bool = set_byte
+
+    def set_float(self, property, *values):
+        """
+        Set a floating point ``property``.
+
+        ``property`` is the property name as string, ``values`` contains
+        *all* values of the property as float objects, which must all be in
+        the range of C float values.
+
+        Raise :exc:`UndefinedPropertyError`, if the given property is not
+        defined on the server
+        """
+        data = struct.pack('f' * len(values), *values)
+        type = xlib.intern_atom(QX11Display(), 'FLOAT', True)
+        self._set_raw(property, type, 32, data)
