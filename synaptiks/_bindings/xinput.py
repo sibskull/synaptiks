@@ -96,7 +96,7 @@ def query_version(display, expected_version):
     """
     major, minor = map(c_int, expected_version)
     state = libXi.XIQueryVersion(display, byref(major), byref(minor))
-    return (state == xlib.Success, (major.value, minor.value))
+    return (state == xlib.SUCCESS, (major.value, minor.value))
 
 
 def query_device(display, deviceid):
