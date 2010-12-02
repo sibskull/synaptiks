@@ -33,15 +33,19 @@
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
 
+from __future__ import print_function
 
-from ctypes import CDLL, POINTER, Structure, byref, c_int, c_char_p
+from ctypes import (CDLL, POINTER, Structure, byref, string_at,
+                    c_int, c_char_p, c_long, c_ulong, c_byte)
 from ctypes.util import find_library
 
 from synaptiks._bindings import xlib
-from synaptiks._bindings.util import add_foreign_signatures
+from synaptiks._bindings.util import add_foreign_signatures, scoped_pointer
 
 
 c_int_p = POINTER(c_int)
+c_ulong_p = POINTER(c_ulong)
+c_byte_p = POINTER(c_byte)
 
 
 # XInput types
@@ -68,6 +72,7 @@ XIDeviceInfo_p = POINTER(XIDeviceInfo)
 
 # XInput defines as python constants
 ALL_DEVICES = 0
+ANY_PROPERTY_TYPE = 0
 
 
 SIGNATURES = dict(
@@ -75,6 +80,10 @@ SIGNATURES = dict(
     XIQueryDevice=([xlib.Display_p, c_int, c_int_p], XIDeviceInfo_p, None),
     XIFreeDeviceInfo=([XIDeviceInfo_p], None, None),
     XIListProperties=([xlib.Display_p, c_int, c_int_p], xlib.Atom_p, None),
+    XIGetProperty=([xlib.Display_p, c_int, xlib.Atom, c_long, c_long,
+                    xlib.Bool, xlib.Atom, xlib.Atom_p, c_int_p,
+                    c_ulong_p, c_ulong_p, POINTER(c_byte_p)],
+                   xlib.Status, None)
     )
 
 
@@ -151,3 +160,50 @@ def list_properties(display, deviceid):
     property_atoms = libXi.XIListProperties(display, deviceid,
                                             byref(number_of_properties))
     return (number_of_properties.value, property_atoms)
+
+
+def get_property(display, deviceid, property):
+    """
+    Get the given ``property`` from the device with the given id.
+
+    ``display`` is a :class:`Display_p` providing the server connection,
+    ``deviceid`` is an integer with a device id.  ``property`` is a
+    :class:`~synaptiks._bindings.xlib.Atom` with the X11 atom of the
+    property to get.
+
+    Return a tuple ``(type, format, data)``.  ``type`` and ``format`` are
+    integers, ``data`` is a byte string.  If the property exists on the
+    device, ``type`` contains the type atom, ``format`` the format of the
+    property (on of ``8``, ``16`` or ``32``) and ``data`` the property
+    contents as bytes.  Otherwise ``type`` is
+    :data:`~synaptiks._bindings.xlib.NONE` and ``format`` is ``0``.
+    ``data`` contains an empty string.
+    """
+
+    length = 1
+    while True:
+        type_return = xlib.Atom(0)
+        format_return = c_int(0)
+        num_items_return = c_ulong(0)
+        bytes_after_return = c_ulong(0)
+        data = c_byte_p()
+
+        state = libXi.XIGetProperty(
+            display, deviceid, property, 0, length, False,
+            ANY_PROPERTY_TYPE, byref(type_return), byref(format_return),
+            byref(num_items_return), byref(bytes_after_return), byref(data))
+
+        with scoped_pointer(data, xlib.free):
+            if state != xlib.SUCCESS:
+                # XXX: better diagnostics
+                raise EnvironmentError()
+            if bytes_after_return.value == 0:
+                # got all bytes now, handle them
+                format = format_return.value
+                type = type_return.value
+                number_of_items = num_items_return.value
+                byte_length = number_of_items * format/8
+                return (type, format, string_at(data, byte_length))
+            else:
+                # get some more bytes and try again
+                length += 1
