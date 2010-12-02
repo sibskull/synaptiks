@@ -42,6 +42,7 @@ from synaptiks._bindings.util import add_foreign_signatures
 
 # X11 types
 Atom = c_uint
+Atom_p = POINTER(Atom)
 
 
 class Display(Structure):

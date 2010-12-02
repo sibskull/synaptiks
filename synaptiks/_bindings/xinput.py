@@ -74,6 +74,7 @@ SIGNATURES = dict(
     XIQueryVersion=([xlib.Display_p, c_int_p, c_int_p], c_int, None),
     XIQueryDevice=([xlib.Display_p, c_int, c_int_p], XIDeviceInfo_p, None),
     XIFreeDeviceInfo=([XIDeviceInfo_p], None, None),
+    XIListProperties=([xlib.Display_p, c_int, c_int_p], xlib.Atom_p, None),
     )
 
 
@@ -123,3 +124,30 @@ def query_device(display, deviceid):
 
 
 free_device_info = libXi.XIFreeDeviceInfo
+
+
+def list_properties(display, deviceid):
+    """
+    Query all properties of the device with the given ``device_id``.
+
+    The properties are returned as C array of X11 Atoms.  Use
+    :func:`~synaptiks._bindings.xlib.get_atom_name` to retrieve the name of
+    these properties.
+
+   ``display`` is a :class:`Display_p` providing the server connection.
+    ``deviceid`` is an integer with a device id.
+
+    Return a tuple ``(number_of_properties, property_atoms)``.
+    ``number_of_properties`` is an integer with the number of properties.
+    ``property_atoms`` is :class:`~synaptiks._bindings.xlib.Atom_p` to a C
+    array of :class:`~synaptiks._bindings.xlib.Atom` objects.  This array is
+    to be freed using :func:`synaptiks._bindings.xlib.free`.
+
+    It is recommended, that you wrap the ``property_atoms`` pointer into
+    :func:`~synaptiks._bindings.util.scoped_pointer` and use a ``with``
+    block to make sure, that the allocated memory is freed.
+    """
+    number_of_properties = c_int(0)
+    property_atoms = libXi.XIListProperties(display, deviceid,
+                                            byref(number_of_properties))
+    return (number_of_properties.value, property_atoms)
