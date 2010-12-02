@@ -71,7 +71,7 @@ ALL_DEVICES = 0
 
 
 SIGNATURES = dict(
-    XIQueryVersion=([xlib.Display_p, c_int_p, c_int_p], c_int, None),
+    XIQueryVersion=([xlib.Display_p, c_int_p, c_int_p], xlib.Status, None),
     XIQueryDevice=([xlib.Display_p, c_int, c_int_p], XIDeviceInfo_p, None),
     XIFreeDeviceInfo=([XIDeviceInfo_p], None, None),
     XIListProperties=([xlib.Display_p, c_int, c_int_p], xlib.Atom_p, None),

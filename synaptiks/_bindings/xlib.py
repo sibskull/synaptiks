@@ -43,6 +43,8 @@ from synaptiks._bindings.util import add_foreign_signatures
 # X11 types
 Atom = c_uint
 Atom_p = POINTER(Atom)
+Bool = c_int
+Status = c_int
 
 
 class Display(Structure):
@@ -86,7 +88,7 @@ def _convert_x11_char_p(c_string, function, args):
 
 SIGNATURES = dict(
     XFree=([c_void_p], c_int, None),
-    XInternAtom=([Display_p, c_char_p, c_int], Atom, None),
+    XInternAtom=([Display_p, c_char_p, Bool], Atom, None),
     XGetAtomName=([Display_p, Atom], c_void_p, _convert_x11_char_p),
     )
 
