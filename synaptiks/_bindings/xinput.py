@@ -214,7 +214,24 @@ def get_property(display, deviceid, property):
 
 def change_property(display, deviceid, property, type, format, data):
     """
-    Change a property
+    Change the given ``property`` on the device with the given id.
+
+    Properties store binary ``data``.  For the X server to correctly interpret
+    the data correctly, it must be assigned a matching ``type`` and ``format``.
+
+    ``display`` is a :class:`Display_p` providing the server connection,
+    ``deviceid`` is an integer with a device id.  ``property`` is a
+    :class:`~synaptiks._bindings.xlib.Atom` with the X11 atom of the
+    property to change.  ``type`` is the
+    :class:`~synaptiks._bindings.xlib.Atom` describing the type of the property
+    (mostly either :data:`~synaptiks._bindings.xlib.Integer` or the atom for
+    ``'FLOAT'`` (use :class:`~synaptiks._bindings.xlib.intern_atom` to create
+    atoms).  ``format`` is an integer describing the format, must either 8, 16
+    or 32.  The format directly corresponds to the number of bytes per item in
+    the property.
+
+    Raise :exc:`~exceptions.ValueError`, if ``format`` is anything else than 8,
+    16 or 32.
     """
     if format not in (8, 16, 32):
         raise ValueError(format)
