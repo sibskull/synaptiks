@@ -40,6 +40,8 @@ from collections import Mapping
 from operator import eq
 
 import sip
+sip.setapi('QString', 2)
+sip.setapi('QVariant', 2)
 from PyQt4.QtGui import QX11Info
 
 from synaptiks._bindings import xlib, xinput
