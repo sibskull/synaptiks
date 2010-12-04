@@ -1,2 +1,3 @@
 *.pyc
 synaptiks.egg-info/*
+.ropeproject/
