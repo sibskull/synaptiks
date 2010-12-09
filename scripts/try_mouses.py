@@ -24,27 +24,50 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import sys
-from pprint import pprint
+from functools import partial
 
 import sip
 sip.setapi('QString', 2)
 sip.setapi('QVariant', 2)
-from PyQt4.QtGui import QApplication, QMainWindow, QTableView
+from PyQt4.QtGui import (QApplication, QMainWindow, QListView, QSplitter,
+                         QAction, QIcon)
 
 from synaptiks.models import MouseDevicesModel
 
 
-def main():
-    app = QApplication(sys.argv)
-    window = QMainWindow()
-    view = QTableView(window)
+def _make_mouse_view(parent):
+    view = QListView(parent)
     model = MouseDevicesModel(view)
     view.setModel(model)
-    view.showColumn(2)
-    window.setCentralWidget(view)
+    return view
+
+
+def main():
+    app = QApplication(sys.argv)
+
+    window = QMainWindow()
+    splitter = QSplitter(window)
+    window.setCentralWidget(splitter)
+    left_view = _make_mouse_view(window)
+    right_view = _make_mouse_view(window)
+    splitter.addWidget(right_view)
+    splitter.addWidget(left_view)
+
+    def _move_checked_state(source, dest):
+        source.model().checked_devices = dest.model().checked_devices
+
+    toolbar = window.addToolBar('Actions')
+    move_selection_left = QAction(
+        QIcon.fromTheme('arrow-left'), 'Moved checked state left', window,
+        triggered=partial(_move_checked_state, right_view, left_view))
+    move_selection_right = QAction(
+        QIcon.fromTheme('arrow-right'), 'Moved checked state right', window,
+        triggered=partial(_move_checked_state, left_view, right_view))
+    toolbar.addAction(move_selection_left)
+    toolbar.addAction(move_selection_right)
+
     window.show()
     app.exec_()
-    pprint(model.checked_devices)
 
 
 if __name__ == '__main__':
