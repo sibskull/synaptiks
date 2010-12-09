@@ -99,13 +99,10 @@ class MouseDevicesModel(QAbstractListModel):
     def checked_devices(self, devices):
         devices = set(d if isinstance(d, basestring) else d.serial
                       for d in devices)
-        for serial in devices:
-            try:
-                row = self._device_index.index(serial)
-                index = QModelIndex(row, 0)
+        for row, device in enumerate(self._device_index):
+            if device.serial in devices:
+                index = self.index(row, 0)
                 self.dataChanged.emit(index, index)
-            except ValueError:
-                pass
         self._checked_devices = devices
 
     def flags(self, index):
