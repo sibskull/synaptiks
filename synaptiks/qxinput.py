@@ -32,6 +32,8 @@
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
 
+from __future__ import (print_function, division, unicode_literals,
+                        absolute_import)
 
 import ctypes
 import struct
@@ -339,11 +341,11 @@ class InputDevice(Mapping):
                                                   self.id, atom)
         if type == xlib.NONE and format == 0:
             raise KeyError(name)
-        number_of_items = (len(bytes) * 8) / format
+        number_of_items = (len(bytes) * 8) // format
         if type == xlib.INTEGER:
             struct_format = _FORMAT_CODE_MAPPING[format] * number_of_items
         elif type == xlib.intern_atom(QX11Display(), 'FLOAT', True):
-            struct_format = 'f' * number_of_items
+            struct_format = b'f' * number_of_items
         else:
             raise PropertyTypeError(type)
         assert struct.calcsize(struct_format) == len(bytes)
@@ -376,7 +378,7 @@ class InputDevice(Mapping):
         Raise :exc:`UndefinedPropertyError`, if the given property is not
         defined on the server.
         """
-        data = struct.pack('L' * len(values), *values)
+        data = struct.pack(b'L' * len(values), *values)
         self._set_raw(property, xlib.INTEGER, 32, data)
 
     def set_byte(self, property, *values):
@@ -390,7 +392,7 @@ class InputDevice(Mapping):
         Raise :exc:`UndefinedPropertyError`, if the given property is not
         defined on the server.
         """
-        data = struct.pack('B' * len(values), *values)
+        data = struct.pack(b'B' * len(values), *values)
         self._set_raw(property, xlib.INTEGER, 8, data)
 
     set_bool = set_byte
@@ -406,6 +408,6 @@ class InputDevice(Mapping):
         Raise :exc:`UndefinedPropertyError`, if the given property is not
         defined on the server
         """
-        data = struct.pack('f' * len(values), *values)
+        data = struct.pack(b'f' * len(values), *values)
         type = xlib.intern_atom(QX11Display(), 'FLOAT', True)
         self._set_raw(property, type, 32, data)

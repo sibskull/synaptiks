@@ -33,6 +33,9 @@
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
 
+from __future__ import (print_function, division, unicode_literals,
+                        absolute_import)
+
 from ctypes import (CDLL, Structure, POINTER, string_at,
                     c_uint32, c_int, c_void_p, c_char_p)
 from ctypes.util import find_library

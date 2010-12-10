@@ -33,7 +33,8 @@
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
 
-from __future__ import print_function
+from __future__ import (print_function, division, unicode_literals,
+                        absolute_import)
 
 from ctypes import (CDLL, POINTER, Structure, byref, string_at, cast,
                     c_int, c_char_p, c_long, c_ulong, c_byte)
@@ -205,7 +206,7 @@ def get_property(display, deviceid, property):
                 format = format_return.value
                 type = type_return.value
                 number_of_items = num_items_return.value
-                byte_length = number_of_items * format/8
+                byte_length = number_of_items * format // 8
                 return (type, format, string_at(data, byte_length))
             else:
                 # get some more bytes and try again
@@ -235,7 +236,7 @@ def change_property(display, deviceid, property, type, format, data):
     """
     if format not in (8, 16, 32):
         raise ValueError(format)
-    number_of_items = (len(data) * 8) / format
+    number_of_items = (len(data) * 8) // format
     libXi.XIChangeProperty(
         display, deviceid, property, type, format, PROP_MODE_REPLACE,
         cast(c_char_p(data), c_byte_p), number_of_items)
