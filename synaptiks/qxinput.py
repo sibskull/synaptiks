@@ -35,39 +35,15 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
-import ctypes
 import struct
 from functools import partial
 from collections import Mapping
 from operator import eq
 
-import sip
-sip.setapi('QString', 2)
-sip.setapi('QVariant', 2)
-from PyQt4.QtGui import QX11Info
-
 from synaptiks._bindings import xlib, xinput
 from synaptiks._bindings.util import scoped_pointer
+from synaptiks.qx11 import QX11Display
 from synaptiks.util import assert_byte_string, assert_unicode_string
-
-
-class QX11Display(object):
-    """
-    Wrapper around the Qt X11 Display (as returned by
-    :meth:`PyQt4.QtGui.QX11Info.display()`) to make the display available as
-    argument for ctypes-wrapped foreign functions from Xlib.
-
-    If used as argument to a foreign function, this object is cast into a
-    proper Display pointer.
-    """
-
-    def __init__(self):
-        display = QX11Info.display()
-        if not display:
-            raise ValueError('A Qt X11 display connection is required. '
-                             'Create a QApplication object')
-        display_address = sip.unwrapinstance(display)
-        self._as_parameter_ = ctypes.cast(display_address, xlib.Display_p)
 
 
 class XInputVersionError(Exception):
