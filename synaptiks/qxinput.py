@@ -37,7 +37,7 @@ from __future__ import (print_function, division, unicode_literals,
 
 import ctypes
 import struct
-from functools import wraps, partial
+from functools import partial
 from collections import Mapping
 from operator import eq
 
