@@ -107,7 +107,7 @@ def assert_xinput_version():
     """
     matched, actual_version = xinput.query_version(QX11Display(), (2,0))
     if not matched:
-        raise QXInputVersionError((2, 0), actual_version)
+        raise XInputVersionError((2, 0), actual_version)
 
 
 def is_property_defined(name):
