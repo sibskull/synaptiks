@@ -240,4 +240,3 @@ def change_property(display, deviceid, property, type, format, data):
     libXi.XIChangeProperty(
         display, deviceid, property, type, format, PROP_MODE_REPLACE,
         cast(c_char_p(data), c_byte_p), number_of_items)
-
