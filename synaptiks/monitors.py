@@ -38,13 +38,18 @@ from __future__ import (print_function, division, unicode_literals,
 
 from itertools import ifilter
 from collections import namedtuple
+from itertools import izip
+from array import array
 
 import pyudev
 import sip
 sip.setapi('QString', 2)
 sip.setapi('QVariant', 2)
 from pyudev.pyqt4 import QUDevMonitorObserver
-from PyQt4.QtCore import QObject, pyqtSignal
+from PyQt4.QtCore import QObject, QTimer, QTime, pyqtSignal
+
+from synaptiks.qx11 import QX11Display
+from synaptiks._bindings import xlib
 
 
 def _is_mouse(device):
@@ -120,3 +125,126 @@ class MouseDevicesMonitor(QObject):
         if signal and _is_mouse(device):
             signal.emit(MouseDevice.from_udev(device))
 
+
+class PollingKeyboardMonitor(QObject):
+    """
+    Monitor the keyboard for state changes by constantly polling the keyboard.
+    """
+
+    #: default polling interval
+    DEFAULT_POLLDELAY = 200
+    #: default time span before considering the keyboard inactive again
+    DEFAULT_IDLETIME = 2000
+    #: size of the X11 keymap array
+    _KEYMAP_SIZE = 32
+
+    #: Ignore no keys
+    IGNORE_NO_KEYS = 0
+    #: Ignore modifier keys alone
+    IGNORE_MODIFIER_KEYS = 1
+    #: Ignore combinations of modifiers and standard keys
+    IGNORE_MODIFIER_COMBOS = 2
+
+    #: emitted if typing is started.  Takes no arguments
+    typingStarted = pyqtSignal()
+    #: emitted if typing is stopped.  Takes no arguments
+    typingStopped = pyqtSignal()
+
+    def __init__(self, parent=None):
+        """
+        Create a new monitor.
+
+        ``parent`` is the parent :class:`~PyQt4.QtCore.QObject`.
+        """
+        QObject.__init__(self, parent)
+        self._keyboard_was_active = False
+        self._old_keymap = array(b'B', b'\0'*32)
+        self._keyboard_timer = QTimer(self)
+        self._keyboard_timer.timeout.connect(self._check_keyboard_activity)
+        self._keyboard_timer.setInterval(self.DEFAULT_POLLDELAY)
+        self._activity = QTime()
+        self._keys_to_ignore = self.IGNORE_NO_KEYS
+        self._keymap_mask = self._setup_mask()
+        self.idle_time = self.DEFAULT_IDLETIME
+
+    def start(self):
+        """
+        Start monitoring the keyboard.
+        """
+        self._keyboard_timer.start()
+
+    def stop(self):
+        """
+        Stop monitoring the keyboard.
+        """
+        self._keyboard_timer.stop()
+
+    @property
+    def keys_to_ignore(self):
+        """
+        The keys to ignore while observing the keyboard.
+
+        If such a key is pressed, the keyboard will not be considered active,
+        the signal :attr:`typingStarted()` will consequently not be emitted.
+
+        Raise :exc:`~exceptions.ValueError` upon assignment, if the given value
+        is not one of :attr:`IGNORE_NO_KEYS`, :attr:`IGNORE_MODIFIER_KEYS` or
+        :attr:`IGNORE_MODIFIER_COMBOS`.
+        """
+        return self._keys_to_ignore
+
+    @keys_to_ignore.setter
+    def keys_to_ignore(self, value):
+        if not (self.IGNORE_NO_KEYS <= value <= self.IGNORE_MODIFIER_COMBOS):
+            raise ValueError('unknown constant for keys_to_ignore')
+        self._keys_to_ignore = value
+        self._keymap_mask = self._setup_mask()
+
+    def _setup_mask(self):
+        mask = array(b'B', b'\xff'*32)
+        if self._keys_to_ignore >= self.IGNORE_MODIFIER_KEYS:
+            modifier_mappings = xlib.get_modifier_mapping(QX11Display())
+            for modifier_keys in modifier_mappings:
+                for keycode in modifier_keys:
+                    mask[keycode // 8] &= ~(1 << (keycode % 8))
+        return mask
+
+    @property
+    def keyboard_active(self):
+        """
+        Is the keyboard currently active (with respect to
+        :attr:`keys_to_ignore`)?
+
+        ``True``, if the keyboard is currently active, ``False`` otherwise.
+        """
+        is_active = False
+
+        _, raw_keymap = xlib.query_keymap(QX11Display())
+        keymap = array(b'B', raw_keymap)
+
+        is_active = keymap != self._old_keymap
+        for new_state, old_state, mask in izip(keymap, self._old_keymap,
+                                               self._keymap_mask):
+            is_active = new_state & ~old_state & mask
+            if is_active:
+                break
+
+        if self._keys_to_ignore == self.IGNORE_MODIFIER_COMBOS:
+            for state, mask in izip(keymap, self._keymap_mask):
+                if state & ~mask:
+                    is_active = False
+                    break
+
+        self._old_keymap = keymap
+        return is_active
+
+    def _check_keyboard_activity(self):
+        if self.keyboard_active:
+            self._activity.start()
+            if not self._keyboard_was_active:
+                self._keyboard_was_active = True
+                self.typingStarted.emit()
+        elif self._activity.elapsed() > self.idle_time and \
+                 self._keyboard_was_active:
+            self._keyboard_was_active = False
+            self.typingStopped.emit()

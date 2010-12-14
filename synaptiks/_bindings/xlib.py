@@ -36,24 +36,38 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
-from ctypes import (CDLL, Structure, POINTER, string_at,
-                    c_uint32, c_int, c_void_p, c_char_p)
+from collections import namedtuple
+from itertools import islice, izip
+from ctypes import (CDLL, Structure, POINTER, string_at, create_string_buffer,
+                    c_uint32, c_int, c_void_p, c_char_p, c_char, c_ubyte)
 from ctypes.util import find_library
 
-from synaptiks._bindings.util import add_foreign_signatures
+from synaptiks._bindings.util import add_foreign_signatures, scoped_pointer
 
+c_ubyte_p = POINTER(c_ubyte)
 
 # X11 types
 Atom = c_uint32
 Atom_p = POINTER(Atom)
 Bool = c_int
 Status = c_int
+KeyCode = c_ubyte
+KeyCode_p = c_ubyte_p
 
 
 class Display(Structure):
     pass
 
 Display_p = POINTER(Display)
+
+
+class XModifierKeymap(Structure):
+    _fields_ = [
+        ('max_keypermod', c_int),
+        ('modifiermap', KeyCode_p)
+        ]
+
+XModifierKeymap_p = POINTER(XModifierKeymap)
 
 
 # X11 definitions as python constants
@@ -95,6 +109,9 @@ SIGNATURES = dict(
     XFree=([c_void_p], c_int, None),
     XInternAtom=([Display_p, c_char_p, Bool], Atom, None),
     XGetAtomName=([Display_p, Atom], c_void_p, _convert_x11_char_p),
+    XQueryKeymap=([Display_p, c_char*32], c_int, None),
+    XGetModifierMapping=([Display_p], XModifierKeymap_p, None),
+    XFreeModifiermap=([XModifierKeymap_p], c_int, None),
     )
 
 
@@ -114,3 +131,44 @@ def free(ptr):
 
 intern_atom = libX11.XInternAtom
 get_atom_name = libX11.XGetAtomName
+
+
+def query_keymap(display):
+    """
+    Query the current state of the keyboard.
+
+    ``display`` is a :class:`Display_p` providing the server connection.
+
+    Return a tuple ``(state, keymap)``, where ``state`` is an integer with the
+    error code of the underlying C function, and ``keymap`` is a byte string
+    with the keymap.  This byte string has excatly 32 bytes.  Each bit in this
+    byte string corresponds to a single key.  If the key is currently pressed,
+    the bit is set, otherwise it is unset.
+    """
+    buffer = create_string_buffer(32)
+    state = libX11.XQueryKeymap(display, buffer)
+    return state, buffer.raw
+
+
+ModifierMap = namedtuple(
+    'ModifierMap', 'shift lock control mod1 mod2 mod3 mod4 mod5')
+
+
+def get_modifier_mapping(display):
+    """
+    Get the modifier mapping.
+
+    ``display`` is a :class:`Display_p` providing the server connection.
+
+    Return a :class:`ModifierMap` tuple, where each element is another plain
+    tuple which contains :data:`KeyCode` objects (which are basically just
+    bytes).  Zero keycodes are meaningless in all these tuples.
+    """
+    modifier_map = libX11.XGetModifierMapping(display)
+    with scoped_pointer(modifier_map, libX11.XFreeModifiermap):
+        keys_per_modifier = modifier_map.contents.max_keypermod
+        keycodes = [modifier_map.contents.modifiermap[i]
+                    for i in xrange(8*keys_per_modifier)]
+        modifier_keys = izip(*[islice(keycodes, i, None, keys_per_modifier)
+                               for i in xrange(keys_per_modifier)])
+        return ModifierMap(*modifier_keys)
