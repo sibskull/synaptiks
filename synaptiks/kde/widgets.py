@@ -94,7 +94,6 @@ class TouchpadInformationWidget(QWidget, _DynamicUserInterfaceMixin):
         """
         QWidget.__init__(self, parent)
         self._load_userinterface()
-        self.errorLabel.setVisible(False)
         self.show_touchpad(touchpad)
 
     def show_touchpad(self, touchpad):
