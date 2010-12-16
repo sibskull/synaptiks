@@ -191,7 +191,11 @@ class InputDevice(Mapping):
         Iterate over all input devices.
 
         Return an iterator over :class:`InputDevice` objects.
+
+        Raise :exc:`XInputVersionError`, if the XInput version isn't sufficient
+        to support input device management.
         """
+        assert_xinput_version()
         number_of_devices, devices = xinput.query_device(
             QX11Display(), xinput.ALL_DEVICES)
         with scoped_pointer(devices, xinput.free_device_info) as devices:
@@ -211,6 +215,9 @@ class InputDevice(Mapping):
 
         Return an iterator over all :class:`InputDevice` objects with a
         matching name.
+
+        Raise :exc:`XInputVersionError`, if the XInput version isn't sufficient
+        to support input device management.
         """
         if isinstance(name, basestring):
             matches = partial(eq, name)
@@ -227,6 +234,9 @@ class InputDevice(Mapping):
 
         Return an iterator over all :class:`InputDevice` objects, which have
         this property defined.
+
+        Raise :exc:`XInputVersionError`, if the XInput version isn't sufficient
+        to support input device management.
         """
         return (d for d in cls.all_devices() if name in d)
 
