@@ -426,13 +426,13 @@ class InputDevice(MutableMapping):
         scheme = self.typescheme.get(property)
         if not scheme:
             raise ValueError(
-                'No type scheme provided for {0!r'.format(property))
+                'No type scheme provided for {0!r}'.format(property))
         property_type, number_of_items = scheme
         if len(values) != number_of_items:
             raise ValueError(
                 'Unexpected number of items for property {0!r}: '
-                '{1} (expected {2}'.format(property, len(values),
-                                           number_of_items))
+                '{1} (expected {2})'.format(property, len(values),
+                                            number_of_items))
         set_property = self.TYPE_SETTERS[property_type]
         set_property(self, property, *values)
 
