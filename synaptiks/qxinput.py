@@ -37,7 +37,7 @@ from __future__ import (print_function, division, unicode_literals,
 
 import struct
 from functools import partial
-from collections import Mapping
+from collections import MutableMapping
 from operator import eq
 
 from synaptiks._bindings import xlib, xinput
@@ -171,14 +171,18 @@ class PropertyTypeError(ValueError):
 _FORMAT_CODE_MAPPING = {8: b'B', 16: b'S', 32: b'L'}
 
 
-class InputDevice(Mapping):
+class InputDevice(MutableMapping):
     """
     An input device registered on the X11 server.
 
-    This class subclasses the Mapping ABC, providing a read-only dictionary
-    mapping device property names to the corresponding values. Therefore all
-    well-known dicitionary methods and operators (e.g. .keys(), .items(),
-    in) are available to access the properties of a input device.
+    This class subclasses the MutableMapping ABC, providing a writable
+    dictionary mapping device property names to the corresponding
+    values. Therefore all well-known dicitionary methods and operators
+    (e.g. .keys(), .items(), in) are available to access the properties of a
+    input device.
+
+    However, to assign properties using :meth:`__setitem__()`, a *type scheme*
+    must be provided.  See :attr:`typescheme` for details.
 
     :class:`InputDevice` objects compare equal and unequal to other devices
     and to strings (based on :attr:`id`). However, there is no ordering on
@@ -242,6 +246,7 @@ class InputDevice(Mapping):
 
     def __init__(self, deviceid):
         self.id = deviceid
+        self.typescheme = None
 
     @property
     def name(self):
@@ -397,3 +402,42 @@ class InputDevice(Mapping):
         data = struct.pack(b'f' * len(values), *values)
         type = xlib.intern_atom(QX11Display(), 'FLOAT', True)
         self._set_raw(property, type, 32, data)
+
+    TYPE_SETTERS = dict(int=set_int, byte=set_byte,
+                        float=set_float, bool=set_bool)
+
+    def __setitem__(self, property, values):
+        """
+        Set ``property`` to the given ``values``.
+
+        ``values`` is checked against the :attr:`typescheme` defined for
+        ``property`` and only set, if the typescheme matches. Otherwise
+        :exc:`~exceptions.ValueError` is raised.
+
+        Raise :exc:`~exceptions.ValueError` on the following occasions:
+
+        - the :attr:`typescheme` is empty
+        - ``property`` is not contained in the :attr:`typescheme`
+        - ``values`` has not the number of items required by the
+          :attr:`typescheme` for ``property``
+        """
+        if not self.typescheme:
+            raise ValueError('No type scheme provided')
+        scheme = self.typescheme.get(property)
+        if not scheme:
+            raise ValueError(
+                'No type scheme provided for {0!r'.format(property))
+        property_type, number_of_items = scheme
+        if len(values) != number_of_items:
+            raise ValueError(
+                'Unexpected number of items for property {0!r}: '
+                '{1} (expected {2}'.format(property, len(values),
+                                           number_of_items))
+        set_property = self.TYPE_SETTERS[property_type]
+        set_property(self, property, *values)
+
+    def __delitem__(self, property):
+        """
+        Not supported, raises :exc:`~exceptions.NotImplementedError`.
+        """
+        raise NotImplementedError
