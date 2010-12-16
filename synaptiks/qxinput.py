@@ -344,7 +344,7 @@ class InputDevice(Mapping):
         xinput.change_property(QX11Display(), self.id, atom,
                                type, format, data)
 
-    def set_integer(self, property, *values):
+    def set_int(self, property, *values):
         """
         Set an integral ``property``.
 
