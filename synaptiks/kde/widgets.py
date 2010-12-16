@@ -126,3 +126,14 @@ class TouchpadInformationWidget(QWidget, _DynamicUserInterfaceMixin):
             pixmaps[touchpad.has_pressure_detection])
         self.twoFingerEmulation.setPixmap(
             pixmaps[touchpad.has_two_finger_emulation])
+
+
+class MotionPage(QWidget, _DynamicUserInterfaceMixin):
+    """
+    Configuration page to configure the settings for cursor motion on the
+    touchpad.
+    """
+
+    def __init__(self, parent=None):
+        QWidget.__init__(self, parent)
+        self._load_userinterface()

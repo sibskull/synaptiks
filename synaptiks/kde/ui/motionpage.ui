@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MotionPage</class>
+ <widget class="QWidget" name="MotionPage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>388</width>
+    <height>304</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string comment="@title:window cursor motion settings">Cursor motion</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QGroupBox" name="speedGroup">
+     <property name="title">
+      <string comment="@title:group">Cursor motion speed</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="KDoubleNumInput" name="touchpad_MinimumSpeed">
+        <property name="label">
+         <string comment="@label:slider">Minimum speed</string>
+        </property>
+        <property name="maximum">
+         <double>2.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="sliderEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="KDoubleNumInput" name="touchpad_MaximumSpeed">
+        <property name="label">
+         <string comment="@label:slider">Maximum speed</string>
+        </property>
+        <property name="maximum">
+         <double>2.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="sliderEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="KDoubleNumInput" name="touchpad_AccelerationFactor">
+        <property name="toolTip">
+         <string comment="@info:tooltip">The acceleration factor defines the acceleration between minimum and maximum speed</string>
+        </property>
+        <property name="whatsThis">
+         <string comment="@info:whatsthis">The acceleration factor defines the acceleration between minimum and maximum speed.  If minimum and maximum speed are equal, acceleration is not used.</string>
+        </property>
+        <property name="label">
+         <string comment="@label:slider">Acceleration factor</string>
+        </property>
+        <property name="maximum">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="decimals">
+         <number>4</number>
+        </property>
+        <property name="sliderEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="edgeMotionGroup">
+     <property name="title">
+      <string comment="@title:group">Continue cursor motion when hitting the touchpad edge</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QCheckBox" name="touchpad_EdgeMotionAlways">
+        <property name="text">
+         <string comment="@option:radio">For all movements, not only dragging</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KDoubleNumInput</class>
+   <extends>QWidget</extends>
+   <header>knuminput.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
