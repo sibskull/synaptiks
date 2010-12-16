@@ -52,20 +52,24 @@ PACKAGE_DIRECTORY = os.path.dirname(__file__)
 
 class _DynamicUserInterfaceMixin(object):
     """
-    Mixin class for widgets, which load their user interface dynamically from
-    the :mod:`synaptiks.kde` package.
-
-    Children of this class must defined a ``filename`` attribute at class or
-    instance namespace, which points to the corresponding user interface file
-    in the ``ui/`` subdirectory.
+    Mixin class for widgets to load their user interface dynamically from the
+    :mod:`synaptiks.kde` package.  It provides a single method
+    :meth:`_load_userinterface()`, which loads the user interface into the
+    instance.
     """
 
     def _load_userinterface(self):
         """
-        Load the user interface for this objects.
+        Load the user interface for this object.
+
+        The user interface is loaded from a user interface file with the
+        lower-cased class name in ``ui/`` sub-directory of this package.  For
+        instance, the user interface file for class ``FooBar`` would be
+        ``ui/foobar.ui``.
         """
         ui_description_filename = os.path.join(
-            PACKAGE_DIRECTORY, 'ui', self.ui_filename)
+            PACKAGE_DIRECTORY, 'ui',
+            self.__class__.__name__.lower() + '.ui')
         loadUi(ui_description_filename, self)
 
 
@@ -81,8 +85,6 @@ class TouchpadInformationWidget(QWidget, _DynamicUserInterfaceMixin):
     - how many fingers it can detect,
     - and whether it supports two-finger emulation.
     """
-
-    ui_filename = 'touchpadinformationwidget.ui'
 
     def __init__(self, touchpad, parent=None):
         """
