@@ -47,7 +47,11 @@ class Touchpad(InputDevice):
 
     This class is a child of :class:`~synaptiks.qxinput.InputDevice`,
     consequently all of the input device methods are available on this class as
-    well.
+    well.  Additionally this class provides special methods and properties
+    specific to touchpads.
+
+    It is recommended, that you use these whenever possible instead of directly
+    accessing the device properties.
     """
 
     TYPESCHEME = {
@@ -116,3 +120,64 @@ class Touchpad(InputDevice):
         """
         return next(cls.find_all(), None)
 
+    @property
+    def capabilities(self):
+        """
+        The capabilities of the touchpad.
+
+        This is a list of seven boolean values, indicating the following
+        capabilities (in the order of the list items):
+
+        - the touchpad has a left button
+        - the touchpad has a middle button
+        - the touchpad has a right button
+        - the touchpad can detect two fingers
+        - the touchpad can detect three fingers
+        - the touchpad can detect the pressure of a touch
+        - the touchpad can detect the width of a finger
+        """
+        return map(bool, self['Synaptics Capabilities'])
+
+    @property
+    def finger_detection(self):
+        """
+        The number of fingers, this touchpad can independently detect upon a
+        touch, as integer.
+        """
+        finger_capabilities = self.capabilities[3:5]
+        return sum(finger_capabilities, 1)
+
+    @property
+    def buttons(self):
+        """
+        """
+        return self.capabilities[0:3]
+
+    @property
+    def has_pressure_detection(self):
+        """
+        ``True``, if this touchpad can detect the pressure of a touch,
+        ``False`` otherwise.
+        """
+        return self.capabilities[5]
+
+    @property
+    def has_finger_width_detection(self):
+        """
+        ``True``, if this touchpad can detect the width of a finger upon touch,
+        ``False`` otherwise.
+        """
+        return self.capabilities[6]
+
+    @property
+    def has_two_finger_emulation(self):
+        """
+        ``True``, if this touchpad supports two finger emulation, ``False``
+        otherwise.
+
+        Many older touchpads are unable to detect multiple fingers
+        independently, which is required for features like two finger
+        scrolling.  Some of these however can at least emulate this by
+        detecting the width of a finger and the pressure upon a touch.
+        """
+        return all(self.capabilities[5:7])
