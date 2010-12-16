@@ -168,3 +168,34 @@ def test_input_device_set_float(touchpad):
     assert touchpad[property] == (1.0,)
     touchpad.set_float(property, *orig_value)
     assert touchpad[property] == orig_value
+
+
+def test_input_device_set_item_no_typescheme(test_keyboard):
+    with pytest.raises(ValueError) as excinfo:
+        test_keyboard['Device Enabled'] = (True,)
+    assert str(excinfo.value) == 'No type scheme provided'
+
+
+def test_input_device_set_item_no_property_typescheme(test_keyboard):
+    test_keyboard.typescheme = dict(foobar=('int', 1))
+    with pytest.raises(ValueError) as excinfo:
+        test_keyboard['Device Enabled'] = (True,)
+    assert str(excinfo.value) == \
+           "No type scheme provided for 'Device Enabled'"
+
+
+def test_input_device_set_item_unexpected_number_of_items(test_keyboard):
+    test_keyboard.typescheme = {'Device Enabled': ('bool', 10)}
+    with pytest.raises(ValueError) as excinfo:
+        test_keyboard['Device Enabled'] = (True,)
+    assert str(excinfo.value) == \
+           ("Unexpected number of items for property 'Device Enabled': "
+            "1 (expected 10)")
+
+
+def test_input_device_set_item(test_keyboard):
+    test_keyboard.typescheme = {'Device Enabled': ('bool', 1)}
+    test_keyboard['Device Enabled'] = (False,)
+    assert test_keyboard['Device Enabled'] == (False,)
+    test_keyboard['Device Enabled'] = (True,)
+    assert test_keyboard['Device Enabled'] == (True,)
