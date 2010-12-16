@@ -340,7 +340,7 @@ class InputDevice(MutableMapping):
         else:
             raise PropertyTypeError(type)
         assert struct.calcsize(struct_format) == len(bytes)
-        return struct.unpack(struct_format, bytes)
+        return list(struct.unpack(struct_format, bytes))
 
     def __gt__(self, other):
         raise TypeError('InputDevice not orderable')
@@ -359,11 +359,11 @@ class InputDevice(MutableMapping):
         xinput.change_property(QX11Display(), self.id, atom,
                                type, format, data)
 
-    def set_int(self, property, *values):
+    def set_int(self, property, values):
         """
         Set an integral ``property``.
 
-        ``property`` is the property name as string, ``values`` contains
+        ``property`` is the property name as string, ``values`` is a list of
         *all* values of the property as integer.
 
         Raise :exc:`UndefinedPropertyError`, if the given property is not
@@ -372,13 +372,13 @@ class InputDevice(MutableMapping):
         data = struct.pack(b'L' * len(values), *values)
         self._set_raw(property, xlib.INTEGER, 32, data)
 
-    def set_byte(self, property, *values):
+    def set_byte(self, property, values):
         """
         Set a ``property``, whose values are single bytes.
 
-        ``property`` is the property name as string, ``values`` contains
-        *all* values of the property as integer, which must of course all be
-        in the range of byte values.
+        ``property`` is the property name as string, ``values`` is a list of
+        *all* values of the property as integer, which must of course all be in
+        the range of byte values.
 
         Raise :exc:`UndefinedPropertyError`, if the given property is not
         defined on the server.
@@ -388,13 +388,13 @@ class InputDevice(MutableMapping):
 
     set_bool = set_byte
 
-    def set_float(self, property, *values):
+    def set_float(self, property, values):
         """
         Set a floating point ``property``.
 
-        ``property`` is the property name as string, ``values`` contains
-        *all* values of the property as float objects, which must all be in
-        the range of C float values.
+        ``property`` is the property name as string, ``values`` is a list of
+        *all* values of the property as float objects, which must all be in the
+        range of C float values.
 
         Raise :exc:`UndefinedPropertyError`, if the given property is not
         defined on the server
@@ -409,6 +409,9 @@ class InputDevice(MutableMapping):
     def __setitem__(self, property, values):
         """
         Set ``property`` to the given ``values``.
+
+        ``property`` is the property name as string, ``values`` is a list of
+        *all* values of the property.
 
         ``values`` is checked against the :attr:`typescheme` defined for
         ``property`` and only set, if the typescheme matches. Otherwise
@@ -434,7 +437,7 @@ class InputDevice(MutableMapping):
                 '{1} (expected {2})'.format(property, len(values),
                                             number_of_items))
         set_property = self.TYPE_SETTERS[property_type]
-        set_property(self, property, *values)
+        set_property(self, property, values)
 
     def __delitem__(self, property):
         """

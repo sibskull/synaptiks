@@ -129,10 +129,10 @@ def test_inputdevice_contains_undefined_property(test_keyboard):
 
 
 def test_inputdevice_getitem(test_keyboard):
-    assert test_keyboard['Device Enabled'] == (1,)
-    assert test_keyboard['XTEST Device'] == (1,)
+    assert test_keyboard['Device Enabled'] == [1]
+    assert test_keyboard['XTEST Device'] == [1]
     assert test_keyboard['Coordinate Transformation Matrix'] == \
-           (1., 0., 0., 0., 1., 0., 0., 0., 1.)
+           [1., 0., 0., 0., 1., 0., 0., 0., 1.]
 
 
 def test_inputdevice_getitem_non_defined_property(test_keyboard):
@@ -153,20 +153,19 @@ def test_input_device_set_bool_alias():
 
 def test_input_device_set_byte(test_keyboard):
     property = 'Device Enabled'
-    assert test_keyboard[property] == (1,)
-    test_keyboard.set_byte(property, 0)
-    assert test_keyboard[property] == (0,)
-    test_keyboard.set_byte(property, 1)
-    assert test_keyboard[property] == (1,)
+    assert test_keyboard[property] == [1]
+    test_keyboard.set_byte(property, [0])
+    assert test_keyboard[property] == [0]
+    test_keyboard.set_byte(property, [1])
+    assert test_keyboard[property] == [1]
 
 
 def test_input_device_set_float(touchpad):
     property = 'Synaptics Circular Scrolling Distance'
     orig_value = touchpad[property]
-    print(orig_value)
-    touchpad.set_float(property, 1.0)
-    assert touchpad[property] == (1.0,)
-    touchpad.set_float(property, *orig_value)
+    touchpad.set_float(property, [1.0])
+    assert touchpad[property] == [1.0]
+    touchpad.set_float(property, orig_value)
     assert touchpad[property] == orig_value
 
 
@@ -195,7 +194,7 @@ def test_input_device_set_item_unexpected_number_of_items(test_keyboard):
 
 def test_input_device_set_item(test_keyboard):
     test_keyboard.typescheme = {'Device Enabled': ('bool', 1)}
-    test_keyboard['Device Enabled'] = (False,)
-    assert test_keyboard['Device Enabled'] == (False,)
-    test_keyboard['Device Enabled'] = (True,)
-    assert test_keyboard['Device Enabled'] == (True,)
+    test_keyboard['Device Enabled'] = [False]
+    assert test_keyboard['Device Enabled'] == [False]
+    test_keyboard['Device Enabled'] = [True]
+    assert test_keyboard['Device Enabled'] == [True]
