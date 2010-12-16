@@ -173,7 +173,7 @@ _FORMAT_CODE_MAPPING = {8: 'B', 16: 'S', 32: 'L'}
 
 class InputDevice(Mapping):
     """
-    An input device register on the X11 server.
+    An input device registered on the X11 server.
 
     This class subclasses the Mapping ABC, providing a read-only dictionary
     mapping device property names to the corresponding values. Therefore all
