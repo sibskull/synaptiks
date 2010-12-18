@@ -44,7 +44,9 @@ sip.setapi('QVariant', 2)
 from PyQt4.uic import loadUi
 from PyQt4.QtGui import QWidget
 from PyKDE4.kdecore import i18nc
-from PyKDE4.kdeui import KIconLoader
+from PyKDE4.kdeui import KIconLoader, KTabWidget
+
+from synaptiks.touchpad import TouchpadConfig
 
 
 PACKAGE_DIRECTORY = os.path.dirname(__file__)
@@ -137,3 +139,25 @@ class MotionPage(QWidget, _DynamicUserInterfaceMixin):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self._load_userinterface()
+
+
+class TouchpadConfigurationWidget(KTabWidget):
+    """
+    A tab widget to configure the touchpad properties.
+
+    This basically aggregates all page classes in this module.
+    """
+
+    def __init__(self, touchpad, parent=None):
+        """
+        Create a new configuration widget for the given ``touchpad``.
+
+        ``parent`` is the parent :class:`~PyQt4.QtGui.QWidget` (can be
+        ``None``).
+        """
+        KTabWidget.__init__(self, parent)
+        for pagecls in [MotionPage]:
+            page = pagecls(self)
+            self.addTab(page, page.windowTitle())
+        self.setWindowTitle(
+            i18nc('@title:window', 'Touchpad configuration'))

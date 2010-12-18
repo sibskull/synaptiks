@@ -48,7 +48,8 @@ from PyKDE4.kdeui import (KApplication, KSystemTrayIcon, KDialog,
 
 import synaptiks
 from synaptiks.touchpad import Touchpad
-from synaptiks.kde import widgets
+from synaptiks.kde.widgets import (TouchpadInformationWidget,
+                                   TouchpadConfigurationWidget)
 
 
 
@@ -63,14 +64,10 @@ class SynaptiksConfigDialog(KPageDialog):
         self.setFaceType(KPageDialog.List)
         self.setButtons(KDialog.ButtonCodes(
             KDialog.Ok | KDialog.Cancel | KDialog.Apply))
-        touchpad_config = KTabWidget(self)
-        for pagecls in [widgets.MotionPage]:
-            page = pagecls(touchpad_config)
-            touchpad_config.addTab(page, page.windowTitle())
-        touchpad_config.setWindowTitle(
-            i18nc('@title:window', 'Touchpad configuration'))
 
-        for page, icon_name in [(touchpad_config, 'configure')]:
+        self.touchpad_config = TouchpadConfigurationWidget(self)
+
+        for page, icon_name in [(self.touchpad_config, 'configure')]:
             page_item = self.addPage(page, page.windowTitle())
             page_item.setIcon(KIcon(icon_name))
 
@@ -125,8 +122,8 @@ class SynaptiksTrayIcon(KSystemTrayIcon):
         self.info_dialog = KDialog()
         # delete the dialog manually once the user closed it
         self.info_dialog.finished.connect(self.info_dialog.deleteLater)
-        info_widget = widgets.TouchpadInformationWidget(
-            self.touchpad, self.info_dialog)
+        info_widget = TouchpadInformationWidget(self.touchpad,
+                                                self.info_dialog)
         self.info_dialog.setMainWidget(info_widget)
         self.info_dialog.setWindowTitle(info_widget.windowTitle())
         self.info_dialog.resize(info_widget.minimumSize())
