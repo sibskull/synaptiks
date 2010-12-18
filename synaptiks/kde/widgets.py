@@ -177,7 +177,6 @@ class TappingPage(QWidget, _DynamicUserInterfaceMixin):
         self.fingerButtonsLayout.labelForField(widget).setEnabled(enabled)
 
 
-
 class TouchpadConfigurationWidget(KTabWidget):
     """
     A tab widget to configure the touchpad properties.
