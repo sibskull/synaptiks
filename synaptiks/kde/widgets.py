@@ -42,6 +42,7 @@ import sip
 sip.setapi('QString', 2)
 sip.setapi('QVariant', 2)
 from PyQt4.uic import loadUi
+from PyQt4.QtCore import QRegExp
 from PyQt4.QtGui import QWidget
 from PyKDE4.kdecore import i18nc
 from PyKDE4.kdeui import KIconLoader, KTabWidget
@@ -161,3 +162,26 @@ class TouchpadConfigurationWidget(KTabWidget):
             self.addTab(page, page.windowTitle())
         self.setWindowTitle(
             i18nc('@title:window', 'Touchpad configuration'))
+
+    def _find_touchpad_configuration_widgets(self):
+        """
+        Find all widgets which correspond to a touchpad configuration entry.
+
+        Yield tuples ``(key, widget)``, where ``key`` is the configuration key
+        corresponding to the widget, and ``widget`` is the actual widget object
+        itself (a :class:`~PyQt4.QtGui.QWidget` or a subclass thereof).
+        """
+        for widget in self.findChildren(QWidget, QRegExp('touchpad_.*')):
+            key = widget.objectName()[9:]
+            yield key, widget
+
+    def load_settings(self, touchpad):
+        """
+        Load settings from the given ``touchpad`` into this widgets.
+
+        ``touchpad`` is a :class:`~synaptiks.touchpad.Touchpad` object.
+        """
+        config = TouchpadConfig.from_touchpad(touchpad)
+        for key, widget in self._find_touchpad_configuration_widgets():
+            user_property = widget.metaObject().userProperty()
+            user_property.write(widget, config[key])

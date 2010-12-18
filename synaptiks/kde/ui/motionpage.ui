@@ -21,7 +21,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="KDoubleNumInput" name="touchpad_MinimumSpeed">
+       <widget class="KDoubleNumInput" name="touchpad_minimum_speed">
         <property name="label">
          <string comment="@label:slider">Minimum speed</string>
         </property>
@@ -37,7 +37,7 @@
        </widget>
       </item>
       <item>
-       <widget class="KDoubleNumInput" name="touchpad_MaximumSpeed">
+       <widget class="KDoubleNumInput" name="touchpad_maximum_speed">
         <property name="label">
          <string comment="@label:slider">Maximum speed</string>
         </property>
@@ -53,7 +53,7 @@
        </widget>
       </item>
       <item>
-       <widget class="KDoubleNumInput" name="touchpad_AccelerationFactor">
+       <widget class="KDoubleNumInput" name="touchpad_acceleration_factor">
         <property name="toolTip">
          <string comment="@info:tooltip">The acceleration factor defines the acceleration between minimum and maximum speed</string>
         </property>
@@ -87,7 +87,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="QCheckBox" name="touchpad_EdgeMotionAlways">
+       <widget class="QCheckBox" name="touchpad_edge_motion_always">
         <property name="text">
          <string comment="@option:radio">For all movements, not only dragging</string>
         </property>
