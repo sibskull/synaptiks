@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>Sebastian Wiesner</author>
+ <class>ScrollingPage</class>
+ <widget class="QWidget" name="ScrollingPage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>533</width>
+    <height>413</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string comment="@title:window scrolling settings">Scrolling</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QGroupBox" name="horizontalScrollingGroup">
+       <property name="title">
+        <string comment="@title:group">Horizontal scrolling</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QCheckBox" name="touchpad_horizontal_two_finger_scrolling">
+          <property name="text">
+           <string comment="@option:check">Horizontal scrolling with two fingers</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="touchpad_horizontal_edge_scrolling">
+          <property name="text">
+           <string comment="@option:check">Horizontal scrolling at bottom edge</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="KIntNumInput" name="touchpad_horizontal_scrolling_distance">
+          <property name="label">
+           <string comment="@label:slider">Move distance to scroll a single line</string>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>200</number>
+          </property>
+          <property name="singleStep">
+           <number>10</number>
+          </property>
+          <property name="sliderEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="verticalScrollingGroup">
+       <property name="title">
+        <string comment="@title:group">Vertical scrolling</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QCheckBox" name="touchpad_vertical_two_finger_scrolling">
+          <property name="text">
+           <string comment="@option:check">Vertical scrolling with two fingers</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="touchpad_vertical_edge_scrolling">
+          <property name="text">
+           <string comment="@option:check">Vertical scrolling at right edge</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="KIntNumInput" name="touchpad_vertical_scrolling_distance">
+          <property name="label">
+           <string comment="@label:slider">Move distance to scroll a single line</string>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>200</number>
+          </property>
+          <property name="singleStep">
+           <number>10</number>
+          </property>
+          <property name="sliderEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="touchpad_coasting">
+     <property name="title">
+      <string comment="@option:check">Continue edge scrolling automatically</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QRadioButton" name="conventionalCoasting">
+        <property name="text">
+         <string comment="@option:radio">Continue edge scrolling, if the finger is lifted while scrolling</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="KDoubleNumInput" name="touchpad_coasting_speed">
+        <property name="label">
+         <string comment="@label:spinbox">Scrolling speed threshold to continue scrolling</string>
+        </property>
+        <property name="minimum">
+         <double>0.010000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>15.000000000000000</double>
+        </property>
+        <property name="sliderEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="touchpad_corner_coasting">
+        <property name="text">
+         <string comment="@option:radio">Continue edge scrolling, while the finger stays in an edge corner</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="touchpad_circular_scrolling">
+     <property name="title">
+      <string comment="@option:check">Horizontal circular scrolling</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_5">
+      <item>
+       <layout class="QFormLayout" name="formLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string comment="@label:listbox">Area, which triggers circular scrolling</string>
+          </property>
+          <property name="buddy">
+           <cstring>touchpad_circular_scrolling_trigger</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="KComboBox" name="touchpad_circular_scrolling_trigger">
+          <item>
+           <property name="text">
+            <string comment="@item:inlistbox circular scrolling trigger area">Any edge</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string comment="@item:inlistbox circular scrolling trigger area">Top edge</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string comment="@item:inlistbox circular scrolling trigger area">Top right corner</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string comment="@item:inlistbox circular scrolling trigger area">Right edge</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string comment="@item:inlistbox circular scrolling trigger area">Bottom right corner</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string comment="@item:inlistbox circular scrolling trigger area">Bottom edge</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string comment="@item:inlistbox circular scrolling trigger area">Bottom left corner</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string comment="@item:inlistbox circular scrolling trigger area">Left edge</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string comment="@item:inlistbox circular scrolling trigger area">Top left corner</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="KDoubleNumInput" name="touchpad_circular_scrolling_distance">
+        <property name="toolTip">
+         <string comment="@info:tooltip">Move the finger by this angle on the touchpad to scroll a single line.  The higher the angle, the slower circular scrolling becomes</string>
+        </property>
+        <property name="whatsThis">
+         <string comment="@info:whatsthis">Move the finger by this angle on the touchpad to scroll a single line.  The higher the angle, the slower circular scrolling becomes</string>
+        </property>
+        <property name="label">
+         <string comment="@label:spinbox">Angle by which to move the finger to scroll a single line</string>
+        </property>
+        <property name="maximum">
+         <double>360.000000000000000</double>
+        </property>
+        <property name="suffix">
+         <string comment="@label:spinbox"> °</string>
+        </property>
+        <property name="sliderEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KDoubleNumInput</class>
+   <extends>QWidget</extends>
+   <header>knuminput.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KIntNumInput</class>
+   <extends>QWidget</extends>
+   <header>knuminput.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

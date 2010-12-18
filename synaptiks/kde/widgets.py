@@ -156,6 +156,20 @@ class MotionPage(QWidget, _DynamicUserInterfaceMixin):
         self._load_userinterface()
 
 
+class ScrollingPage(QWidget, _DynamicUserInterfaceMixin):
+    """
+    Configuration page to configure scrolling.
+    """
+
+    def __init__(self, touchpad, parent=None):
+        QWidget.__init__(self, parent)
+        self._load_userinterface()
+        two_finger_widgets = self.findChildren(
+            QWidget, QRegExp('touchpad_(.*)_two_finger_scrolling'))
+        for widget in two_finger_widgets:
+            widget.setEnabled(False)
+
+
 class TappingPage(QWidget, _DynamicUserInterfaceMixin):
     """
     Configuration page to configure tapping.
@@ -194,7 +208,8 @@ class TouchpadConfigurationWidget(KTabWidget):
         """
         KTabWidget.__init__(self, parent)
         self.touchpad = touchpad
-        pages = [MotionPage(self), TappingPage(self.touchpad, self)]
+        pages = [MotionPage(self), ScrollingPage(self.touchpad, self),
+                 TappingPage(self.touchpad, self)]
         for page in pages:
             self.addTab(page, page.windowTitle())
         self.setWindowTitle(
@@ -219,4 +234,9 @@ class TouchpadConfigurationWidget(KTabWidget):
         config = TouchpadConfig.from_touchpad(self.touchpad)
         for key, widget in self._find_touchpad_configuration_widgets():
             user_property = widget.metaObject().userProperty()
-            user_property.write(widget, config[key])
+            if user_property.isValid():
+                user_property.write(widget, config[key])
+            else:
+                # the widget is a view (views don't have a user property), so
+                # set the current index.
+                widget.setCurrentIndex(config[key])

@@ -38,6 +38,7 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
+import math
 from collections import namedtuple
 
 from synaptiks.qxinput import InputDevice
@@ -220,6 +221,16 @@ class TouchpadConfig(dict):
         'Synaptics Gestures': ('tap_and_drag_gesture',),
         'Synaptics Locked Drags': ('locked_drags',),
         'Synaptics Locked Drags Timeout': ('locked_drags_timeout',),
+        'Synaptics Edge Scrolling': ('vertical_edge_scrolling',
+                                     'horizontal_edge_scrolling',
+                                     'corner_coasting'),
+        'Synaptics Scrolling Distance': ('vertical_scrolling_distance',
+                                         'horizontal_scrolling_distance'),
+        'Synaptics Coasting Speed': ('coasting_speed',),
+        'Synaptics Two-Finger Scrolling': ('vertical_two_finger_scrolling',
+                                           'horizontal_two_finger_scrolling'),
+        'Synaptics Circular Scrolling': ('circular_scrolling',),
+        'Synaptics Circular Scrolling Trigger': ('circular_scrolling_trigger',),
         }
 
     @classmethod
@@ -235,4 +246,9 @@ class TouchpadConfig(dict):
         for property, item_names in cls.PROPERTY_CONFIG_MAP.iteritems():
             values = touchpad[property]
             config.update(zip(item_names, values))
+        # circular scrolling distance property stores radians, but the
+        # configuration should store degrees (easier to deal with for humans)
+        config['circular_scrolling_distance'] = math.degrees(
+            touchpad['Synaptics Circular Scrolling Distance'][0])
+        config['coasting'] = touchpad['Synaptics Coasting Speed'][0] != 0
         return config
