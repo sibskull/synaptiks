@@ -65,7 +65,7 @@ class SynaptiksConfigDialog(KPageDialog):
         self.setButtons(KDialog.ButtonCodes(
             KDialog.Ok | KDialog.Cancel | KDialog.Apply))
 
-        self.touchpad_config = TouchpadConfigurationWidget(self)
+        self.touchpad_config = TouchpadConfigurationWidget(self.touchpad, self)
 
         for page, icon_name in [(self.touchpad_config, 'configure')]:
             page_item = self.addPage(page, page.windowTitle())
@@ -77,7 +77,7 @@ class SynaptiksConfigDialog(KPageDialog):
         self.load_settings()
 
     def load_settings(self):
-        self.touchpad_config.load_settings(self.touchpad)
+        self.touchpad_config.load_settings()
 
     def apply_settings(self):
         raise NotImplementedError

@@ -153,10 +153,12 @@ class TouchpadConfigurationWidget(KTabWidget):
         """
         Create a new configuration widget for the given ``touchpad``.
 
+        ``touchpad`` is a :class:`~synaptiks.touchpad.Touchpad` object.
         ``parent`` is the parent :class:`~PyQt4.QtGui.QWidget` (can be
         ``None``).
         """
         KTabWidget.__init__(self, parent)
+        self.touchpad = touchpad
         for pagecls in [MotionPage]:
             page = pagecls(self)
             self.addTab(page, page.windowTitle())
@@ -175,13 +177,11 @@ class TouchpadConfigurationWidget(KTabWidget):
             key = widget.objectName()[9:]
             yield key, widget
 
-    def load_settings(self, touchpad):
+    def load_settings(self):
         """
-        Load settings from the given ``touchpad`` into this widgets.
-
-        ``touchpad`` is a :class:`~synaptiks.touchpad.Touchpad` object.
+        Load settings from the associated touchpad.
         """
-        config = TouchpadConfig.from_touchpad(touchpad)
+        config = TouchpadConfig.from_touchpad(self.touchpad)
         for key, widget in self._find_touchpad_configuration_widgets():
             user_property = widget.metaObject().userProperty()
             user_property.write(widget, config[key])
