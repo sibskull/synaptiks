@@ -77,7 +77,7 @@ class SynaptiksConfigDialog(KPageDialog):
         self.load_settings()
 
     def load_settings(self):
-        self.touchpad_config.load_settings()
+        self.touchpad_config.load_configuration()
 
     def apply_settings(self):
         raise NotImplementedError

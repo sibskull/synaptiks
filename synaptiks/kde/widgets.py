@@ -177,7 +177,7 @@ class TouchpadConfigurationWidget(KTabWidget):
             key = widget.objectName()[9:]
             yield key, widget
 
-    def load_settings(self):
+    def load_configuration(self):
         """
         Load settings from the associated touchpad.
         """
