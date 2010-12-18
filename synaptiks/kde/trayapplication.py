@@ -75,7 +75,7 @@ class SynaptiksConfigDialog(KPageDialog):
         self.okClicked.connect(self.apply_settings)
 
     def apply_settings(self):
-        pass
+        raise NotImplementedError
 
 
 class SynaptiksTrayIcon(KSystemTrayIcon):
