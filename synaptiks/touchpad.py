@@ -38,7 +38,12 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
+from collections import namedtuple
+
 from synaptiks.qxinput import InputDevice
+
+
+PhysicalButtons = namedtuple('PhysicalButtons', 'left middle right')
 
 
 class Touchpad(InputDevice):
@@ -150,8 +155,17 @@ class Touchpad(InputDevice):
     @property
     def buttons(self):
         """
+        The physical mouse buttons, this touchpad has, as a named tuple with
+        the following three components (in corresponding order):
+
+        - ``left``: a physical left button
+        - ``middle``: a physical middle button
+        - ``right``: a physical right button
+
+        Each component is ``True``, if the touchpad has this physical button,
+        or ``False`` otherwise.
         """
-        return self.capabilities[0:3]
+        return PhysicalButtons(self.capabilities[0:3])
 
     @property
     def has_pressure_detection(self):
