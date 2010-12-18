@@ -41,8 +41,6 @@ import sys
 import sip
 sip.setapi('QString', 2)
 sip.setapi('QVariant', 2)
-from PyQt4.QtCore import QRegExp
-from PyQt4.QtGui import QWidget
 from PyKDE4.kdecore import KCmdLineArgs, KAboutData, ki18n, i18nc
 from PyKDE4.kdeui import (KApplication, KSystemTrayIcon, KDialog,
                           KPageDialog, KTabWidget, KIcon,
