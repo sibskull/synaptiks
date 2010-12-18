@@ -220,7 +220,6 @@ class TouchpadConfig(dict):
                                  'f3_tap_action'),
         'Synaptics Gestures': ('tap_and_drag_gesture',),
         'Synaptics Locked Drags': ('locked_drags',),
-        'Synaptics Locked Drags Timeout': ('locked_drags_timeout',),
         'Synaptics Edge Scrolling': ('vertical_edge_scrolling',
                                      'horizontal_edge_scrolling',
                                      'corner_coasting'),
@@ -246,6 +245,9 @@ class TouchpadConfig(dict):
         for property, item_names in cls.PROPERTY_CONFIG_MAP.iteritems():
             values = touchpad[property]
             config.update(zip(item_names, values))
+        # convert to seconds
+        config['locked_drags_timeout'] = (
+            touchpad['Synaptics Locked Drags Timeout'][0] / 1000)
         # circular scrolling distance property stores radians, but the
         # configuration should store degrees (easier to deal with for humans)
         config['circular_scrolling_distance'] = math.degrees(
