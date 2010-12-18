@@ -43,7 +43,7 @@ sip.setapi('QString', 2)
 sip.setapi('QVariant', 2)
 from PyKDE4.kdecore import KCmdLineArgs, KAboutData, ki18n, i18nc
 from PyKDE4.kdeui import (KApplication, KSystemTrayIcon, KDialog,
-                          KPageDialog, KTabWidget, KIcon,
+                          KPageDialog, KIcon,
                           KAction, KStandardAction, KHelpMenu)
 
 import synaptiks
@@ -86,6 +86,7 @@ class SynaptiksTrayIcon(KSystemTrayIcon):
         KSystemTrayIcon.__init__(self, parent)
         self.setup_actions()
         self.touchpad = Touchpad.find_first()
+        self.setIcon(KSystemTrayIcon.loadIcon('synaptiks'))
         # explicitly delete the tray icon before quitting to avoid some rather
         # mysterious crashes.  Should be considered a really nasty hack.
         self.quitSelected.connect(self.deleteLater)
