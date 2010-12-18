@@ -45,7 +45,7 @@ from PyQt4.uic import loadUi
 from PyQt4.QtCore import QRegExp
 from PyQt4.QtGui import QWidget
 from PyKDE4.kdecore import i18nc
-from PyKDE4.kdeui import KIconLoader, KTabWidget
+from PyKDE4.kdeui import KIconLoader, KTabWidget, KComboBox
 
 from synaptiks.touchpad import TouchpadConfig
 
@@ -75,6 +75,20 @@ class _DynamicUserInterfaceMixin(object):
             self.__class__.__name__.lower() + '.ui')
         loadUi(ui_description_filename, self)
 
+
+class MouseButtonComboBox(KComboBox):
+    def __init__(self, parent=None):
+        KComboBox.__init__(self, parent)
+        self.addItems([
+            i18nc('@item:inlistbox mouse button triggered by tapping',
+                  'Disabled'),
+            i18nc('@item:inlistbox mouse button triggered by tapping',
+                  'Left mouse button'),
+            i18nc('@item:inlistbox mouse button triggered by tapping',
+                  'Middle mouse button'),
+            i18nc('@item:inlistbox mouse button triggered by tapping',
+                   'Right mouse button')
+            ])
 
 
 class TouchpadInformationWidget(QWidget, _DynamicUserInterfaceMixin):
@@ -142,6 +156,28 @@ class MotionPage(QWidget, _DynamicUserInterfaceMixin):
         self._load_userinterface()
 
 
+class TappingPage(QWidget, _DynamicUserInterfaceMixin):
+    """
+    Configuration page to configure tapping.
+    """
+
+    def __init__(self, touchpad, parent=None):
+        QWidget.__init__(self, parent)
+        self._load_userinterface()
+        finger_tap_actions = self.findChildren(
+            KComboBox, QRegExp('touchpad_f[1-3]_tap_action'))
+
+        for widget in finger_tap_actions[touchpad.finger_detection:]:
+            self._set_enabled(widget, False)
+        if touchpad.has_two_finger_emulation:
+            self._set_enabled(self.touchpad_f2_tap_action, True)
+
+    def _set_enabled(self, widget, enabled):
+        widget.setEnabled(enabled)
+        self.fingerButtonsLayout.labelForField(widget).setEnabled(enabled)
+
+
+
 class TouchpadConfigurationWidget(KTabWidget):
     """
     A tab widget to configure the touchpad properties.
@@ -159,8 +195,8 @@ class TouchpadConfigurationWidget(KTabWidget):
         """
         KTabWidget.__init__(self, parent)
         self.touchpad = touchpad
-        for pagecls in [MotionPage]:
-            page = pagecls(self)
+        pages = [MotionPage(self), TappingPage(self.touchpad, self)]
+        for page in pages:
             self.addTab(page, page.windowTitle())
         self.setWindowTitle(
             i18nc('@title:window', 'Touchpad configuration'))

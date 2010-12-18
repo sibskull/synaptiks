@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TappingPage</class>
+ <widget class="QWidget" name="TappingPage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>563</width>
+    <height>445</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string comment="@title:window tapping settings">Tapping</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QGroupBox" name="generalSettingsGroup">
+     <property name="title">
+      <string comment="@title:group">General tapping settings</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <widget class="QCheckBox" name="touchpad_fast_taps">
+        <property name="text">
+         <string comment="@option:check">Make single taps faster and double taps slower (fast taps)</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="tappingButtonGroup">
+     <property name="title">
+      <string comment="@title:group">Mouse clicks triggered by tapping</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QHBoxLayout" name="topLayout">
+        <item>
+         <layout class="QVBoxLayout" name="topLeftLayout">
+          <item>
+           <widget class="MouseButtonComboBox" name="touchpad_lt_tap_action"/>
+          </item>
+          <item>
+           <widget class="QLabel" name="topLeftLabel">
+            <property name="text">
+             <string comment="@label:listbox">Top left corner</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="topRightLayout">
+          <item>
+           <widget class="MouseButtonComboBox" name="touchpad_rt_tap_action"/>
+          </item>
+          <item>
+           <widget class="QLabel" name="topRightLabel">
+            <property name="text">
+             <string comment="@label:listbox">Top right corner</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QFormLayout" name="fingerButtonsLayout">
+          <property name="fieldGrowthPolicy">
+           <enum>QFormLayout::ExpandingFieldsGrow</enum>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="oneFingerLabel">
+            <property name="text">
+             <string comment="@label:listbox">Tapping with one finger</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="MouseButtonComboBox" name="touchpad_f1_tap_action"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="twoFingerLabel">
+            <property name="text">
+             <string comment="@label:listbox">Tapping with two fingers</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="MouseButtonComboBox" name="touchpad_f2_tap_action"/>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="threeFingerLabel">
+            <property name="text">
+             <string comment="@label:listbox">Tapping with three fingers</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="MouseButtonComboBox" name="touchpad_f3_tap_action"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="bottomLayout">
+        <item>
+         <layout class="QVBoxLayout" name="bottomLeftLayout">
+          <item>
+           <widget class="QLabel" name="bottomLeftLabel">
+            <property name="text">
+             <string comment="@label:listbox">Bottom left corner</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="MouseButtonComboBox" name="touchpad_lb_tap_action"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="bottomRightLayout">
+          <item>
+           <widget class="QLabel" name="bottomRightLabel">
+            <property name="text">
+             <string comment="@label:listbox">Bottom right corner</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="MouseButtonComboBox" name="touchpad_rb_tap_action"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="touchpad_tap_and_drag_gesture">
+     <property name="title">
+      <string comment="@option:check">Drag items by tapping the touchpad and then immediately touching it again</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_5">
+      <item>
+       <widget class="QCheckBox" name="touchpad_locked_drags">
+        <property name="text">
+         <string comment="@option:check">Continue dragging when releasing the finger until the touchpad is touched again</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="KDoubleNumInput" name="touchpad_locked_drags_timeout">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="label">
+         <string comment="@label:spinbox">Timeout to automatically stop dragging</string>
+        </property>
+        <property name="maximum">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="suffix">
+         <string comment="@label:spinbox seconds"> s</string>
+        </property>
+        <property name="decimals">
+         <number>2</number>
+        </property>
+        <property name="sliderEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KDoubleNumInput</class>
+   <extends>QWidget</extends>
+   <header>knuminput.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MouseButtonComboBox</class>
+   <extends>QComboBox</extends>
+   <header>synaptiks.kde.widgets</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>touchpad_locked_drags</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>touchpad_locked_drags_timeout</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>100</x>
+     <y>656</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>100</x>
+     <y>672</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

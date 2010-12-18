@@ -212,6 +212,14 @@ class TouchpadConfig(dict):
         'Synaptics Move Speed': ('minimum_speed', 'maximum_speed',
                                  'acceleration_factor'),
         'Synaptics Edge Motion Always': ('edge_motion_always',),
+        'Synaptics Tap FastTap': ('fast_taps',),
+        'Synaptics Tap Action': ('rt_tap_action', 'rb_tap_action',
+                                 'lt_tap_action', 'lb_tap_action',
+                                 'f1_tap_action', 'f2_tap_action',
+                                 'f3_tap_action'),
+        'Synaptics Gestures': ('tap_and_drag_gesture',),
+        'Synaptics Locked Drags': ('locked_drags',),
+        'Synaptics Locked Drags Timeout': ('locked_drags_timeout',),
         }
 
     @classmethod
