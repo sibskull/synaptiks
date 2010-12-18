@@ -181,3 +181,36 @@ class Touchpad(InputDevice):
         detecting the width of a finger and the pressure upon a touch.
         """
         return all(self.capabilities[5:7])
+
+
+class TouchpadConfig(dict):
+    """
+    Touchpad configuration class.
+
+    This class provides an easier interface to touchpad configuration than the
+    touchpad properties themselves.
+    """
+
+    #: Map touchpad properties to configuration keys.  The values in this
+    #: dictionary are tuples containing configuration keys, in the order they
+    #: appear in the property (which is the key)
+    PROPERTY_CONFIG_MAP = {
+        'Synaptics Move Speed': ('minimum_speed', 'maximum_speed',
+                                 'acceleration_factor'),
+        'Synaptics Edge Motion Always': ('edge_motion_always',),
+        }
+
+    @classmethod
+    def from_touchpad(cls, touchpad):
+        """
+        Extract the touchpad configuration from the given ``touchpad`` device.
+
+        ``touchpad`` is a :class:`Touchpad` object.
+
+        Return a :class:`TouchpadConfig` object.
+        """
+        config = cls()
+        for property, item_names in cls.PROPERTY_CONFIG_MAP.iteritems():
+            values = touchpad[property]
+            config.update(zip(item_names, values))
+        return config
