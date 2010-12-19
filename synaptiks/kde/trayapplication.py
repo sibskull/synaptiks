@@ -42,7 +42,7 @@ import sip
 sip.setapi('QString', 2)
 sip.setapi('QVariant', 2)
 from PyKDE4.kdecore import KCmdLineArgs, KAboutData, ki18n, i18nc
-from PyKDE4.kdeui import (KApplication, KSystemTrayIcon, KDialog,
+from PyKDE4.kdeui import (KApplication, KStatusNotifierItem, KDialog,
                           KPageDialog, KIcon,
                           KAction, KStandardAction, KHelpMenu)
 
@@ -86,15 +86,19 @@ class SynaptiksConfigDialog(KPageDialog):
         self.enableButtonApply(False)
 
 
-class SynaptiksTrayIcon(KSystemTrayIcon):
+class SynaptiksNotifierItem(KStatusNotifierItem):
     def __init__(self, parent=None):
-        KSystemTrayIcon.__init__(self, parent)
+        KStatusNotifierItem.__init__(self, parent)
+        self.setTitle('synaptiks')
+        self.setIconByName('synaptiks')
+        self.setCategory(KStatusNotifierItem.Hardware)
+        self.setStatus(KStatusNotifierItem.Passive)
         self.setup_actions()
         self.touchpad = Touchpad.find_first()
-        self.setIcon(KSystemTrayIcon.loadIcon('synaptiks'))
-        # explicitly delete the tray icon before quitting to avoid some rather
-        # mysterious crashes.  Should be considered a really nasty hack.
-        self.quitSelected.connect(self.deleteLater)
+        # explicitly delete the notifier item before quitting to avoid some
+        # rather mysterious crashes.  Should be considered a really nasty hack.
+        quit_action = self.actionCollection().action('file_quit')
+        quit_action.triggered.connect(self.deleteLater)
 
     def setup_actions(self):
         touchpad_information = KAction(
@@ -156,8 +160,9 @@ def main():
     KCmdLineArgs.init(sys.argv, about)
     app = KApplication()
     app.setQuitOnLastWindowClosed(False)
-    icon = SynaptiksTrayIcon()
-    icon.show()
+    # icon is unused, but the notifier item must be bound to a name to keep it
+    # alive
+    icon = SynaptiksNotifierItem()
     app.exec_()
 
 
