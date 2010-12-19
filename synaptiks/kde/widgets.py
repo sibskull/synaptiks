@@ -199,6 +199,16 @@ class TappingPage(QWidget, _DynamicUserInterfaceMixin):
         self.fingerButtonsLayout.labelForField(widget).setEnabled(enabled)
 
 
+class HardwarePage(QWidget, _DynamicUserInterfaceMixin):
+    """
+    Configuration page for hardware settings.
+    """
+
+    def __init__(self, parent=None):
+        QWidget.__init__(self, parent)
+        self._load_userinterface()
+
+
 class TouchpadConfigurationWidget(KTabWidget):
     """
     A tab widget to configure the touchpad properties.
@@ -233,7 +243,7 @@ class TouchpadConfigurationWidget(KTabWidget):
         self.touchpad = touchpad
         self._changed_widgets = set()
         pages = [MotionPage(self), ScrollingPage(self.touchpad, self),
-                 TappingPage(self.touchpad, self)]
+                 TappingPage(self.touchpad, self), HardwarePage(self)]
         for page in pages:
             self.addTab(page, page.windowTitle())
         self.setWindowTitle(

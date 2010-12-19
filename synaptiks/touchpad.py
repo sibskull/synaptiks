@@ -228,6 +228,11 @@ class Touchpad(InputDevice):
     circular_scrolling_distance.convert_from_property = math.degrees
     circular_scrolling_distance.convert_to_property = math.radians
 
+    circular_touchpad = device_property(
+        'Synaptics Circular Pad', 'bool', 0,
+        '``True``, if the touchpad is considered circular, ``False`` '
+        'otherwise')
+
     @property
     def coasting(self):
         """
