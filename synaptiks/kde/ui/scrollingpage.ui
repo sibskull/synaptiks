@@ -104,34 +104,24 @@
     </layout>
    </item>
    <item>
-    <widget class="QGroupBox" name="touchpad_coasting">
+    <widget class="QGroupBox" name="coasting">
      <property name="title">
       <string comment="@option:check">Continue edge scrolling automatically</string>
      </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QRadioButton" name="conventionalCoasting">
-        <property name="text">
-         <string comment="@option:radio">Continue edge scrolling, if the finger is lifted while scrolling</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
       <item>
        <widget class="KDoubleNumInput" name="touchpad_coasting_speed">
         <property name="label">
          <string comment="@label:spinbox">Scrolling speed threshold to continue scrolling</string>
         </property>
         <property name="minimum">
-         <double>0.010000000000000</double>
+         <double>0.000000000000000</double>
         </property>
         <property name="maximum">
          <double>15.000000000000000</double>
+        </property>
+        <property name="specialValueText">
+         <string comment="@item num input special value zero">Disabled</string>
         </property>
         <property name="sliderEnabled">
          <bool>true</bool>
@@ -139,7 +129,10 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="touchpad_corner_coasting">
+       <widget class="QCheckBox" name="touchpad_corner_coasting">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string comment="@option:radio">Continue edge scrolling, while the finger stays in an edge corner</string>
         </property>

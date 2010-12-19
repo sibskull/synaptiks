@@ -163,10 +163,19 @@ class ScrollingPage(QWidget, _DynamicUserInterfaceMixin):
     def __init__(self, touchpad, parent=None):
         QWidget.__init__(self, parent)
         self._load_userinterface()
+        # HACK: the designer is seems unable to set this property, so we set it
+        # in code.
+        self.touchpad_coasting_speed.setSpecialValueText(
+            i18nc('@item coasting speed special value', 'Disabled'))
+        self.touchpad_coasting_speed.valueChanged.connect(
+            self._coasting_speed_value_changed)
         two_finger_widgets = self.findChildren(
             QWidget, QRegExp('touchpad_(.*)_two_finger_scrolling'))
         for widget in two_finger_widgets:
             widget.setEnabled(False)
+
+    def _coasting_speed_value_changed(self, value):
+        self.touchpad_corner_coasting.setEnabled(value != 0)
 
 
 class TappingPage(QWidget, _DynamicUserInterfaceMixin):
