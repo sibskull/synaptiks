@@ -55,34 +55,34 @@ class device_property(object):
 
     PROPERTY_TYPES = ('int', 'byte', 'float', 'bool')
 
-    def __init__(self, property, type, item, doc=None):
+    def __init__(self, property_name, property_type, item, doc=None):
         """
-        ``property`` is the property name as string.  ``type`` is the type of
-        the property as string (one of ``('int', 'byte', 'float', 'bool')``).
-        ``item`` is the integral number of the item to access in the given
-        property.  ``doc`` is the docstring of the descriptor in the owner
-        class.
+        ``property_name`` is the property name as string.  ``property_type`` is
+        the type of the property as string (one of ``('int', 'byte', 'float',
+        'bool')``).  ``item`` is the integral number of the item to access in
+        the given property.  ``doc`` is the docstring of the descriptor in the
+        owner class.
 
         Raise :exc:`~exceptions.ValueError`, if ``type`` is an invalid value.
         """
-        if type not in self.PROPERTY_TYPES:
+        if property_type not in self.PROPERTY_TYPES:
             raise ValueError('invalid type: {0!r}'.format(type))
-        self.property = property
-        self.type = type
+        self.property_name = property_name
+        self.property_type = property_type
         self.item = item
         self.__doc__ = doc
 
     def __get__(self, obj, owner=None):
-        values = obj[self.property]
-        if self.type == 'bool':
+        values = obj[self.property_name]
+        if self.property_type == 'bool':
             values = map(bool, values)
         return self.convert_from_property(values[self.item])
 
     def __set__(self, obj, value):
-        values = self[self.property]
+        values = obj[self.property_name]
         values[self.item] = self.convert_to_property(value)
-        set_property = getattr(self, 'set_{0}'.format(self.type))
-        set_property(property, values)
+        set_property = getattr(obj, 'set_{0}'.format(self.property_type))
+        set_property(self.property_name, values)
 
     def convert_from_property(self, value):
         """
