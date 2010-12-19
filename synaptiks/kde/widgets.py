@@ -271,10 +271,22 @@ class TouchpadConfigurationWidget(KTabWidget):
 
     def load_configuration(self):
         """
-        Load settings from the associated touchpad.
+        Load the configuration of the associated touchpad into the
+        configuration widgets.
         """
         for widget in self._find_touchpad_configuration_widgets():
             touchpad_property = self._get_touchpad_property(widget)
             value = getattr(self.touchpad, touchpad_property)
             widget_property = self.PROPERTY_MAP[type(widget).__name__]
             widget.setProperty(widget_property, value)
+
+    def apply_configuration(self):
+        """
+        Apply the contents of the configuration widgets to the associated
+        touchpad.
+        """
+        for widget in self._find_touchpad_configuration_widgets():
+            touchpad_property = self._get_touchpad_property(widget)
+            widget_property = self.PROPERTY_MAP[type(widget).__name__]
+            value = widget.property(widget_property)
+            setattr(self.touchpad, touchpad_property, value)

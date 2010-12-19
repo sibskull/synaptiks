@@ -83,7 +83,8 @@ class SynaptiksConfigDialog(KPageDialog):
         self.touchpad_config.load_configuration()
 
     def apply_settings(self):
-        raise NotImplementedError
+        self.touchpad_config.apply_configuration()
+        self.enableButtonApply(False)
 
 
 class SynaptiksTrayIcon(KSystemTrayIcon):
