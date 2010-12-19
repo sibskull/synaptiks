@@ -47,8 +47,6 @@ from PyQt4.QtGui import QWidget
 from PyKDE4.kdecore import i18nc
 from PyKDE4.kdeui import KIconLoader, KTabWidget, KComboBox
 
-from synaptiks.touchpad import TouchpadConfig
-
 
 PACKAGE_DIRECTORY = os.path.dirname(__file__)
 
@@ -217,11 +215,12 @@ class TouchpadConfigurationWidget(KTabWidget):
 
     def _find_touchpad_configuration_widgets(self):
         """
-        Find all widgets which correspond to a touchpad configuration entry.
+        Find all widgets which correspond to a touchpad properties.
 
-        Yield tuples ``(key, widget)``, where ``key`` is the configuration key
-        corresponding to the widget, and ``widget`` is the actual widget object
-        itself (a :class:`~PyQt4.QtGui.QWidget` or a subclass thereof).
+        Yield tuples ``(property, widget)``, where ``property`` is the touchpad
+        property corresponding to the widget, and ``widget`` is the actual
+        widget object itself (a :class:`~PyQt4.QtGui.QWidget` or a subclass
+        thereof).
         """
         for widget in self.findChildren(QWidget, QRegExp('touchpad_.*')):
             key = widget.objectName()[9:]
@@ -231,12 +230,12 @@ class TouchpadConfigurationWidget(KTabWidget):
         """
         Load settings from the associated touchpad.
         """
-        config = TouchpadConfig.from_touchpad(self.touchpad)
         for key, widget in self._find_touchpad_configuration_widgets():
             user_property = widget.metaObject().userProperty()
+            value = getattr(self.touchpad, key)
             if user_property.isValid():
-                user_property.write(widget, config[key])
+                user_property.write(widget, value)
             else:
                 # the widget is a view (views don't have a user property), so
                 # set the current index.
-                widget.setCurrentIndex(config[key])
+                widget.setCurrentIndex(value)

@@ -39,12 +39,62 @@ from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
 import math
+from functools import partial
 from collections import namedtuple
 
 from synaptiks.qxinput import InputDevice
 
 
 PhysicalButtons = namedtuple('PhysicalButtons', 'left middle right')
+
+
+class device_property(object):
+    """
+    An attribute mapped to a property of an input device.
+    """
+
+    PROPERTY_TYPES = ('int', 'byte', 'float', 'bool')
+
+    def __init__(self, property, type, item, doc=None):
+        """
+        ``property`` is the property name as string.  ``type`` is the type of
+        the property as string (one of ``('int', 'byte', 'float', 'bool')``).
+        ``item`` is the integral number of the item to access in the given
+        property.  ``doc`` is the docstring of the descriptor in the owner
+        class.
+
+        Raise :exc:`~exceptions.ValueError`, if ``type`` is an invalid value.
+        """
+        if type not in self.PROPERTY_TYPES:
+            raise ValueError('invalid type: {0!r}'.format(type))
+        self.property = property
+        self.type = type
+        self.item = item
+        self.__doc__ = doc
+
+    def __get__(self, obj, owner=None):
+        values = obj[self.property]
+        if self.type == 'bool':
+            values = map(bool, values)
+        return self.convert_from_property(values[self.item])
+
+    def __set__(self, obj, value):
+        values = self[self.property]
+        values[self.item] = self.convert_to_property(value)
+        set_property = getattr(self, 'set_{0}'.format(self.type))
+        set_property(property, values)
+
+    def convert_from_property(self, value):
+        """
+        Convert the given ``value`` from the actual property value.
+        """
+        return value
+
+    def convert_to_property(self, value):
+        """
+        Convert the given ``value`` to the actual property value.
+        """
+        return value
 
 
 class Touchpad(InputDevice):
@@ -60,45 +110,8 @@ class Touchpad(InputDevice):
     accessing the device properties.
     """
 
-    TYPESCHEME = {
-        'Synaptics Edges': ('int', 4),
-        'Synaptics Finger': ('int', 3),
-        'Synaptics Tap Time': ('int', 1),
-        'Synaptics Tap Move': ('int', 1),
-        'Synaptics Tap Durations': ('int', 3),
-        'Synaptics Tap FastTap': ('bool', 1),
-        'Synaptics Middle Button Timeout': ('int', 1),
-        'Synaptics Two-Finger Pressure': ('int', 1),
-        'Synaptics Two-Finger Width': ('int', 1),
-        'Synaptics Scrolling Distance': ('int', 2),
-        'Synaptics Edge Scrolling': ('bool', 3),
-        'Synaptics Two-Finger Scrolling': ('bool', 2),
-        'Synaptics Move Speed': ('float', 4),
-        'Synaptics Edge Motion Pressure': ('int', 2),
-        'Synaptics Edge Motion Speed': ('int', 2),
-        'Synaptics Edge Motion Always': ('bool', 1),
-        'Synaptics Off': ('byte', 1),
-        'Synaptics Locked Drags': ('bool', 1),
-        'Synaptics Locked Drags Timeout': ('int', 1),
-        'Synaptics Tap Action': ('byte', 7),
-        'Synaptics Click Action': ('byte', 3),
-        'Synaptics Circular Scrolling': ('bool', 1),
-        'Synaptics Circular Scrolling Distance': ('float', 1),
-        'Synaptics Circular Scrolling Trigger': ('byte', 1),
-        'Synaptics Circular Pad': ('byte', 1),
-        'Synaptics Palm Detection': ('byte', 1),
-        'Synaptics Palm Dimensions': ('int', 2),
-        'Synaptics Coasting Speed': ('float', 2),
-        'Synaptics Pressure Motion': ('int', 2),
-        'Synaptics Pressure Motion Factor': ('float', 2),
-        'Synaptics Grab Event Device': ('bool', 1),
-        'Synaptics Gestures': ('bool', 1),
-        }
-
-
     def __init__(self, id):
         InputDevice.__init__(self, id)
-        self.typescheme = dict(self.TYPESCHEME)
 
     @classmethod
     def find_all(cls):
@@ -125,6 +138,105 @@ class Touchpad(InputDevice):
         to support input device management.
         """
         return next(cls.find_all(), None)
+
+    _move_speed_property = partial(device_property,
+                                   'Synaptics Move Speed', 'float')
+    minimum_speed = _move_speed_property(
+        0, 'The minimum speed of cursor movement as float')
+    maximum_speed = _move_speed_property(
+        1, 'The maximum speed of cursor movement as float')
+    acceleration_factor = _move_speed_property(
+        2, 'The acceleration factor of cursor movement as float')
+
+    edge_motion_always = device_property(
+        'Synaptics Edge Motion Always', 'bool', 0,
+        '``True`` if edge motion is enabled, ``False`` otherwise.')
+
+    fast_taps = device_property(
+        'Synaptics Tap FastTap', 'bool', 0,
+        '``True`` if edge taps are enabled, ``False`` otherwise.')
+
+    _tap_action_property = partial(device_property,
+                                   'Synaptics Tap Action', 'byte')
+    rt_tap_action = _tap_action_property(
+        0, 'Tap action for the right top corner')
+    rb_tap_action = _tap_action_property(
+        1, 'Tap action for the right bottom corner')
+    lt_tap_action = _tap_action_property(
+        2, 'Tap action for the left top corner')
+    lb_tap_action = _tap_action_property(
+        3, 'Tap action for the left bottom corner')
+    f1_tap_action = _tap_action_property(4, 'Action for a one-finger tap')
+    f2_tap_action = _tap_action_property(5, 'Action for a two-finger tap')
+    f3_tap_action = _tap_action_property(6, 'Action for a three-finger tap')
+
+    tap_and_drag_gesture = device_property(
+        'Synaptics Gestures', 'bool', 0,
+        '``True``, if the tap and drag gesture is enabled, ``False`` otherwise')
+
+    locked_drags = device_property(
+        'Synaptics Locked Drags', 'bool', 0,
+        '``True``, if locked drags are enabled, ``False`` otherwise')
+
+    locked_drags_timeout = device_property(
+        'Synaptics Locked Drags Timeout', 'int', 0,
+        'The timeout of locked drags in seconds as float')
+    locked_drags_timeout.convert_from_property = lambda v: v / 1000
+    locked_drags_timeout.convert_to_property = lambda v: int(1000*v)
+
+    _edge_scrolling_property = partial(device_property,
+                                       'Synaptics Edge Scrolling', 'bool')
+    vertical_edge_scrolling = _edge_scrolling_property(
+        0, '``True``, if vertical edge scrolling is enabled, ``False`` '
+        'otherwise')
+    horizontal_edge_scrolling = _edge_scrolling_property(
+        1, '``True``, if horizontal edge scrolling is enabled, ``False`` '
+        'otherwise')
+    corner_coasting = _edge_scrolling_property(
+        0, '``True``, if corner coasting is enabled, ``False`` otherwise')
+
+    _scrolling_distance_property = partial(
+        device_property, 'Synaptics Scrolling Distance', 'int')
+    vertical_scrolling_distance = _scrolling_distance_property(
+        0, 'The vertical scrolling distance as int')
+    horizontal_scrolling_distance = _scrolling_distance_property(
+        1, 'The horizontal scrolling distance as int')
+
+    coasting_speed = device_property(
+        'Synaptics Coasting Speed', 'float', 0, 'The coasting speed as float')
+
+    _two_finger_scrolling_property = partial(
+        device_property, 'Synaptics Two-Finger Scrolling', 'bool')
+    vertical_two_finger_scrolling = _two_finger_scrolling_property(
+        0, '``True``, if vertical two-finger scrolling is enabled, ``False`` '
+        'otherwise')
+    horizontal_two_finger_scrolling = _two_finger_scrolling_property(
+        1, '``True``, if horizontal two-finger scrolling is enabled, '
+        '``False`` otherwise')
+
+    circular_scrolling = device_property(
+        'Synaptics Circular Scrolling', 'bool', 0,
+        '``True``, if circular scrolling is enabled, ``False`` otherwise')
+
+    circular_scrolling_trigger = device_property(
+        'Synaptics Circular Scrolling Trigger', 'byte', 0,
+        'The trigger area for circular scrolling')
+
+    circular_scrolling_distance = device_property(
+        'Synaptics Circular Scrolling Distance', 'float', 0,
+        'The circular scrolling distance in degrees as float.')
+    circular_scrolling_distance.convert_from_property = math.degrees
+    circular_scrolling_distance.convert_to_property = math.radians
+
+    @property
+    def coasting(self):
+        """
+        ``True``, if coasting is enabled, ``False`` otherwise.
+
+        Readonly, set :attr:`coasting_speed` to a non-zero value to enable
+        coasting.
+        """
+        return self.coasting_speed != 0
 
     @property
     def capabilities(self):
@@ -196,61 +308,3 @@ class Touchpad(InputDevice):
         detecting the width of a finger and the pressure upon a touch.
         """
         return all(self.capabilities[5:7])
-
-
-class TouchpadConfig(dict):
-    """
-    Touchpad configuration class.
-
-    This class provides an easier interface to touchpad configuration than the
-    touchpad properties themselves.
-    """
-
-    #: Map touchpad properties to configuration keys.  The values in this
-    #: dictionary are tuples containing configuration keys, in the order they
-    #: appear in the property (which is the key)
-    PROPERTY_CONFIG_MAP = {
-        'Synaptics Move Speed': ('minimum_speed', 'maximum_speed',
-                                 'acceleration_factor'),
-        'Synaptics Edge Motion Always': ('edge_motion_always',),
-        'Synaptics Tap FastTap': ('fast_taps',),
-        'Synaptics Tap Action': ('rt_tap_action', 'rb_tap_action',
-                                 'lt_tap_action', 'lb_tap_action',
-                                 'f1_tap_action', 'f2_tap_action',
-                                 'f3_tap_action'),
-        'Synaptics Gestures': ('tap_and_drag_gesture',),
-        'Synaptics Locked Drags': ('locked_drags',),
-        'Synaptics Edge Scrolling': ('vertical_edge_scrolling',
-                                     'horizontal_edge_scrolling',
-                                     'corner_coasting'),
-        'Synaptics Scrolling Distance': ('vertical_scrolling_distance',
-                                         'horizontal_scrolling_distance'),
-        'Synaptics Coasting Speed': ('coasting_speed',),
-        'Synaptics Two-Finger Scrolling': ('vertical_two_finger_scrolling',
-                                           'horizontal_two_finger_scrolling'),
-        'Synaptics Circular Scrolling': ('circular_scrolling',),
-        'Synaptics Circular Scrolling Trigger': ('circular_scrolling_trigger',),
-        }
-
-    @classmethod
-    def from_touchpad(cls, touchpad):
-        """
-        Extract the touchpad configuration from the given ``touchpad`` device.
-
-        ``touchpad`` is a :class:`Touchpad` object.
-
-        Return a :class:`TouchpadConfig` object.
-        """
-        config = cls()
-        for property, item_names in cls.PROPERTY_CONFIG_MAP.iteritems():
-            values = touchpad[property]
-            config.update(zip(item_names, values))
-        # convert to seconds
-        config['locked_drags_timeout'] = (
-            touchpad['Synaptics Locked Drags Timeout'][0] / 1000)
-        # circular scrolling distance property stores radians, but the
-        # configuration should store degrees (easier to deal with for humans)
-        config['circular_scrolling_distance'] = math.degrees(
-            touchpad['Synaptics Circular Scrolling Distance'][0])
-        config['coasting'] = touchpad['Synaptics Coasting Speed'][0] != 0
-        return config
