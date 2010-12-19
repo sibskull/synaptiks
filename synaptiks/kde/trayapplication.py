@@ -64,8 +64,11 @@ class SynaptiksConfigDialog(KPageDialog):
         self.setFaceType(KPageDialog.List)
         self.setButtons(KDialog.ButtonCodes(
             KDialog.Ok | KDialog.Cancel | KDialog.Apply))
+        self.enableButtonApply(False)
 
         self.touchpad_config = TouchpadConfigurationWidget(self.touchpad, self)
+        self.touchpad_config.configurationChanged.connect(
+            self.enableButtonApply)
 
         for page, icon_name in [(self.touchpad_config, 'configure')]:
             page_item = self.addPage(page, page.windowTitle())
