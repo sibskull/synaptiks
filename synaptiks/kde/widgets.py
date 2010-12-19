@@ -37,12 +37,13 @@ from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
 import os
+from functools import partial
 
 import sip
 sip.setapi('QString', 2)
 sip.setapi('QVariant', 2)
 from PyQt4.uic import loadUi
-from PyQt4.QtCore import QRegExp
+from PyQt4.QtCore import pyqtSignal, QRegExp
 from PyQt4.QtGui import QWidget
 from PyKDE4.kdecore import i18nc
 from PyKDE4.kdeui import KIconLoader, KTabWidget, KComboBox
@@ -196,6 +197,21 @@ class TouchpadConfigurationWidget(KTabWidget):
     This basically aggregates all page classes in this module.
     """
 
+    configurationChanged = pyqtSignal(bool)
+
+    PROPERTY_MAP = dict(
+        QCheckBox='checked', QRadioButton='checked', QGroupBox='checked',
+        MouseButtonComboBox='currentIndex', KComboBox='currentIndex',
+        KIntNumInput='value', KDoubleNumInput='value'
+        )
+
+    CHANGED_SIGNAL_MAP = dict(
+        QCheckBox='toggled', QRadioButton='toggled', QGroupBox='toggled',
+        MouseButtonComboBox='currentIndexChanged',
+        KComboBox='currentIndexChanged',
+        KIntNumInput='valueChanged', KDoubleNumInput='valueChanged'
+        )
+
     def __init__(self, touchpad, parent=None):
         """
         Create a new configuration widget for the given ``touchpad``.
@@ -206,36 +222,50 @@ class TouchpadConfigurationWidget(KTabWidget):
         """
         KTabWidget.__init__(self, parent)
         self.touchpad = touchpad
+        self._changed_widgets = set()
         pages = [MotionPage(self), ScrollingPage(self.touchpad, self),
                  TappingPage(self.touchpad, self)]
         for page in pages:
             self.addTab(page, page.windowTitle())
         self.setWindowTitle(
             i18nc('@title:window', 'Touchpad configuration'))
+        self.load_configuration()
+        for widget in self._find_touchpad_configuration_widgets():
+            signalname = self.CHANGED_SIGNAL_MAP[type(widget).__name__]
+            signal = getattr(widget, signalname)
+            signal.connect(partial(self._check_for_changes, widget))
+
+    def _check_for_changes(self, origin, changed_value):
+        touchpad_property = self._get_touchpad_property(origin)
+        name = origin.objectName()
+        current_value = getattr(self.touchpad, touchpad_property)
+        if isinstance(current_value, float):
+            # round floats for comparison
+            current_value = round(current_value, 5)
+        if current_value == changed_value:
+            self._changed_widgets.remove(name)
+        else:
+            self._changed_widgets.add(name)
+        self.configurationChanged.emit(bool(self._changed_widgets))
+
+    def _get_touchpad_property(self, widget):
+        """
+        Return the touchpad property name associated with the given ``widget``.
+        """
+        return widget.objectName()[9:]
 
     def _find_touchpad_configuration_widgets(self):
         """
         Find all widgets which correspond to a touchpad properties.
-
-        Yield tuples ``(property, widget)``, where ``property`` is the touchpad
-        property corresponding to the widget, and ``widget`` is the actual
-        widget object itself (a :class:`~PyQt4.QtGui.QWidget` or a subclass
-        thereof).
         """
-        for widget in self.findChildren(QWidget, QRegExp('touchpad_.*')):
-            key = widget.objectName()[9:]
-            yield key, widget
+        return self.findChildren(QWidget, QRegExp('touchpad_.*'))
 
     def load_configuration(self):
         """
         Load settings from the associated touchpad.
         """
-        for key, widget in self._find_touchpad_configuration_widgets():
-            user_property = widget.metaObject().userProperty()
-            value = getattr(self.touchpad, key)
-            if user_property.isValid():
-                user_property.write(widget, value)
-            else:
-                # the widget is a view (views don't have a user property), so
-                # set the current index.
-                widget.setCurrentIndex(value)
+        for widget in self._find_touchpad_configuration_widgets():
+            touchpad_property = self._get_touchpad_property(widget)
+            value = getattr(self.touchpad, touchpad_property)
+            widget_property = self.PROPERTY_MAP[type(widget).__name__]
+            widget.setProperty(widget_property, value)

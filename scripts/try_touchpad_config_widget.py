@@ -28,6 +28,7 @@ from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
 import sys
+from functools import partial
 
 import sip
 sip.setapi('QString', 2)
@@ -60,7 +61,8 @@ def main():
     app = KApplication()
     window = KMainWindow()
     config_widget = TouchpadConfigurationWidget(Touchpad.find_first())
-    config_widget.load_configuration()
+    config_widget.configurationChanged.connect(
+        partial(print, 'config changed?'))
     window.setCentralWidget(config_widget)
     window.show()
     app.exec_()
