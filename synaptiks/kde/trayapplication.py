@@ -52,7 +52,6 @@ from synaptiks.kde.widgets import (TouchpadInformationWidget,
                                    TouchpadConfigurationWidget)
 
 
-
 class SynaptiksConfigDialog(KPageDialog):
     """
     Configuration dialog used by the system tray application.
