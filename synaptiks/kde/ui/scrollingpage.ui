@@ -25,6 +25,9 @@
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
          <widget class="QCheckBox" name="touchpad_horizontal_two_finger_scrolling">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string comment="@option:check">Horizontal scrolling with two fingers</string>
           </property>
@@ -67,6 +70,9 @@
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
          <widget class="QCheckBox" name="touchpad_vertical_two_finger_scrolling">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string comment="@option:check">Vertical scrolling with two fingers</string>
           </property>
