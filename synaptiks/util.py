@@ -36,7 +36,9 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
+import os
 import sys
+import errno
 
 
 def assert_byte_string(s):
@@ -63,3 +65,22 @@ def assert_unicode_string(s):
     if isinstance(s, str):
         return s.decode(sys.getfilesystemencoding())
     return s
+
+
+def ensure_directory(directory):
+    """
+    Ensure, that the given ``directory`` exists.  If the ``directory`` does not
+    yet exist, it is created.
+
+    Return ``directory`` again.
+
+    Raise :exc:`~exceptions.EnvironmentError`, if directory creation fails.
+    """
+    try:
+        os.makedirs(directory)
+        return directory
+    except EnvironmentError as error:
+        if error.errno == errno.EEXIST:
+            return directory
+        else:
+            raise

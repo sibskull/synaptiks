@@ -232,16 +232,16 @@ class TouchpadConfigurationWidget(KTabWidget):
         KIntNumInput='valueChanged', KDoubleNumInput='valueChanged'
         )
 
-    def __init__(self, touchpad, parent=None):
+    def __init__(self, config, parent=None):
         """
         Create a new configuration widget for the given ``touchpad``.
 
-        ``touchpad`` is a :class:`~synaptiks.touchpad.Touchpad` object.
-        ``parent`` is the parent :class:`~PyQt4.QtGui.QWidget` (can be
-        ``None``).
+        ``config`` is the :class:`~synaptiks.config.TouchpadConfiguration`
+        object displayed by this widget.  ``parent`` is the parent
+        :class:`~PyQt4.QtGui.QWidget` (can be ``None``).
         """
         KTabWidget.__init__(self, parent)
-        self.touchpad = touchpad
+        self.touchpad_config = config
         self._changed_widgets = set()
         pages = [MotionPage(self), ScrollingPage(self.touchpad, self),
                  TappingPage(self.touchpad, self), HardwarePage(self)]
@@ -255,13 +255,18 @@ class TouchpadConfigurationWidget(KTabWidget):
             signal = getattr(widget, signalname)
             signal.connect(partial(self._check_for_changes, widget))
 
+    @property
+    def touchpad(self):
+        """
+        The :class:`~synaptiks.touchpad.Touchpad` object associated with this
+        widget.
+        """
+        return self.touchpad_config.touchpad
+
     def _check_for_changes(self, origin, changed_value):
         touchpad_property = self._get_touchpad_property(origin)
         name = origin.objectName()
-        current_value = getattr(self.touchpad, touchpad_property)
-        if isinstance(current_value, float):
-            # round floats for comparison
-            current_value = round(current_value, 5)
+        current_value = self.touchpad_config[touchpad_property]
         if current_value == changed_value:
             self._changed_widgets.remove(name)
         else:
@@ -287,7 +292,7 @@ class TouchpadConfigurationWidget(KTabWidget):
         """
         for widget in self._find_touchpad_configuration_widgets():
             touchpad_property = self._get_touchpad_property(widget)
-            value = getattr(self.touchpad, touchpad_property)
+            value = self.touchpad_config[touchpad_property]
             widget_property = self.PROPERTY_MAP[type(widget).__name__]
             widget.setProperty(widget_property, value)
 
@@ -300,4 +305,4 @@ class TouchpadConfigurationWidget(KTabWidget):
             touchpad_property = self._get_touchpad_property(widget)
             widget_property = self.PROPERTY_MAP[type(widget).__name__]
             value = widget.property(widget_property)
-            setattr(self.touchpad, touchpad_property, value)
+            self.touchpad_config[touchpad_property] = value

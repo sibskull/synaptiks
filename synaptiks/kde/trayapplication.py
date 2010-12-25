@@ -48,6 +48,7 @@ from PyKDE4.kdeui import (KApplication, KStatusNotifierItem, KDialog,
 
 import synaptiks
 from synaptiks.touchpad import Touchpad
+from synaptiks.config import TouchpadConfiguration
 from synaptiks.kde.widgets import (TouchpadInformationWidget,
                                    TouchpadConfigurationWidget)
 
@@ -57,32 +58,29 @@ class SynaptiksConfigDialog(KPageDialog):
     Configuration dialog used by the system tray application.
     """
 
-    def __init__(self, touchpad, parent=None):
+    def __init__(self, touchpad_config, parent=None):
         KPageDialog.__init__(self, parent)
-        self.touchpad = touchpad
+        self.touchpad_config = touchpad_config
         self.setFaceType(KPageDialog.List)
         self.setButtons(KDialog.ButtonCodes(
             KDialog.Ok | KDialog.Cancel | KDialog.Apply))
         self.enableButtonApply(False)
 
-        self.touchpad_config = TouchpadConfigurationWidget(self.touchpad, self)
-        self.touchpad_config.configurationChanged.connect(
+        self.touchpad_config_widget = TouchpadConfigurationWidget(
+            self.touchpad_config, self)
+        self.touchpad_config_widget.configurationChanged.connect(
             self.enableButtonApply)
 
-        for page, icon_name in [(self.touchpad_config, 'configure')]:
+        for page, icon_name in [(self.touchpad_config_widget, 'configure')]:
             page_item = self.addPage(page, page.windowTitle())
             page_item.setIcon(KIcon(icon_name))
 
         self.applyClicked.connect(self.apply_settings)
         self.okClicked.connect(self.apply_settings)
 
-        self.load_settings()
-
-    def load_settings(self):
-        self.touchpad_config.load_configuration()
-
     def apply_settings(self):
-        self.touchpad_config.apply_configuration()
+        self.touchpad_config_widget.apply_configuration()
+        self.touchpad_config.save()
         self.enableButtonApply(False)
 
 
@@ -95,6 +93,7 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
         self.setStatus(KStatusNotifierItem.Passive)
         self.setup_actions()
         self.touchpad = Touchpad.find_first()
+        self.touchpad_config = TouchpadConfiguration.load(self.touchpad)
         # explicitly delete the notifier item before quitting to avoid some
         # rather mysterious crashes.  Should be considered a really nasty hack.
         quit_action = self.actionCollection().action('file_quit')
@@ -122,7 +121,7 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
 
     def show_configuration_dialog(self):
         # using the same "hack" here as in show_touchpad_information_dialog
-        self.config_dialog = SynaptiksConfigDialog(self.touchpad)
+        self.config_dialog = SynaptiksConfigDialog(self.touchpad_config)
         self.config_dialog.finished.connect(self.config_dialog.deleteLater)
         self.config_dialog.show()
 
@@ -155,7 +154,6 @@ def main():
                           'bug reporting and testing'),
                     'valentyn.pavliuchenko@gmail.com')
     about.setHomepage('http://synaptiks.lunaryorn.de/')
-    about.setOrganizationDomain('synaptiks.lunaryorn.de')
 
     KCmdLineArgs.init(sys.argv, about)
     app = KApplication()

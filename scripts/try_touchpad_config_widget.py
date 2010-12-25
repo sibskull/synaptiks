@@ -39,6 +39,7 @@ from PyKDE4.kdeui import KApplication, KMainWindow
 
 import synaptiks
 from synaptiks.touchpad import Touchpad
+from synaptiks.config import TouchpadConfiguration
 from synaptiks.kde.widgets import TouchpadConfigurationWidget
 
 
@@ -60,7 +61,9 @@ def main():
     KCmdLineArgs.init(sys.argv, about)
     app = KApplication()
     window = KMainWindow()
-    config_widget = TouchpadConfigurationWidget(Touchpad.find_first())
+    touchpad = Touchpad.find_first()
+    config = TouchpadConfiguration(touchpad)
+    config_widget = TouchpadConfigurationWidget(config)
     config_widget.configurationChanged.connect(
         partial(print, 'config changed?'))
     window.setCentralWidget(config_widget)
