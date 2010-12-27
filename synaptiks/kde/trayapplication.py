@@ -49,8 +49,7 @@ import synaptiks
 from synaptiks.qx11 import QX11Display
 from synaptiks.touchpad import Touchpad
 from synaptiks.config import TouchpadConfiguration
-from synaptiks.kde.widgets import (TouchpadInformationWidget,
-                                   TouchpadConfigurationWidget)
+from synaptiks.kde.widgets import TouchpadConfigurationWidget
 
 
 class SynaptiksConfigDialog(KDialog):
