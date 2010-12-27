@@ -94,10 +94,6 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
         self.setup_actions()
         self.touchpad = Touchpad.find_first()
         self.touchpad_config = TouchpadConfiguration.load(self.touchpad)
-        # explicitly delete the notifier item before quitting to avoid some
-        # rather mysterious crashes.  Should be considered a really nasty hack.
-        quit_action = self.actionCollection().action('file_quit')
-        quit_action.triggered.connect(self.deleteLater)
 
     def setup_actions(self):
         touchpad_information = KAction(
@@ -161,6 +157,7 @@ def main():
     # icon is unused, but the notifier item must be bound to a name to keep it
     # alive
     icon = SynaptiksNotifierItem()
+    app.aboutToQuit.connect(icon.deleteLater)
     app.exec_()
 
 
