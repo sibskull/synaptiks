@@ -42,7 +42,7 @@ import sip
 sip.setapi('QString', 2)
 sip.setapi('QVariant', 2)
 from PyKDE4.kdecore import KCmdLineArgs, KAboutData, ki18n, i18nc
-from PyKDE4.kdeui import (KApplication, KStatusNotifierItem, KDialog,
+from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem, KDialog,
                           KPageDialog, KIcon,
                           KAction, KStandardAction, KHelpMenu)
 
@@ -149,9 +149,16 @@ def main():
                           'bug reporting and testing'),
                     'valentyn.pavliuchenko@gmail.com')
     about.setHomepage('http://synaptiks.lunaryorn.de/')
+    about.setOrganizationDomain('lunaryorn.de')
 
     KCmdLineArgs.init(sys.argv, about)
-    app = KApplication()
+    KUniqueApplication.addCmdLineOptions()
+
+    if not KUniqueApplication.start():
+        print('synaptiks tray application is already running')
+        return
+
+    app = KUniqueApplication()
     app.setQuitOnLastWindowClosed(False)
     # icon is unused, but the notifier item must be bound to a name to keep it
     # alive
