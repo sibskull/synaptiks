@@ -25,38 +25,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-from distutils.core import setup
-
-import synaptiks
+from synaptiks.kde.trayapplication import main
 
 
-setup(
-    name='synaptiks',
-    version=synaptiks.__version__,
-    url='http://synaptiks.lunaryorn.de',
-    author='Sebastian Wiesner',
-    author_email='lunaryorn@googlemail.com',
-    description='A KDE touchpad management tool',
-    platforms='X11',
-    license='BSD',
-    classifiers=[
-        'Development Status :: 3 - Alpha',
-        'Environment :: X11 Applications :: KDE',
-        'Intended Audience :: End Users/Desktop',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: Unix',
-        'Programming Language :: Python :: 2',
-        'Topic :: Desktop Environment :: K Desktop Environment (KDE)',
-        'Topic :: System :: Hardware',
-        'Topic :: Utilities',
-        ],
-    packages=['synaptiks', 'synaptiks.kde', 'synaptiks._bindings'],
-    package_data={
-        'synaptiks.kde': ['ui/*.ui'],
-        },
-    data_files=[
-        ('share/applications/kde4/', ['synaptiks.desktop']),
-        ('share/icons/hicolor/scalable/apps/', ['pics/synaptiks.svgz']),
-        ],
-    scripts=['scripts/synaptiks'],
-    )
+if __name__ == '__main__':
+    main()
