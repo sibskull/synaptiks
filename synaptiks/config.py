@@ -30,6 +30,8 @@
 
     General configuration handling for synaptiks.
 
+    If executed as script, the touchpad configuration is loaded and applied.
+
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
 
@@ -175,3 +177,16 @@ class TouchpadConfiguration(MutableMapping):
             filename = get_touchpad_config_file_path()
         with open(filename, 'w') as stream:
             json.dump(dict(self), stream, indent=2)
+
+
+def main():
+    from synaptiks.touchpad import Touchpad
+    from synaptiks._bindings import xlib
+
+    with xlib.display() as display:
+        touchpad = Touchpad.find_first(display)
+        TouchpadConfiguration.load(touchpad)
+
+
+if __name__ == '__main__':
+    main()
