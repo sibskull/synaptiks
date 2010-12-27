@@ -58,9 +58,9 @@ class SynaptiksConfigDialog(KPageDialog):
     Configuration dialog used by the system tray application.
     """
 
-    def __init__(self, touchpad_config, parent=None):
+    def __init__(self, touchpad, parent=None):
         KPageDialog.__init__(self, parent)
-        self.touchpad_config = touchpad_config
+        self.touchpad_config = TouchpadConfiguration(touchpad)
         self.setFaceType(KPageDialog.List)
         self.setButtons(KDialog.ButtonCodes(
             KDialog.Ok | KDialog.Cancel | KDialog.Apply))
@@ -93,7 +93,6 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
         self.setStatus(KStatusNotifierItem.Passive)
         self.setup_actions()
         self.touchpad = Touchpad.find_first()
-        self.touchpad_config = TouchpadConfiguration.load(self.touchpad)
 
     def setup_actions(self):
         touchpad_information = KAction(
@@ -117,7 +116,7 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
 
     def show_configuration_dialog(self):
         # using the same "hack" here as in show_touchpad_information_dialog
-        self.config_dialog = SynaptiksConfigDialog(self.touchpad_config)
+        self.config_dialog = SynaptiksConfigDialog(self.touchpad)
         self.config_dialog.finished.connect(self.config_dialog.deleteLater)
         self.config_dialog.show()
 
