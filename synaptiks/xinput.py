@@ -27,7 +27,7 @@
     synaptiks.qxinput
     =================
 
-    Qt-based API to access XInput functionality
+    Pythonic API API to access XInput functionality
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
@@ -42,7 +42,6 @@ from operator import eq
 
 from synaptiks._bindings import xlib, xinput
 from synaptiks._bindings.util import scoped_pointer
-from synaptiks.qx11 import QX11Display
 from synaptiks.util import assert_byte_string, assert_unicode_string
 
 
@@ -72,31 +71,35 @@ class XInputVersionError(Exception):
                 'got {0.actual_version}')
 
 
-def assert_xinput_version():
+def assert_xinput_version(display):
     """
     Check, that the XInput version on the server side is sufficiently
     recent.
 
     Currently, at least version 2.0 is required.
 
+    ``display`` is X11 display object (see :class:`synaptiks.qx11.QX11Display`
+    or :func:`synaptiks._bindings.xlib.display`).
+
     Raise :exc:`XInputVersionError`, if the version isn't sufficient.
     """
-    matched, actual_version = xinput.query_version(QX11Display(), (2,0))
+    matched, actual_version = xinput.query_version(display, (2,0))
     if not matched:
         raise XInputVersionError((2, 0), actual_version)
 
 
-def is_property_defined(name):
+def is_property_defined(display, name):
     """
     Check, if the given property is defined on the server side.
 
-    ``name`` is the property name as byte or unicode string.  A unicode
-    string is converted into a byte string according to the encoding of the
-    current locale.
+    ``display`` is X11 display object (see :class:`synaptiks.qx11.QX11Display`
+    or :func:`synaptiks._bindings.xlib.display`).  ``name`` is the property
+    name as byte or unicode string.  A unicode string is converted into a byte
+    string according to the encoding of the current locale.
 
     Return ``True``, if the property is defined, ``False`` otherwise.
     """
-    atom = xlib.intern_atom(QX11Display(), assert_byte_string(name), True)
+    atom = xlib.intern_atom(display, assert_byte_string(name), True)
     return atom != xlib.NONE
 
 
@@ -114,13 +117,14 @@ class UndefinedPropertyError(KeyError):
         return self.args[0]
 
 
-def _get_property_atom(name):
+def _get_property_atom(display, name):
     """
     Get a :class:`~synaptiks._bindings.xlib.Atom` for the given property.
 
-    ``name`` is the property name as byte or unicode string.  A unicode
-    string is converted into a byte string according to the encoding of the
-    current locale.
+    ``display`` is X11 display object (see :class:`synaptiks.qx11.QX11Display`
+    or :func:`synaptiks._bindings.xlib.display`).  ``name`` is the property
+    name as byte or unicode string.  A unicode string is converted into a byte
+    string according to the encoding of the current locale.
 
     Return the :class:`~synaptiks._bindings.xlib.Atom` for the given
     property.
@@ -128,7 +132,7 @@ def _get_property_atom(name):
     Raise :exc:`UndefinedPropertyError`, if there is no atom for the given
     property.
     """
-    atom = xlib.intern_atom(QX11Display(), assert_byte_string(name), True)
+    atom = xlib.intern_atom(display, assert_byte_string(name), True)
     if atom == xlib.NONE:
         raise UndefinedPropertyError(name)
     return atom
@@ -187,32 +191,38 @@ class InputDevice(Mapping):
     """
 
     @classmethod
-    def all_devices(cls):
+    def all_devices(cls, display):
         """
-        Iterate over all input devices.
+        Iterate over all input devices registered on the given ``display``.
+
+        ``display`` is X11 display object (see
+        :class:`synaptiks.qx11.QX11Display` or
+        :func:`synaptiks._bindings.xlib.display`).
 
         Return an iterator over :class:`InputDevice` objects.
 
         Raise :exc:`XInputVersionError`, if the XInput version isn't sufficient
         to support input device management.
         """
-        assert_xinput_version()
+        assert_xinput_version(display)
         number_of_devices, devices = xinput.query_device(
-            QX11Display(), xinput.ALL_DEVICES)
+            display, xinput.ALL_DEVICES)
         with scoped_pointer(devices, xinput.free_device_info) as devices:
             if not devices:
                 raise EnvironmentError('Failed to query devices')
             for i in xrange(number_of_devices):
-                yield cls(devices[i].deviceid)
+                yield cls(display, devices[i].deviceid)
 
     @classmethod
-    def find_devices_by_name(cls, name):
+    def find_devices_by_name(cls, display, name):
         """
-        Find all devices with the given ``name``.
+        Find all devices with the given ``name`` on the given ``display``.
 
-        ``name`` is either a string, which has to match the device name
-        literally, or a regular expression pattern, which is searched in the
-        device name.
+        ``display`` is X11 display object (see
+        :class:`synaptiks.qx11.QX11Display` or
+        :func:`synaptiks._bindings.xlib.display`).  ``name`` is either a
+        string, which has to match the device name literally, or a regular
+        expression pattern, which is searched in the device name.
 
         Return an iterator over all :class:`InputDevice` objects with a
         matching name.
@@ -224,14 +234,17 @@ class InputDevice(Mapping):
             matches = partial(eq, name)
         else:
             matches = name.search
-        return (d for d in cls.all_devices() if matches(d.name))
+        return (d for d in cls.all_devices(display) if matches(d.name))
 
     @classmethod
-    def find_devices_with_property(cls, name):
+    def find_devices_with_property(cls, display, name):
         """
         Find all devices which have the given property.
 
-        ``name`` is a string with the property name.
+        ``display`` is X11 display object (see
+        :class:`synaptiks.qx11.QX11Display` or
+        :func:`synaptiks._bindings.xlib.display`).  ``name`` is a string with
+        the property name.
 
         Return an iterator over all :class:`InputDevice` objects, which have
         this property defined.
@@ -239,19 +252,18 @@ class InputDevice(Mapping):
         Raise :exc:`XInputVersionError`, if the XInput version isn't sufficient
         to support input device management.
         """
-        return (d for d in cls.all_devices() if name in d)
+        return (d for d in cls.all_devices(display) if name in d)
 
-    def __init__(self, deviceid):
+    def __init__(self, display, deviceid):
         self.id = deviceid
-        self.typescheme = None
+        self.display = display
 
     @property
     def name(self):
         """
         The name of this device as unicode string.
         """
-        number_of_devices, device = xinput.query_device(
-            QX11Display(), self.id)
+        number_of_devices, device = xinput.query_device(self.display, self.id)
         with scoped_pointer(device, xinput.free_device_info) as device:
             if not device:
                 raise InputDeviceNotFoundError(self.id)
@@ -268,13 +280,13 @@ class InputDevice(Mapping):
         Return the amount of all properties defined on this device.
         """
         number_of_properties, property_atoms = xinput.list_properties(
-            QX11Display(), self.id)
+            self.display, self.id)
         with scoped_pointer(property_atoms, xlib.free):
             return number_of_properties
 
     def _iter_property_atoms(self):
         number_of_properties, property_atoms = xinput.list_properties(
-            QX11Display(), self.id)
+            self.display, self.id)
         with scoped_pointer(property_atoms, xlib.free):
             for i in xrange(number_of_properties):
                 yield property_atoms[i]
@@ -286,7 +298,7 @@ class InputDevice(Mapping):
         Return a generator yielding the names of all properties of this
         device as unicode strings
         """
-        return (assert_unicode_string(xlib.get_atom_name(QX11Display(), a))
+        return (assert_unicode_string(xlib.get_atom_name(self.display, a))
                 for a in self._iter_property_atoms())
 
     def __contains__(self, name):
@@ -299,7 +311,7 @@ class InputDevice(Mapping):
         ``False`` otherwise.
         """
         atom = xlib.intern_atom(
-            QX11Display(), assert_byte_string(name), True)
+            self.display, assert_byte_string(name), True)
         if atom == xlib.NONE:
             return False
         return any(a == atom for a in self._iter_property_atoms())
@@ -324,15 +336,15 @@ class InputDevice(Mapping):
         server at all.  Raise :exc:`PropertyTypeError`, if the property has
         an unsupported type.
         """
-        atom = _get_property_atom(name)
-        type, format, bytes = xinput.get_property(QX11Display(),
+        atom = _get_property_atom(self.display, name)
+        type, format, bytes = xinput.get_property(self.display,
                                                   self.id, atom)
         if type == xlib.NONE and format == 0:
             raise KeyError(name)
         number_of_items = (len(bytes) * 8) // format
         if type == xlib.INTEGER:
             struct_format = _FORMAT_CODE_MAPPING[format] * number_of_items
-        elif type == xlib.intern_atom(QX11Display(), 'FLOAT', True):
+        elif type == xlib.intern_atom(self.display, 'FLOAT', True):
             struct_format = b'f' * number_of_items
         else:
             raise PropertyTypeError(type)
@@ -352,8 +364,8 @@ class InputDevice(Mapping):
         raise TypeError('InputDevice not orderable')
 
     def _set_raw(self, property, type, format, data):
-        atom = _get_property_atom(property)
-        xinput.change_property(QX11Display(), self.id, atom,
+        atom = _get_property_atom(self.display, property)
+        xinput.change_property(self.display, self.id, atom,
                                type, format, data)
 
     def set_int(self, property, values):
@@ -397,5 +409,5 @@ class InputDevice(Mapping):
         defined on the server
         """
         data = struct.pack(b'f' * len(values), *values)
-        type = xlib.intern_atom(QX11Display(), 'FLOAT', True)
+        type = xlib.intern_atom(self.display, 'FLOAT', True)
         self._set_raw(property, type, 32, data)

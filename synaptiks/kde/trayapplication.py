@@ -47,6 +47,7 @@ from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem, KDialog,
                           KAction, KStandardAction, KHelpMenu)
 
 import synaptiks
+from synaptiks.qx11 import QX11Display
 from synaptiks.touchpad import Touchpad
 from synaptiks.config import TouchpadConfiguration
 from synaptiks.kde.widgets import (TouchpadInformationWidget,
@@ -92,7 +93,7 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
         self.setCategory(KStatusNotifierItem.Hardware)
         self.setStatus(KStatusNotifierItem.Passive)
         self.setup_actions()
-        self.touchpad = Touchpad.find_first()
+        self.touchpad = Touchpad.find_first(QX11Display())
 
     def setup_actions(self):
         touchpad_information = KAction(

@@ -42,7 +42,7 @@ import math
 from functools import partial
 from collections import namedtuple
 
-from synaptiks.qxinput import InputDevice
+from synaptiks.xinput import InputDevice
 
 
 PhysicalButtons = namedtuple('PhysicalButtons', 'left middle right')
@@ -117,13 +117,14 @@ class Touchpad(InputDevice):
     accessing the device properties.
     """
 
-    def __init__(self, id):
-        InputDevice.__init__(self, id)
-
     @classmethod
-    def find_all(cls):
+    def find_all(cls, display):
         """
-        Find all touchpad devices present in this system.
+        Find all touchpad devices registered on the given ``display``.
+
+        ``display`` is X11 display object (see
+        :class:`synaptiks.qx11.QX11Display` or
+        :func:`synaptiks._bindings.xlib.display`).
 
         Return an iterator over all :class:`Touchpad` objects present on this
         system.
@@ -131,19 +132,23 @@ class Touchpad(InputDevice):
         Raise :exc:`XInputVersionError`, if the XInput version isn't sufficient
         to support input device management.
         """
-        return cls.find_devices_with_property('Synaptics Off')
+        return cls.find_devices_with_property(display, 'Synaptics Off')
 
     @classmethod
-    def find_first(cls):
+    def find_first(cls, display):
         """
         Find the first usable touchpad device on this system and return it as
         :class:`Touchpad` object.
+
+        ``display`` is X11 display object (see
+        :class:`synaptiks.qx11.QX11Display` or
+        :func:`synaptiks._bindings.xlib.display`).
 
         Raise :exc:`NoTouchpadError`, if no touchpad was found.  Raise
         :exc:`synaptiks.qxinput.XInputVersionError`, if the XInput version
         isn't sufficient to support input device management.
         """
-        touchpad = next(cls.find_all(), None)
+        touchpad = next(cls.find_all(display), None)
         if touchpad is None:
             raise NoTouchpadError()
         return touchpad
