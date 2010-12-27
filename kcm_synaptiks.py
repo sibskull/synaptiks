@@ -1,4 +1,3 @@
-#!/usr/bin/python2
 # -*- coding: utf-8 -*-
 # Copyright (c) 2010, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
@@ -25,40 +24,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-from distutils.core import setup
+from __future__ import (print_function, division, unicode_literals,
+                        absolute_import)
 
-import synaptiks
+"""
+    kcm_synaptiks
+    =============
+
+    KCM wrapper for synaptiks
+
+    .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
+"""
 
 
-setup(
-    name='synaptiks',
-    version=synaptiks.__version__,
-    url='http://synaptiks.lunaryorn.de',
-    author='Sebastian Wiesner',
-    author_email='lunaryorn@googlemail.com',
-    description='A KDE touchpad management tool',
-    platforms='X11',
-    license='BSD',
-    classifiers=[
-        'Development Status :: 3 - Alpha',
-        'Environment :: X11 Applications :: KDE',
-        'Intended Audience :: End Users/Desktop',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: Unix',
-        'Programming Language :: Python :: 2',
-        'Topic :: Desktop Environment :: K Desktop Environment (KDE)',
-        'Topic :: System :: Hardware',
-        'Topic :: Utilities',
-        ],
-    packages=['synaptiks', 'synaptiks.kde', 'synaptiks._bindings'],
-    package_data={
-        'synaptiks.kde': ['ui/*.ui'],
-        },
-    data_files=[
-        ('share/applications/kde4/', ['synaptiks.desktop']),
-        ('share/icons/hicolor/scalable/apps/', ['pics/synaptiks.svgz']),
-        ('share/kde4/services/', ['kcm_synaptiks.desktop']),
-        ('share/apps/synaptiks/', ['kcm_synaptiks.py']),
-        ],
-    scripts=['scripts/synaptiks'],
-    )
+from synaptiks.qx11 import QX11Display
+from synaptiks.touchpad import Touchpad
+from synaptiks.config import TouchpadConfiguration
+from synaptiks.kde.widgets import TouchpadConfigurationKCM
+
+
+def CreatePlugin(widget_parent, parent, component_data):
+    # FIXME: error handling!
+    touchpad = Touchpad.find_first(QX11Display())
+    config = TouchpadConfiguration(touchpad)
+    return TouchpadConfigurationKCM(config, component_data, widget_parent)

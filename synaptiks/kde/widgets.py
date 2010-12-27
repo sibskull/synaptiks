@@ -44,9 +44,9 @@ sip.setapi('QString', 2)
 sip.setapi('QVariant', 2)
 from PyQt4.uic import loadUi
 from PyQt4.QtCore import pyqtSignal, QRegExp
-from PyQt4.QtGui import QWidget
+from PyQt4.QtGui import QWidget, QHBoxLayout
 from PyKDE4.kdecore import i18nc
-from PyKDE4.kdeui import KIconLoader, KTabWidget, KComboBox
+from PyKDE4.kdeui import KIconLoader, KTabWidget, KComboBox, KCModule
 
 
 PACKAGE_DIRECTORY = os.path.dirname(__file__)
@@ -303,3 +303,39 @@ class TouchpadConfigurationWidget(KTabWidget):
             widget_property = self.PROPERTY_MAP[type(widget).__name__]
             value = widget.property(widget_property)
             self.touchpad_config[touchpad_property] = value
+
+
+class TouchpadConfigurationKCM(KCModule):
+    """
+    Synaptiks system settings module.
+    """
+
+    def __init__(self, touchpad_config, component_data, parent=None):
+        """
+        Create a new synaptiks module.
+
+        ``touchpad_config`` is the
+        :class:`synaptiks.config.TouchpadConfiguration`, which is handled by
+        this module.  ``component_data`` and ``parent`` come from the
+        ``KCModule`` constructor and are passed from the plugin entry point.
+        """
+        KCModule.__init__(self, component_data, parent)
+        self.setButtons(KCModule.Apply)
+        self.touchpad_config = touchpad_config
+        self.setLayout(QHBoxLayout(self))
+        self.config_widget = TouchpadConfigurationWidget(touchpad_config)
+        self.config_widget.configurationChanged.connect(self.changed)
+        self.layout().addWidget(self.config_widget)
+
+    def load(self):
+        """
+        Load settings into the widgets.
+        """
+        self.config_widget.load_configuration()
+
+    def save(self):
+        """
+        Apply and save touchpad configuration.
+        """
+        self.config_widget.apply_configuration()
+        self.touchpad_config.save()
