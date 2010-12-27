@@ -56,6 +56,7 @@ setup(
         },
     data_files=[
         ('share/applications/kde4/', ['synaptiks.desktop']),
+        ('share/icons/hicolor/scalable/apps/', ['pics/synaptiks.svgz']),
         ],
     entry_points={
         'gui_scripts': ['synaptiks = synaptiks.kde.trayapplication:main']},
