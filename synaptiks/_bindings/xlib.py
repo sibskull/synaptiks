@@ -41,6 +41,7 @@ from itertools import islice, izip
 from ctypes import (CDLL, Structure, POINTER, string_at, create_string_buffer,
                     c_uint32, c_int, c_void_p, c_char_p, c_char, c_ubyte)
 from ctypes.util import find_library
+from contextlib import contextmanager
 
 from synaptiks._bindings.util import add_foreign_signatures, scoped_pointer
 
@@ -107,6 +108,8 @@ def _convert_x11_char_p(c_string, function, args):
 
 SIGNATURES = dict(
     XFree=([c_void_p], c_int, None),
+    XOpenDisplay=([c_char_p], Display_p, None),
+    XCloseDisplay=([Display_p], c_int, None),
     XInternAtom=([Display_p, c_char_p, Bool], Atom, None),
     XGetAtomName=([Display_p, Atom], c_void_p, _convert_x11_char_p),
     XQueryKeymap=([Display_p, c_char*32], c_int, None),
@@ -116,6 +119,31 @@ SIGNATURES = dict(
 
 
 libX11 = add_foreign_signatures(CDLL(find_library('X11')), SIGNATURES)
+
+open_display = libX11.XOpenDisplay
+close_display = libX11.XCloseDisplay
+
+
+@contextmanager
+def display(name=None):
+    """
+    Create a X11 display.
+
+    The created display connection is wrapped in a context manager, which
+    closes the display automatically, once the context is left::
+
+       with xlib.display() as display:
+           # work with the display here
+
+    If no ``name`` is given, the display name is read from ``$DISPLAY``.
+
+    ``name`` is a string containing the display name or ``None``.
+
+    Return a ctypes pointer to a :class:`Display` object.
+    """
+    display = open_display(name)
+    yield display
+    close_display(display)
 
 
 # add libX11 functions to top-level namespace under pythonic names
