@@ -81,6 +81,7 @@ class SynaptiksConfigDialog(KDialog):
 
 
 class SynaptiksNotifierItem(KStatusNotifierItem):
+
     def __init__(self, parent=None):
         KStatusNotifierItem.__init__(self, parent)
         self.setTitle('synaptiks')
