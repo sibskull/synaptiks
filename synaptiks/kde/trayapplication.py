@@ -41,10 +41,9 @@ import sys
 import sip
 sip.setapi('QString', 2)
 sip.setapi('QVariant', 2)
-from PyKDE4.kdecore import KCmdLineArgs, KAboutData, ki18n, i18nc
+from PyKDE4.kdecore import KCmdLineArgs, KAboutData, ki18n
 from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem, KDialog,
-                          KPageDialog, KIcon,
-                          KAction, KStandardAction, KHelpMenu)
+                          KStandardAction, KHelpMenu)
 
 import synaptiks
 from synaptiks.qx11 import QX11Display
@@ -54,15 +53,14 @@ from synaptiks.kde.widgets import (TouchpadInformationWidget,
                                    TouchpadConfigurationWidget)
 
 
-class SynaptiksConfigDialog(KPageDialog):
+class SynaptiksConfigDialog(KDialog):
     """
     Configuration dialog used by the system tray application.
     """
 
     def __init__(self, touchpad, parent=None):
-        KPageDialog.__init__(self, parent)
+        KDialog.__init__(self, parent)
         self.touchpad_config = TouchpadConfiguration(touchpad)
-        self.setFaceType(KPageDialog.List)
         self.setButtons(KDialog.ButtonCodes(
             KDialog.Ok | KDialog.Cancel | KDialog.Apply))
         self.enableButtonApply(False)
@@ -72,9 +70,7 @@ class SynaptiksConfigDialog(KPageDialog):
         self.touchpad_config_widget.configurationChanged.connect(
             self.enableButtonApply)
 
-        for page, icon_name in [(self.touchpad_config_widget, 'configure')]:
-            page_item = self.addPage(page, page.windowTitle())
-            page_item.setIcon(KIcon(icon_name))
+        self.setMainWidget(self.touchpad_config_widget)
 
         self.applyClicked.connect(self.apply_settings)
         self.okClicked.connect(self.apply_settings)
@@ -96,15 +92,6 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
         self.touchpad = Touchpad.find_first(QX11Display())
 
     def setup_actions(self):
-        touchpad_information = KAction(
-            i18nc('@action:inmenu', 'Touchpad information ...'),
-            self.actionCollection())
-        self.actionCollection().addAction('information',
-                                          touchpad_information)
-        touchpad_information.triggered.connect(
-            self.show_touchpad_information_dialog)
-        self.contextMenu().addAction(touchpad_information)
-
         preferences = self.actionCollection().addAction(
             KStandardAction.Preferences, 'preferences')
         preferences.triggered.connect(self.show_configuration_dialog)
@@ -121,20 +108,6 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
         self.config_dialog.finished.connect(self.config_dialog.deleteLater)
         self.config_dialog.show()
 
-    def show_touchpad_information_dialog(self):
-        # The dialog is shown in non-modal form, and consequently must exists
-        # even after this method returns.  So we bind the dialog to the
-        # instance to keep pythons GC out of business and manually delete the
-        # dialog once the user closed it
-        self.info_dialog = KDialog()
-        # delete the dialog manually once the user closed it
-        self.info_dialog.finished.connect(self.info_dialog.deleteLater)
-        info_widget = TouchpadInformationWidget(self.touchpad,
-                                                self.info_dialog)
-        self.info_dialog.setMainWidget(info_widget)
-        self.info_dialog.setWindowTitle(info_widget.windowTitle())
-        self.info_dialog.resize(info_widget.minimumSize())
-        self.info_dialog.show()
 
 
 def main():

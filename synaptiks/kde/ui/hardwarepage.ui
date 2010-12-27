@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>287</width>
-    <height>118</height>
+    <width>303</width>
+    <height>151</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,20 +15,44 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string comment="@info">Please enable this setting, if your touchpad is circular.</string>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Hardware information</string>
      </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="TouchpadInformationWidget" name="information" native="true"/>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
-    <widget class="QCheckBox" name="touchpad_circular_touchpad">
-     <property name="text">
-      <string comment="@option:check">The touchpad is circular</string>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Hardware settings</string>
      </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string comment="@info">Please enable this setting, if your touchpad is circular.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="touchpad_circular_touchpad">
+        <property name="text">
+         <string comment="@option:check">The touchpad is circular</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+     <zorder>label_2</zorder>
+     <zorder>label_2</zorder>
+     <zorder>touchpad_circular_touchpad</zorder>
     </widget>
    </item>
    <item>
@@ -46,6 +70,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TouchpadInformationWidget</class>
+   <extends>QWidget</extends>
+   <header>synaptiks.kde.widgets</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

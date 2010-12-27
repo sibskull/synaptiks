@@ -102,17 +102,12 @@ class TouchpadInformationWidget(QWidget, _DynamicUserInterfaceMixin):
     - and whether it supports two-finger emulation.
     """
 
-    def __init__(self, touchpad, parent=None):
+    def __init__(self, parent=None):
         """
-        Create a new information widget for the given ``touchpad``.
-
-        ``touchpad`` is a :class:`~synaptiks.touchpad.Touchpad`
-        object. ``parent`` is the parent :class:`~PyQt4.QtGui.QWidget` (can be
-        ``None``).
+        Create a new information widget.
         """
         QWidget.__init__(self, parent)
         self._load_userinterface()
-        self.show_touchpad(touchpad)
 
     def show_touchpad(self, touchpad):
         """
@@ -205,9 +200,10 @@ class HardwarePage(QWidget, _DynamicUserInterfaceMixin):
     Configuration page for hardware settings.
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, touchpad, parent=None):
         QWidget.__init__(self, parent)
         self._load_userinterface()
+        self.information.show_touchpad(touchpad)
 
 
 class TouchpadConfigurationWidget(KTabWidget):
@@ -243,8 +239,9 @@ class TouchpadConfigurationWidget(KTabWidget):
         KTabWidget.__init__(self, parent)
         self.touchpad_config = config
         self._changed_widgets = set()
-        pages = [MotionPage(self), ScrollingPage(self.touchpad, self),
-                 TappingPage(self.touchpad, self), HardwarePage(self)]
+        pages = [HardwarePage(self.touchpad, self), MotionPage(self),
+                 ScrollingPage(self.touchpad, self),
+                 TappingPage(self.touchpad, self)]
         for page in pages:
             self.addTab(page, page.windowTitle())
         self.setWindowTitle(
