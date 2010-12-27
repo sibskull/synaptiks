@@ -297,7 +297,7 @@ class Touchpad(InputDevice):
         Each component is ``True``, if the touchpad has this physical button,
         or ``False`` otherwise.
         """
-        return PhysicalButtons(self.capabilities[0:3])
+        return PhysicalButtons(*self.capabilities[0:3])
 
     @property
     def has_pressure_detection(self):
