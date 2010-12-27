@@ -1,3 +1,4 @@
 include *.py
 recursive-include synaptiks/ *.py *.ui
 include COPYING
+include *.desktop

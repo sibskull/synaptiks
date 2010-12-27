@@ -54,6 +54,9 @@ setup(
     package_data={
         'synaptiks.kde': ['ui/*.ui'],
         },
+    data_files=[
+        ('share/applications/kde4/', ['synaptiks.desktop']),
+        ],
     entry_points={
         'gui_scripts': ['synaptiks = synaptiks.kde.trayapplication:main']},
     )
