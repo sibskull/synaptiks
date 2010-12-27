@@ -109,6 +109,21 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
         self.config_dialog.show()
 
 
+class SynaptiksApplication(KUniqueApplication):
+
+    _first_instance = True
+
+    def newInstance(self):
+        if self._first_instance:
+            self.setQuitOnLastWindowClosed(False)
+
+            self.icon = SynaptiksNotifierItem()
+            self.aboutToQuit.connect(self.icon.deleteLater)
+            self._first_instance = False
+        else:
+            self.icon.show_configuration_dialog()
+        return 0
+
 
 def main():
     about = KAboutData(
@@ -129,15 +144,9 @@ def main():
     KUniqueApplication.addCmdLineOptions()
 
     if not KUniqueApplication.start():
-        print('synaptiks tray application is already running')
         return
 
-    app = KUniqueApplication()
-    app.setQuitOnLastWindowClosed(False)
-    # icon is unused, but the notifier item must be bound to a name to keep it
-    # alive
-    icon = SynaptiksNotifierItem()
-    app.aboutToQuit.connect(icon.deleteLater)
+    app = SynaptiksApplication()
     app.exec_()
 
 
