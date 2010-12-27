@@ -97,6 +97,13 @@ class device_property(object):
         return value
 
 
+class NoTouchpadError(Exception):
+    """
+    Raised by :class:`Touchpad`, if no touchpad was found.
+    """
+    pass
+
+
 class Touchpad(InputDevice):
     """
     A touchpad registered on the X11 server.
@@ -129,15 +136,17 @@ class Touchpad(InputDevice):
     @classmethod
     def find_first(cls):
         """
-        Find the first usable touchpad device on this system.
+        Find the first usable touchpad device on this system and return it as
+        :class:`Touchpad` object.
 
-        Return a :class:`Touchpad` object for this device or ``None``, if
-        theere is no touchpad on this system.
-
-        Raise :exc:`XInputVersionError`, if the XInput version isn't sufficient
-        to support input device management.
+        Raise :exc:`NoTouchpadError`, if no touchpad was found.  Raise
+        :exc:`synaptiks.qxinput.XInputVersionError`, if the XInput version
+        isn't sufficient to support input device management.
         """
-        return next(cls.find_all(), None)
+        touchpad = next(cls.find_all(), None)
+        if touchpad is None:
+            raise NoTouchpadError()
+        return touchpad
 
     _move_speed_property = partial(device_property,
                                    'Synaptics Move Speed', 'float')
