@@ -2,3 +2,4 @@
 synaptiks.egg-info/*
 .ropeproject/
 dist/*
+build/*
