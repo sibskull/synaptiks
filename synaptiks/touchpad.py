@@ -153,6 +153,14 @@ class Touchpad(InputDevice):
             raise NoTouchpadError()
         return touchpad
 
+    off = device_property('Synaptics Off', 'byte', 0, """\
+Whether the touchpad is off or not.  Three valid values:
+
+- 0: The touchpad is enabled
+- 1: The touchpad is switched off
+- 2: Only tapping and scrolling is switched off
+""")
+
     _move_speed_property = partial(device_property,
                                    'Synaptics Move Speed', 'float')
     minimum_speed = _move_speed_property(
