@@ -23,10 +23,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-
-from __future__ import (print_function, division, unicode_literals,
-                        absolute_import)
-
 """
     kcm_synaptiks
     =============
@@ -36,6 +32,8 @@ from __future__ import (print_function, division, unicode_literals,
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
 
+from __future__ import (print_function, division, unicode_literals,
+                        absolute_import)
 
 from synaptiks.qx11 import QX11Display
 from synaptiks.touchpad import Touchpad
