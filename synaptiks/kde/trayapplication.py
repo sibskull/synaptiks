@@ -41,9 +41,10 @@ import sys
 import sip
 sip.setapi('QString', 2)
 sip.setapi('QVariant', 2)
-from PyKDE4.kdecore import KCmdLineArgs, KAboutData, ki18n
+from PyQt4.QtGui import QAction
+from PyKDE4.kdecore import KCmdLineArgs, KAboutData, ki18n, i18nc
 from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem, KDialog,
-                          KStandardAction, KHelpMenu)
+                          KStandardAction, KToggleAction, KShortcut, KHelpMenu)
 
 import synaptiks
 from synaptiks.qx11 import QX11Display
@@ -88,19 +89,36 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
         self.setIconByName('synaptiks')
         self.setCategory(KStatusNotifierItem.Hardware)
         self.setStatus(KStatusNotifierItem.Passive)
-        self.setup_actions()
         self.touchpad = Touchpad.find_first(QX11Display())
+        self.setup_actions()
 
     def setup_actions(self):
+        touchpad_on = KToggleAction(
+            i18nc('@action:inmenu', 'Touchpad on'), self.actionCollection())
+        touchpad_on.setChecked(self.touchpad.off == 0)
+        self.actionCollection().addAction('touchpadOn', touchpad_on)
+        touchpad_on.setGlobalShortcut(
+            KShortcut(i18nc('Touchpad toggle shortcut', 'Ctrl+Alt+T')))
+        # very ugly, but without the cast the bool signature of triggered is
+        # not found, because KAction re-defines triggered with some other
+        # signature.  I consider this an issue in PyQt/PyKDE, and this a dirty
+        # workaround.
+        sip.cast(touchpad_on, QAction).triggered[bool].connect(
+            self.toggle_touchpad)
+        self.contextMenu().addAction(touchpad_on)
+
+        self.contextMenu().addSeparator()
+
         preferences = self.actionCollection().addAction(
             KStandardAction.Preferences, 'preferences')
         preferences.triggered.connect(self.show_configuration_dialog)
         self.contextMenu().addAction(preferences)
 
-        self.contextMenu().addSeparator()
-
         help_menu = KHelpMenu(self.contextMenu(), KCmdLineArgs.aboutData())
         self.contextMenu().addMenu(help_menu.menu())
+
+    def toggle_touchpad(self, on):
+        self.touchpad.off = not on
 
     def show_configuration_dialog(self):
         # using the same "hack" here as in show_touchpad_information_dialog
