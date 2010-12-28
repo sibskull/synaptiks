@@ -71,6 +71,14 @@ def get_touchpad_config_file_path():
     return os.path.join(get_configuration_directory(), 'touchpad-config.json')
 
 
+def get_touchpad_defaults_file_path():
+    """
+    Get the path to the file which stores the default touchpad configuration as
+    setup by the touchpad driver.
+    """
+    return os.path.join(get_configuration_directory(), 'touchpad-defaults.json')
+
+
 class TouchpadConfiguration(MutableMapping):
     """
     A mutable mapping class representing the current configuration of the
@@ -180,12 +188,58 @@ class TouchpadConfiguration(MutableMapping):
 
 
 def main():
+    from argparse import ArgumentParser
+
+    from synaptiks import __version__
     from synaptiks.touchpad import Touchpad
     from synaptiks._bindings import xlib
 
+    parser = ArgumentParser(
+        description='synaptiks touchpad configuration utility',
+        epilog="""\
+Copyright (C) 2010 Sebastian Wiesner <lunaryorn@googlemail.com>,
+distributed under the terms of the BSD License""")
+    parser.add_argument('--version', help='Show synaptiks version',
+                        action='version', version=__version__)
+    actions = parser.add_subparsers(title='Actions')
+
+    init_act = actions.add_parser(
+        'init', help='Initialize touchpad configuration.  Should not be '
+        'called manually, but automatically at session startup.')
+    init_act.set_defaults(action='init')
+
+    load_act = actions.add_parser(
+        'load', help='Load the touchpad configuration')
+    load_act.add_argument(
+        'filename', nargs='?', help='File to load the configuration from.  If '
+        'empty, the default configuration file is loaded.')
+    load_act.set_defaults(action='load')
+
+    save_act = actions.add_parser(
+        'save', help='Save the current touchpad configuration')
+    save_act.add_argument(
+        'filename', nargs='?', help='File to save the configuration to.  If '
+        'empty, the default configuration file is used.')
+    save_act.set_defaults(action='save')
+
+    # default filename to load configuration from
+    parser.set_defaults(filename=None)
+
+    # we don't have any arguments, but need to make sure, that the builtin
+    # arguments (--help mainly) are handled
+    args = parser.parse_args()
+
     with xlib.display() as display:
         touchpad = Touchpad.find_first(display)
-        TouchpadConfiguration.load(touchpad)
+
+        if args.action == 'init':
+            driver_defaults = TouchpadConfiguration(touchpad)
+            driver_defaults.save(get_touchpad_defaults_file_path())
+        if args.action in ('init', 'load'):
+            TouchpadConfiguration.load(touchpad, filename=args.filename)
+        if args.action == 'save':
+            current_config = TouchpadConfiguration(touchpad)
+            current_config.save(filename=args.filename)
 
 
 if __name__ == '__main__':
