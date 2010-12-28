@@ -4,14 +4,15 @@ X-DocPath=synaptiks/index.html
 Type=Application
 Terminal=false
 Icon=synaptiks
+
 GenericName=Touchpad control
 GenericName[de]=Touchpadverwaltung
 GenericName[en_GB]=Touchpad control
-GenericName[ru]=Управление тачпадом
+
 Name=synaptiks
 Name[de]=synaptiks
 Name[en_GB]=synaptiks
-Name[ru]=synaptiks
+
 X-KDE-StartupNotify=true
 X-DBUS-StartupType=Unique
 Categories=Qt;KDE;Utility;HardwareSettings;
