@@ -44,7 +44,8 @@ sip.setapi('QVariant', 2)
 from PyQt4.QtGui import QAction
 from PyKDE4.kdecore import KCmdLineArgs, KAboutData, ki18n, i18nc
 from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem, KDialog,
-                          KStandardAction, KToggleAction, KShortcut, KHelpMenu)
+                          KStandardAction, KToggleAction, KShortcut, KHelpMenu,
+                          KShortcutsDialog, KShortcutsEditor)
 
 import synaptiks
 from synaptiks.qx11 import QX11Display
@@ -109,6 +110,11 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
 
         self.contextMenu().addSeparator()
 
+        shortcuts = self.actionCollection().addAction(
+            KStandardAction.KeyBindings, 'shortcuts')
+        shortcuts.triggered.connect(self.show_shortcuts_dialog)
+        self.contextMenu().addAction(shortcuts)
+
         preferences = self.actionCollection().addAction(
             KStandardAction.Preferences, 'preferences')
         preferences.triggered.connect(self.show_configuration_dialog)
@@ -119,6 +125,21 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
 
     def toggle_touchpad(self, on):
         self.touchpad.off = not on
+
+    def show_shortcuts_dialog(self):
+        # The dialog is shown in non-modal form, and consequently must exists
+        # even after this method returns.  So we bind the dialog to the
+        # instance to keep pythons GC out of business and manually delete the
+        # dialog once the user closed it
+        self.shortcuts_dialog = KShortcutsDialog(
+            KShortcutsEditor.GlobalAction,
+            KShortcutsEditor.LetterShortcutsDisallowed)
+        self.shortcuts_dialog.addCollection(self.actionCollection())
+        # delete the dialog manually once the user closed it, to avoid some
+        # mysterious crashes when quitting the application
+        self.shortcuts_dialog.finished.connect(
+            self.shortcuts_dialog.deleteLater)
+        self.shortcuts_dialog.configure()
 
     def show_configuration_dialog(self):
         # using the same "hack" here as in show_touchpad_information_dialog
