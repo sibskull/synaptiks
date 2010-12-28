@@ -45,7 +45,8 @@ from PyQt4.QtGui import QAction
 from PyKDE4.kdecore import KCmdLineArgs, KAboutData, ki18n, i18nc
 from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem, KDialog,
                           KStandardAction, KToggleAction, KShortcut, KHelpMenu,
-                          KShortcutsDialog, KShortcutsEditor)
+                          KShortcutsDialog, KShortcutsEditor, KNotification,
+                          KIconLoader)
 
 import synaptiks
 from synaptiks.qx11 import QX11Display
@@ -125,6 +126,19 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
 
     def toggle_touchpad(self, on):
         self.touchpad.off = not on
+        self.show_touchpad_state()
+
+    def show_touchpad_state(self):
+        is_touchpad_on = self.touchpad.off == 0
+        notification = KNotification(
+            'touchpadOn' if is_touchpad_on else 'touchpadOff')
+        notification.setText(
+            i18nc('touchpad switched notification', 'Touchpad switched on')
+            if is_touchpad_on else
+            i18nc('touchpad switched notification', 'Touchpad switched off'))
+        notification.setPixmap(
+            KIconLoader.global_().loadIcon('synaptiks', KIconLoader.Panel))
+        notification.sendEvent()
 
     def show_shortcuts_dialog(self):
         # The dialog is shown in non-modal form, and consequently must exists

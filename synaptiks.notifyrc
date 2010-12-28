@@ -1,0 +1,12 @@
+[Global]
+IconName=synaptiks
+Comment=synaptiks
+Name=synaptiks
+
+[Event/touchpadOn]
+Name=Touchpad is on
+Comment=The touchpad is on now
+
+[Event/touchpadOff]
+Name=Touchpad is off
+Comment=The touchpad is off now
