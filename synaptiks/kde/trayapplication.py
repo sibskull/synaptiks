@@ -134,11 +134,13 @@ class SynaptiksApplication(KUniqueApplication):
     def newInstance(self):
         if self._first_instance:
             self.setQuitOnLastWindowClosed(False)
-
+            # create and show the status icon on first startup
             self.icon = SynaptiksNotifierItem()
             self.aboutToQuit.connect(self.icon.deleteLater)
             self._first_instance = False
         else:
+            # show the configuration dialog in an already running existing
+            # instance
             self.icon.show_configuration_dialog()
         return 0
 
