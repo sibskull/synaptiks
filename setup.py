@@ -81,11 +81,19 @@ class KDE4BaseCmd(Command):
             resource_type = 'data'
         else:
             tail_path = None
-        install_directory = get_output(
-            [self.kde4_config_exe, '--install', resource_type])
-        if not install_directory:
-            raise SystemExit('Could not determine install directory '
-                             'for %s' % resource_type)
+
+        if resource_type == 'autostart':
+            # manually handle autostart type, because kde4-config doesn't
+            # provide the install path for this resource type
+            install_directory = os.path.join(
+                self.kde4_prefix, 'share', 'autostart')
+        else:
+            install_directory = get_output(
+                [self.kde4_config_exe, '--install', resource_type])
+            if not install_directory:
+                raise SystemExit('Could not determine install directory '
+                                 'for %s' % resource_type)
+
         # substitute the KDE prefix with the prefix from distutils
         install_cmd = self.get_finalized_command('install')
         actual_install_dir = change_prefix(
@@ -149,6 +157,7 @@ KDE4_FILES={
     'xdgdata-apps': ['synaptiks.desktop'],
     'services': ['kcm_synaptiks.desktop'],
     'appdata': ['kcm_synaptiks.py'],
+    'autostart': ['init_synaptiks_config.desktop'],
     }
 
 KDE4_ICONS = [
