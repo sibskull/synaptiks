@@ -15,4 +15,5 @@ Name[en_GB]=synaptiks
 
 X-KDE-StartupNotify=true
 X-DBUS-StartupType=Unique
+X-DBUS-ServiceName=de.lunaryorn.synaptiks
 Categories=Qt;KDE;Utility;HardwareSettings;
