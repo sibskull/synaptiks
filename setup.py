@@ -25,9 +25,15 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+import sys
+
 from distutils.core import setup
 
 import synaptiks
+
+
+if sys.version_info[0] >= 3:
+    sys.exit('Python 3 is not yet supported.  Try "python2".')
 
 
 setup(
