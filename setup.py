@@ -155,9 +155,9 @@ install_cls.sub_commands.extend([
 
 KDE4_FILES={
     'xdgdata-apps': ['synaptiks.desktop'],
-    'services': ['kcm_synaptiks.desktop'],
-    'appdata': ['kcm_synaptiks.py'],
-    'autostart': ['init_synaptiks_config.desktop'],
+    'services': ['services/kcm_synaptiks.desktop'],
+    'appdata': ['services/kcm_synaptiks.py'],
+    'autostart': ['autostart/init_synaptiks_config.desktop'],
     }
 
 KDE4_ICONS = [
