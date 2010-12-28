@@ -180,7 +180,7 @@ setup(
     package_data={
         'synaptiks.kde': ['ui/*.ui'],
         },
-    scripts=['scripts/synaptiks'],
+    scripts=['scripts/synaptiks', 'scripts/synaptikscfg'],
     cmdclass={'install_kde4_files': InstallKDE4Files,
               'install_kde4_icons': InstallKDE4Icons},
     )
