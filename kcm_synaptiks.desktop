@@ -2,9 +2,10 @@
 Exec=kcmshell4 kcm_synaptiks
 Icon=synaptiks
 Type=Service
-X-KDE-ServiceTypes=KCModule
+
 X-DocPath=synaptiks/index.html
 
+X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kpythonpluginfactory
 X-KDE-ParentApp=kcontrol
 X-KDE-PluginKeyword=synaptiks/kcm_synaptiks.py
@@ -14,9 +15,5 @@ X-KDE-System-Settings-Parent-Category-V2=input-devices
 X-KDE-Weight=65
 
 Name=Touchpad
-Name[en_GB]=Touchpad
-Name[x-test]=xxTouchpadxx
 
 Comment=Touchpad settings
-Comment[en_GB]=Touchpad settings
-Comment[x-test]=xxTouchpad settingsxx
