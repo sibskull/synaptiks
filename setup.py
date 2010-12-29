@@ -31,10 +31,11 @@ from subprocess import Popen, PIPE
 from collections import namedtuple
 
 from distutils import spawn
-from distutils.core import setup
 from distutils.cmd import Command
-from distutils.command.install import install as install_cls
 from distutils.util import change_root
+
+from setuptools import setup
+from setuptools.command.install import install as install_cls
 
 import synaptiks
 
