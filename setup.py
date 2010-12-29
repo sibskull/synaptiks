@@ -216,6 +216,7 @@ setup(
     entry_points={
         'gui_scripts': ['synaptiks = synaptiks.kde.trayapplication:main'],
         'console_scripts': ['synaptikscfg = synaptiks.config:main']},
+    zip_safe=False,
     install_requires=requirements,
     cmdclass={'install_kde4_files': InstallKDE4Files,
               'install_kde4_icons': InstallKDE4Icons},
