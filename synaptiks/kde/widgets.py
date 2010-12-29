@@ -263,6 +263,15 @@ class TouchpadConfigurationWidget(KTabWidget):
         """
         return self.touchpad_config.touchpad
 
+    @property
+    def is_configuration_changed(self):
+        """
+        ``True``, if the configuration shown in the widgets is different from
+        the actual touchpad configuration.  This usually means, that the user
+        has changed some setting.
+        """
+        return bool(self._changed_widgets)
+
     def _check_for_changes(self, origin, changed_value):
         touchpad_property = self._get_touchpad_property(origin)
         name = origin.objectName()
@@ -271,7 +280,7 @@ class TouchpadConfigurationWidget(KTabWidget):
             self._changed_widgets.remove(name)
         else:
             self._changed_widgets.add(name)
-        self.configurationChanged.emit(bool(self._changed_widgets))
+        self.configurationChanged.emit(self.is_configuration_changed)
 
     def _get_touchpad_property(self, widget):
         """
