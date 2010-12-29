@@ -94,6 +94,7 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
         self.setStatus(KStatusNotifierItem.Passive)
         self.touchpad = Touchpad.find_first(QX11Display())
         self.setup_actions()
+        self.activateRequested.connect(self.show_configuration_dialog)
 
     def setup_actions(self):
         touchpad_on = KToggleAction(
