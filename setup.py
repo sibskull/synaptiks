@@ -184,6 +184,11 @@ KDE4_ICONS = [
     ]
 
 
+requirements = []
+if sys.version_info[:2] < (2, 7):
+    requirements.append('argparse>=1.1')
+
+
 setup(
     name='synaptiks',
     version=synaptiks.__version__,
@@ -211,6 +216,7 @@ setup(
     entry_points={
         'gui_scripts': ['synaptiks = synaptiks.kde.trayapplication:main'],
         'console_scripts': ['synaptikscfg = synaptiks.config:main']},
+    install_requires=requirements,
     cmdclass={'install_kde4_files': InstallKDE4Files,
               'install_kde4_icons': InstallKDE4Icons},
     )
