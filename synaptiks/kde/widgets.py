@@ -326,6 +326,10 @@ class TouchpadConfigurationKCM(KCModule):
         # deleted by the GC
         self._about = make_about_data(
             ki18nc('kcmodule description', 'Touchpad configuration'))
+        self.setQuickHelp(i18nc(
+            '@info:tooltip synaptiks kcmodule',
+            '<title>Touchpad configuration</title>'
+            '<para>This module lets you configure your touchpad.</para>'))
         self.setAboutData(self._about)
         self.setButtons(KCModule.Apply)
         self.touchpad_config = touchpad_config
