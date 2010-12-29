@@ -208,7 +208,9 @@ setup(
     package_data={
         'synaptiks.kde': ['ui/*.ui'],
         },
-    scripts=['scripts/synaptiks', 'scripts/synaptikscfg'],
+    entry_points={
+        'gui_scripts': ['synaptiks = synaptiks.kde.trayapplication:main'],
+        'console_scripts': ['synaptikscfg = synaptiks.config:main']},
     cmdclass={'install_kde4_files': InstallKDE4Files,
               'install_kde4_icons': InstallKDE4Icons},
     )
