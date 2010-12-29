@@ -32,3 +32,52 @@
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
+
+from __future__ import (print_function, division, unicode_literals,
+                        absolute_import)
+
+import sip
+sip.setapi('QString', 2)
+sip.setapi('QVariant', 2)
+from PyKDE4.kdecore import KAboutData, ki18nc
+
+import synaptiks
+
+
+def make_about_data(description):
+    """
+    Create an about data object describing synaptiks.
+
+    ``description`` is a :class:`~PyKDE4.kdecore.KLocalizedString` containing a
+    description for the specific part of synaptiks, the created about data
+    object should describe.
+
+    Return a :class:`~PyKDE4.kdecore.KAboutData` object with the given
+    ``description``.
+    """
+    about = KAboutData(
+        b'synaptiks', '', ki18nc('Program name', 'synaptiks'),
+        str(synaptiks.__version__), description, KAboutData.License_BSD,
+        ki18nc('About data copyright',
+               # KLocalizedString doesn't deal well with unicode
+               b'Copyright © 2009, 2010 Sebastian Wiesner'))
+    about.setCustomAuthorText(
+        ki18nc('custom author text plain text',
+               'Please report bugs to the issue tracker at '
+               'https://github.com/lunaryorn/synaptiks/issues'),
+        ki18nc('custom author text rich text',
+               'Please report bugs to the <a href="https://github.com/'
+               'lunaryorn/synaptiks/issues">issue tracker</a>.'))
+    about.setHomepage('http://synaptiks.lunaryorn.de')
+    about.setOrganizationDomain('lunaryorn.de')
+
+    about.setTranslator(ki18nc('NAME OF TRANSLATORS', 'Your names'),
+                        ki18nc('EMAIL OF TRANSLATORS', 'Your emails'))
+    about.addAuthor(ki18nc('author name', 'Sebastian Wiesner'),
+                    ki18nc('author task', 'Maintainer'),
+                    'lunaryorn@googlemail.com')
+    about.addCredit(ki18nc('credit name', 'Valentyn Pavliuchenko'),
+                    ki18nc('credit task', 'Debian packaging, russian '
+                           'translation, bug reporting and testing'),
+                    'valentyn.pavliuchenko@gmail.com')
+    return about

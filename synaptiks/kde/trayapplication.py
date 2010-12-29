@@ -42,16 +42,16 @@ import sip
 sip.setapi('QString', 2)
 sip.setapi('QVariant', 2)
 from PyQt4.QtGui import QAction
-from PyKDE4.kdecore import KCmdLineArgs, KAboutData, ki18n, i18nc
+from PyKDE4.kdecore import KCmdLineArgs, ki18nc, i18nc
 from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem, KDialog,
                           KStandardAction, KToggleAction, KShortcut, KHelpMenu,
                           KShortcutsDialog, KShortcutsEditor, KNotification,
                           KIconLoader)
 
-import synaptiks
 from synaptiks.qx11 import QX11Display
 from synaptiks.touchpad import Touchpad
 from synaptiks.config import TouchpadConfiguration
+from synaptiks.kde import make_about_data
 from synaptiks.kde.widgets import TouchpadConfigurationWidget
 
 
@@ -181,19 +181,8 @@ class SynaptiksApplication(KUniqueApplication):
 
 
 def main():
-    about = KAboutData(
-        b'synaptiks', '', ki18n('synaptiks'), str(synaptiks.__version__),
-        ki18n('touchpad management and configuration application'),
-        KAboutData.License_BSD,
-        ki18n('Copyright (C) 2009, 2010 Sebastian Wiesner'))
-    about.addAuthor(ki18n('Sebastian Wiesner'), ki18n('Maintainer'),
-                    'lunaryorn@googlemail.com')
-    about.addCredit(ki18n('Valentyn Pavliuchenko'),
-                    ki18n('Debian packaging, russian translation, '
-                          'bug reporting and testing'),
-                    'valentyn.pavliuchenko@gmail.com')
-    about.setHomepage('http://synaptiks.lunaryorn.de/')
-    about.setOrganizationDomain('lunaryorn.de')
+    about = make_about_data(ki18nc('tray application description',
+                                   'touchpad management application'))
 
     KCmdLineArgs.init(sys.argv, about)
     KUniqueApplication.addCmdLineOptions()
