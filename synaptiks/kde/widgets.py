@@ -387,7 +387,8 @@ class TouchpadConfigurationKCM(KCModule):
         self.touchpad_config = touchpad_config
         self.setLayout(QHBoxLayout(self))
         self.config_widget = TouchpadConfigurationWidget(self.touchpad_config)
-        self.config_widget.configurationChanged.connect(self.changed)
+        self.config_widget.configurationChanged.connect(
+            self.unmanagedWidgetChangeState)
         self.layout().addWidget(self.config_widget)
 
     def defaults(self, defaults=None):
