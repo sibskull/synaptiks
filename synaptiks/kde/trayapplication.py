@@ -131,6 +131,7 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
 
     def show_touchpad_state(self):
         is_touchpad_on = self.touchpad.off == 0
+        # show a notification
         notification = KNotification(
             'touchpadOn' if is_touchpad_on else 'touchpadOff')
         notification.setText(
@@ -140,6 +141,9 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
         notification.setPixmap(
             KIconLoader.global_().loadIcon('synaptiks', KIconLoader.Panel))
         notification.sendEvent()
+        # show an overlay, if the touchpad is disabled
+        overlay_icon_name = '' if is_touchpad_on else 'off-overlay'
+        self.setOverlayIconByName(overlay_icon_name)
 
     def show_shortcuts_dialog(self):
         # The dialog is shown in non-modal form, and consequently must exists

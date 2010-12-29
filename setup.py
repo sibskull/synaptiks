@@ -28,6 +28,7 @@
 import sys
 import os
 from subprocess import Popen, PIPE
+from collections import namedtuple
 
 from distutils import spawn
 from distutils.core import setup
@@ -141,10 +142,17 @@ class InstallKDE4Icons(KDE4BaseCmd):
     def run(self):
         if not self.kde4_icons:
             return
-        install_dir = self._get_install_directory('icon')
-        for theme, size, category, filename in self.kde4_icons:
-            dest_dir = os.path.join(install_dir, theme, size, category)
-            self.copy_files([filename], dest_dir)
+        theme_install_dir = self._get_install_directory('icon')
+        standalone_install_dir = os.path.join(
+            self._get_install_directory('appdata'), 'pics')
+        for icon in self.kde4_icons:
+            if isinstance(icon, ThemeIcon):
+                dest_dir = os.path.join(theme_install_dir, icon.path)
+            elif isinstance(icon, StandAloneIcon):
+                dest_dir = standalone_install_dir
+            else:
+                raise SystemExit('unknown icon type: %r', icon)
+            self.copy_files([icon.filename], dest_dir)
 
 
 install_cls.sub_commands.extend([
@@ -160,8 +168,17 @@ KDE4_FILES={
     'autostart': ['autostart/init_synaptiks_config.desktop'],
     }
 
+
+class ThemeIcon(namedtuple('_ThemeIcon', 'theme size category filename')):
+    @property
+    def path(self):
+        return os.path.join(self.theme, self.size, self.category)
+
+StandAloneIcon = namedtuple('StandaloneIcon', 'filename')
+
 KDE4_ICONS = [
-    ('hicolor', 'scalable', 'apps', 'pics/synaptiks.svgz')
+    ThemeIcon('hicolor', 'scalable', 'apps', 'pics/synaptiks.svgz'),
+    StandAloneIcon('pics/off-overlay.svgz'),
     ]
 
 
