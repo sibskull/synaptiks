@@ -104,8 +104,8 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
             KShortcut(i18nc('Touchpad toggle shortcut', 'Ctrl+Alt+T')))
         # very ugly, but without the cast the bool signature of triggered is
         # not found, because KAction re-defines triggered with some other
-        # signature.  I consider this an issue in PyQt/PyKDE, and this a dirty
-        # workaround.
+        # signature.  I consider this an issue in PyQt/PyKDE, and the following
+        # line a dirty workaround.
         sip.cast(touchpad_on, QAction).triggered[bool].connect(
             self.toggle_touchpad)
         self.contextMenu().addAction(touchpad_on)
