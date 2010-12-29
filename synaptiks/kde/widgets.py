@@ -45,8 +45,10 @@ sip.setapi('QVariant', 2)
 from PyQt4.uic import loadUi
 from PyQt4.QtCore import pyqtSignal, QRegExp
 from PyQt4.QtGui import QWidget, QHBoxLayout
-from PyKDE4.kdecore import i18nc
+from PyKDE4.kdecore import ki18nc, i18nc
 from PyKDE4.kdeui import KIconLoader, KTabWidget, KComboBox, KCModule
+
+from synaptiks.kde import make_about_data
 
 
 PACKAGE_DIRECTORY = os.path.dirname(__file__)
@@ -320,6 +322,11 @@ class TouchpadConfigurationKCM(KCModule):
         ``KCModule`` constructor and are passed from the plugin entry point.
         """
         KCModule.__init__(self, component_data, parent)
+        # keep a reference to the generated about data to prevent it from being
+        # deleted by the GC
+        self._about = make_about_data(
+            ki18nc('kcmodule description', 'Touchpad configuration'))
+        self.setAboutData(self._about)
         self.setButtons(KCModule.Apply)
         self.touchpad_config = touchpad_config
         self.setLayout(QHBoxLayout(self))
