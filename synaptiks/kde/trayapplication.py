@@ -41,47 +41,93 @@ import sys
 import sip
 sip.setapi('QString', 2)
 sip.setapi('QVariant', 2)
-from PyQt4.QtGui import QAction
+from PyQt4.QtGui import QWidget, QAction
 from PyKDE4.kdecore import KCmdLineArgs, ki18nc, i18nc
-from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem, KDialog,
-                          KStandardAction, KToggleAction, KShortcut, KHelpMenu,
-                          KShortcutsDialog, KShortcutsEditor, KNotification,
-                          KIconLoader)
+from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem,
+                          KConfigDialog, KShortcutsDialog,
+                          KShortcut, KShortcutsEditor, KStandardAction,
+                          KToggleAction, KHelpMenu, KIcon, KIconLoader,
+                          KNotification, KConfigSkeleton)
 
 from synaptiks.qx11 import QX11Display
 from synaptiks.touchpad import Touchpad
 from synaptiks.config import TouchpadConfiguration
 from synaptiks.kde import make_about_data
-from synaptiks.kde.widgets import TouchpadConfigurationWidget
+from synaptiks.kde.widgets import (TouchpadConfigurationWidget,
+                                   DynamicUserInterfaceMixin)
 
 
-class SynaptiksConfigDialog(KDialog):
+class GeneralPage(QWidget, DynamicUserInterfaceMixin):
+    """
+    Configuration page to configure the general behaviour of the tray application
+    """
+
+    def __init__(self, parent=None):
+        QWidget.__init__(self, parent)
+        self._load_userinterface()
+
+
+class SynaptiksConfigDialog(KConfigDialog):
     """
     Configuration dialog used by the system tray application.
     """
 
-    def __init__(self, touchpad, parent=None):
-        KDialog.__init__(self, parent)
+    DIALOG_NAME = 'synaptiks-configuration'
+
+    def __init__(self, touchpad, tray_config, parent=None):
+        KConfigDialog.__init__(self, parent, self.DIALOG_NAME, tray_config)
         self.touchpad_config = TouchpadConfiguration(touchpad)
-        self.setButtons(KDialog.ButtonCodes(
-            KDialog.Ok | KDialog.Cancel | KDialog.Apply | KDialog.Default))
-        self.enableButtonApply(False)
+
+        self.setFaceType(self.List)
 
         self.touchpad_config_widget = TouchpadConfigurationWidget(
             self.touchpad_config, self)
+        self._touchpad_config_changed = False
         self.touchpad_config_widget.configurationChanged.connect(
-            self.enableButtonApply)
+            self._touchpad_config_changed_slot)
+        self.touchpad_config_widget.configurationChanged.connect(
+            self.settingsChangedSlot)
 
-        self.setMainWidget(self.touchpad_config_widget)
+        pages = [(GeneralPage(self), 'configure'),
+                 (self.touchpad_config_widget, 'synaptiks')]
+        for page_widget, page_icon_name in pages:
+            page = self.addPage(page_widget, page_widget.windowTitle())
+            page.setIcon(KIcon(page_icon_name))
 
-        self.applyClicked.connect(self.apply_settings)
-        self.okClicked.connect(self.apply_settings)
-        self.defaultClicked.connect(self.touchpad_config_widget.load_defaults)
+    def _touchpad_config_changed_slot(self, has_changed):
+        self._touchpad_config_changed = has_changed
 
-    def apply_settings(self):
+    def hasChanged(self):
+        return (KConfigDialog.hasChanged(self) or
+                self.touchpad_config_widget.is_configuration_changed)
+
+    def isDefault(self):
+        return (KConfigDialog.isDefault(self) or
+                self.touchpad_config_widget.shows_defaults())
+
+    def updateWidgetsDefault(self):
+        KConfigDialog.updateWidgetsDefault(self)
+        self.touchpad_config_widget.load_defaults()
+
+    def updateWidgets(self):
+        KConfigDialog.updateWidgets(self)
+        self.touchpad_config_widget.load_configuration()
+
+    def updateSettings(self):
+        KConfigDialog.updateSettings(self)
         self.touchpad_config_widget.apply_configuration()
         self.touchpad_config.save()
-        self.enableButtonApply(False)
+
+
+class SynaptiksTrayConfiguration(KConfigSkeleton):
+    """
+    Configuration specific for the tray application.
+    """
+
+    def __init__(self, parent=None):
+        KConfigSkeleton.__init__(self, 'synaptiksrc', parent)
+        self.setCurrentGroup('General')
+        self.addItemBool('Autostart', False, False)
 
 
 class SynaptiksNotifierItem(KStatusNotifierItem):
@@ -92,7 +138,10 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
         self.setIconByName('synaptiks')
         self.setCategory(KStatusNotifierItem.Hardware)
         self.setStatus(KStatusNotifierItem.Passive)
+
         self.touchpad = Touchpad.find_first(QX11Display())
+        self._config = SynaptiksTrayConfiguration(self)
+
         self.setup_actions()
         self.activateRequested.connect(self.show_configuration_dialog)
 
