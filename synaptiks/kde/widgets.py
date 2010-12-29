@@ -368,7 +368,7 @@ class TouchpadConfigurationKCM(KCModule):
 
     def load(self):
         """
-        Load settings into the widgets.
+        Load the touchpad configuration into the widgets.
         """
         self.config_widget.load_configuration()
 
