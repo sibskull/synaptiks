@@ -156,8 +156,7 @@ install_cls.sub_commands.extend([
 KDE4_FILES={
     'xdgdata-apps': ['synaptiks.desktop'],
     'services': ['services/kcm_synaptiks.desktop'],
-    'appdata': ['services/kcm_synaptiks.py'],
-    'appdata': ['synaptiks.notifyrc'],
+    'appdata': ['services/kcm_synaptiks.py', 'synaptiks.notifyrc'],
     'autostart': ['autostart/init_synaptiks_config.desktop'],
     }
 
