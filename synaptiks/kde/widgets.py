@@ -55,7 +55,7 @@ from synaptiks.kde import make_about_data
 PACKAGE_DIRECTORY = os.path.dirname(__file__)
 
 
-class _DynamicUserInterfaceMixin(object):
+class DynamicUserInterfaceMixin(object):
     """
     Mixin class for widgets to load their user interface dynamically from the
     :mod:`synaptiks.kde` package.  It provides a single method
@@ -93,7 +93,7 @@ class MouseButtonComboBox(KComboBox):
             ])
 
 
-class TouchpadInformationWidget(QWidget, _DynamicUserInterfaceMixin):
+class TouchpadInformationWidget(QWidget, DynamicUserInterfaceMixin):
     """
     A widget which shows some information about a touchpad.
 
@@ -142,7 +142,7 @@ class TouchpadInformationWidget(QWidget, _DynamicUserInterfaceMixin):
             pixmaps[touchpad.has_two_finger_emulation])
 
 
-class MotionPage(QWidget, _DynamicUserInterfaceMixin):
+class MotionPage(QWidget, DynamicUserInterfaceMixin):
     """
     Configuration page to configure the settings for cursor motion on the
     touchpad.
@@ -153,7 +153,7 @@ class MotionPage(QWidget, _DynamicUserInterfaceMixin):
         self._load_userinterface()
 
 
-class ScrollingPage(QWidget, _DynamicUserInterfaceMixin):
+class ScrollingPage(QWidget, DynamicUserInterfaceMixin):
     """
     Configuration page to configure scrolling.
     """
@@ -177,7 +177,7 @@ class ScrollingPage(QWidget, _DynamicUserInterfaceMixin):
         self.touchpad_corner_coasting.setEnabled(value != 0)
 
 
-class TappingPage(QWidget, _DynamicUserInterfaceMixin):
+class TappingPage(QWidget, DynamicUserInterfaceMixin):
     """
     Configuration page to configure tapping.
     """
@@ -198,7 +198,7 @@ class TappingPage(QWidget, _DynamicUserInterfaceMixin):
         self.fingerButtonsLayout.labelForField(widget).setEnabled(enabled)
 
 
-class HardwarePage(QWidget, _DynamicUserInterfaceMixin):
+class HardwarePage(QWidget, DynamicUserInterfaceMixin):
     """
     Configuration page for hardware settings.
     """
