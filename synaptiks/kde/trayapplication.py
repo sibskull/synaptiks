@@ -162,8 +162,7 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
         self.shortcuts_dialog.configure()
 
     def show_configuration_dialog(self):
-        # using the same "hack" here as in show_shortcuts_dialog
-        self.config_dialog = SynaptiksConfigDialog(self.touchpad)
+        self.config_dialog = SynaptiksConfigDialog(self.touchpad, self._config)
         self.config_dialog.finished.connect(self.config_dialog.deleteLater)
         self.config_dialog.show()
 

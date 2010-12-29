@@ -294,12 +294,21 @@ class TouchpadConfigurationWidget(KTabWidget):
         """
         return self.findChildren(QWidget, QRegExp('touchpad_.*'))
 
-    def _load_mapping_into_widgets(self, mapping):
+    def _update_widgets_from_mapping(self, mapping):
         for widget in self._find_touchpad_configuration_widgets():
             touchpad_property = self._get_touchpad_property(widget)
             value = mapping[touchpad_property]
             widget_property = self.PROPERTY_MAP[type(widget).__name__]
             widget.setProperty(widget_property, value)
+
+    def _get_mapping_from_widgets(self):
+        config = dict()
+        for widget in self._find_touchpad_configuration_widgets():
+            touchpad_property = self._get_touchpad_property(widget)
+            widget_property = self.PROPERTY_MAP[type(widget).__name__]
+            value = widget.property(widget_property)
+            config[touchpad_property] = value
+        return config
 
     def load_defaults(self, defaults=None):
         """
@@ -314,25 +323,41 @@ class TouchpadConfigurationWidget(KTabWidget):
         """
         if defaults is None:
             defaults = get_touchpad_defaults()
-        self._load_mapping_into_widgets(defaults)
+        self._update_widgets_from_mapping(defaults)
+
+    def shows_defaults(self, defaults=None):
+        """
+        Check, if the widgets currently shows the given default settings.
+
+        If ``defaults`` is ``None``, the default configuration is implicitly
+        loaded from disk (see
+        :func:`synaptiks.config.get_touchpad_defaults()`).
+
+        ``defaults`` is a mapping with the default touchpad configuration or
+        ``None``.
+
+        Return ``True``, if the given ``defaults`` are currently shown,
+        ``False`` otherwise.
+        """
+        if defaults is None:
+            defaults = get_touchpad_defaults()
+        current = self._get_mapping_from_widgets()
+        return current == defaults
 
     def load_configuration(self):
         """
         Load the configuration of the associated touchpad into the
         configuration widgets.
         """
-        self._load_mapping_into_widgets(self.touchpad_config)
+        self._update_widgets_from_mapping(self.touchpad_config)
 
     def apply_configuration(self):
         """
         Apply the contents of the configuration widgets to the associated
         touchpad.
         """
-        for widget in self._find_touchpad_configuration_widgets():
-            touchpad_property = self._get_touchpad_property(widget)
-            widget_property = self.PROPERTY_MAP[type(widget).__name__]
-            value = widget.property(widget_property)
-            self.touchpad_config[touchpad_property] = value
+        config = self._get_mapping_from_widgets()
+        self.touchpad_config.update(config)
 
 
 class TouchpadConfigurationKCM(KCModule):
