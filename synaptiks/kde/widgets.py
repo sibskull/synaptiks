@@ -48,6 +48,7 @@ from PyQt4.QtGui import QWidget, QHBoxLayout
 from PyKDE4.kdecore import ki18nc, i18nc
 from PyKDE4.kdeui import KIconLoader, KTabWidget, KComboBox, KCModule
 
+from synaptiks.config import get_touchpad_defaults
 from synaptiks.kde import make_about_data
 
 
@@ -284,16 +285,34 @@ class TouchpadConfigurationWidget(KTabWidget):
         """
         return self.findChildren(QWidget, QRegExp('touchpad_.*'))
 
+    def _load_mapping_into_widgets(self, mapping):
+        for widget in self._find_touchpad_configuration_widgets():
+            touchpad_property = self._get_touchpad_property(widget)
+            value = mapping[touchpad_property]
+            widget_property = self.PROPERTY_MAP[type(widget).__name__]
+            widget.setProperty(widget_property, value)
+
+    def load_defaults(self, defaults=None):
+        """
+        Load the given default configuration into the configuration widgets.
+
+        If ``defaults`` is ``None``, the default configuration is implicitly
+        loaded from disk (see
+        :func:`synaptiks.config.get_touchpad_defaults()`).
+
+        ``defaults`` is a mapping with the default touchpad configuration or
+        ``None``.
+        """
+        if defaults is None:
+            defaults = get_touchpad_defaults()
+        self._load_mapping_into_widgets(defaults)
+
     def load_configuration(self):
         """
         Load the configuration of the associated touchpad into the
         configuration widgets.
         """
-        for widget in self._find_touchpad_configuration_widgets():
-            touchpad_property = self._get_touchpad_property(widget)
-            value = self.touchpad_config[touchpad_property]
-            widget_property = self.PROPERTY_MAP[type(widget).__name__]
-            widget.setProperty(widget_property, value)
+        self._load_mapping_into_widgets(self.touchpad_config)
 
     def apply_configuration(self):
         """
@@ -331,12 +350,21 @@ class TouchpadConfigurationKCM(KCModule):
             '<title>Touchpad configuration</title>'
             '<para>This module lets you configure your touchpad.</para>'))
         self.setAboutData(self._about)
-        self.setButtons(KCModule.Apply)
         self.touchpad_config = touchpad_config
         self.setLayout(QHBoxLayout(self))
         self.config_widget = TouchpadConfigurationWidget(touchpad_config)
         self.config_widget.configurationChanged.connect(self.changed)
         self.layout().addWidget(self.config_widget)
+
+    def defaults(self, defaults=None):
+        """
+        Load the default settings into the widgets.
+
+        ``defaults`` is a mapping with the default touchpad configuration, or
+        ``None``.  In the latter case, the defaults are implicitly loaded from
+        disk.
+        """
+        self.config_widget.load_defaults(defaults)
 
     def load(self):
         """

@@ -64,7 +64,7 @@ class SynaptiksConfigDialog(KDialog):
         KDialog.__init__(self, parent)
         self.touchpad_config = TouchpadConfiguration(touchpad)
         self.setButtons(KDialog.ButtonCodes(
-            KDialog.Ok | KDialog.Cancel | KDialog.Apply))
+            KDialog.Ok | KDialog.Cancel | KDialog.Apply | KDialog.Default))
         self.enableButtonApply(False)
 
         self.touchpad_config_widget = TouchpadConfigurationWidget(
@@ -76,6 +76,7 @@ class SynaptiksConfigDialog(KDialog):
 
         self.applyClicked.connect(self.apply_settings)
         self.okClicked.connect(self.apply_settings)
+        self.defaultClicked.connect(self.touchpad_config_widget.load_defaults)
 
     def apply_settings(self):
         self.touchpad_config_widget.apply_configuration()

@@ -79,6 +79,32 @@ def get_touchpad_defaults_file_path():
     return os.path.join(get_configuration_directory(), 'touchpad-defaults.json')
 
 
+def _load_json_with_default(filename, default=None):
+    """
+    Load the given JSON file.
+
+    If the given file does not exist and ``default`` is not ``None``, then the
+    given ``default`` is returned.
+    """
+    try:
+        with open(filename, 'r') as stream:
+            return json.load(stream)
+    except EnvironmentError as error:
+        if default is not None and error.errno == errno.ENOENT:
+            return default
+        raise
+
+
+def get_touchpad_defaults(filename=None):
+    """
+    Get the default touchpad settings as :func:`dict` *without* applying it to
+    the touchpad.
+    """
+    if not filename:
+        filename = get_touchpad_defaults_file_path()
+    return _load_json_with_default(filename, {})
+
+
 class TouchpadConfiguration(MutableMapping):
     """
     A mutable mapping class representing the current configuration of the
@@ -123,14 +149,8 @@ class TouchpadConfiguration(MutableMapping):
         if not filename:
             filename = get_touchpad_config_file_path()
         config = cls(touchpad)
-        try:
-            with open(filename, 'r') as stream:
-                config.update(json.load(stream))
-        except EnvironmentError as error:
-            if error.errno != errno.ENOENT:
-                raise
+        config.update(_load_json_with_default(filename, {}))
         return config
-
 
     def __init__(self, touchpad):
         """
