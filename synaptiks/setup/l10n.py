@@ -36,6 +36,7 @@ from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
 import os
+import locale
 
 from synaptiks.setup import BaseCommand
 
@@ -126,5 +127,54 @@ class ExtractMessages(BaseCommand):
         if rc_data:
             xgettext_command.append('rc.py')
         self.spawn(xgettext_command, input=rc_data)
+
         if os.path.isfile('rc.py'):
             os.unlink('rc.py')
+
+
+class InitCatalog(BaseCommand):
+    description = 'Init a new message catalog'
+
+    user_options = [(b'msginit-exe=', None, 'Path to msginit'),
+                    (b'input-file=', None,
+                     'Input filename (template catalog)'),
+                    (b'output-file=', None, 'Output filename'),
+                    (b'locale=', None, 'Locale name')]
+
+    def initialize_options(self):
+        self.msginit_exe = None
+        self.output_file = None
+        self.input_file = None
+        self.locale = None
+
+    def finalize_options(self):
+        if self.msginit_exe is None:
+            self.msginit_exe = self._find_executable(
+                'msginit', 'Please install gettext')
+        if self.locale is None:
+            # find out, what locale the user is currently running on
+            old_locale = locale.getlocale()
+            try:
+                locale.setlocale(locale.LC_ALL, '')
+                country_code, _ = locale.getlocale()
+            finally:
+                # always restore locale
+                locale.setlocale(locale.LC_ALL, old_locale)
+            lang_code = country_code.split('_')[0]
+            self.locale = lang_code
+        if self.input_file is None:
+            extract_messages = self.get_finalized_command('extract_messages')
+            self.input_file = extract_messages.output_file
+        if self.output_file is None:
+            output_directory = os.path.dirname(self.input_file)
+            self.output_file = os.path.join(output_directory,
+                                            self.locale + '.po')
+
+    def run(self):
+        output_directory = os.path.dirname(self.output_file)
+        self.mkpath(output_directory)
+
+        msginit_command = [self.msginit_exe, '--locale', self.locale,
+                           '--input', self.input_file,
+                           '--output', self.output_file]
+        self.spawn(msginit_command)
