@@ -42,7 +42,6 @@ from functools import partial
 import sip
 sip.setapi('QString', 2)
 sip.setapi('QVariant', 2)
-from PyQt4.uic import loadUi
 from PyQt4.QtCore import pyqtSignal, QRegExp
 from PyQt4.QtGui import QWidget, QHBoxLayout
 from PyKDE4.kdecore import KGlobal, ki18nc, i18nc
@@ -50,6 +49,7 @@ from PyKDE4.kdeui import KIconLoader, KTabWidget, KComboBox, KCModule
 
 from synaptiks.config import get_touchpad_defaults
 from synaptiks.kde import make_about_data
+from synaptiks.kde.uic import loadUi
 
 
 PACKAGE_DIRECTORY = os.path.dirname(__file__)
