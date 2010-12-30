@@ -56,6 +56,9 @@ def is_python_file(filename):
 def is_ui_file(filename):
     return _check_ext(filename, '.ui')
 
+def is_po_file(filename):
+    return _check_ext(filename, '.po')
+
 
 def find_python_sources(directory):
     for root, dirnames, filenames in os.walk(directory):
@@ -180,3 +183,46 @@ class InitCatalog(BaseCommand):
                            '--input', self.template_file,
                            '--output', self.output_file]
         self.spawn(msginit_command)
+
+
+class CompileCatalog(BaseCommand):
+    description = 'Compile message catalog(s)'
+
+    user_options = [(b'msgfmt-exe=', None, 'Path to msgfmt'),
+                    (b'directory=', None, 'The locale directory'),
+                    (b'locale=', None, 'Locale name'),
+                    (b'build-dir=', None, 'The build directory')]
+
+    def initialize_options(self):
+        self.msgfmt_exe = None
+        self.directory = None
+        self.locale = None
+        self.build_dir = None
+
+    def finalize_options(self):
+        if self.msgfmt_exe is None:
+            self.msgfmt_exe = self._find_executable(
+                'msgfmt', 'Please install gettext')
+        if self.directory is None:
+            extract_messages = self.get_finalized_command('extract_messages')
+            self.directory = extract_messages.directory
+        if self.build_dir is None:
+            build = self.get_finalized_command('build')
+            self.build_dir = os.path.join(build.build_base, 'locale')
+
+    def run(self):
+        self.mkpath(self.build_dir)
+
+        if self.locale:
+            files_to_compile = [self.locale+'.po']
+        else:
+            files_to_compile = [fn for fn in os.listdir(self.directory)
+                                if is_po_file(fn)]
+
+        for filename in files_to_compile:
+            locale = os.path.splitext(filename)[0]
+            output_file = os.path.join(self.build_dir, locale + '.mo')
+            msgfmt_command = [self.msgfmt_exe, '--check',
+                              '--output-file', output_file,
+                              os.path.join(self.directory, filename)]
+            self.spawn(msgfmt_command)
