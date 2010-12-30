@@ -46,6 +46,7 @@ setup(
     distclass=kde.Distribution,
     cmdclass={'install_kde_files': kde.InstallFiles,
               'install_kde_icons': kde.InstallIcons,
+              'install_kde_messages': kde.InstallMessages,
               'extract_messages': l10n.ExtractMessages,
               'init_catalog': l10n.InitCatalog,
               'compile_catalog': l10n.CompileCatalog},

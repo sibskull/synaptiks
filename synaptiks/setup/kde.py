@@ -132,6 +132,14 @@ class InstallFiles(KDEBaseCmd):
             self.copy_files(files, install_dir)
 
 
+class ThemeIcon(namedtuple('_ThemeIcon', 'theme size category filename')):
+    @property
+    def path(self):
+        return os.path.join(self.theme, self.size, self.category)
+
+StandAloneIcon = namedtuple('StandaloneIcon', 'filename')
+
+
 class InstallIcons(KDEBaseCmd):
     description = 'Install KDE icons'
 
@@ -155,16 +163,37 @@ class InstallIcons(KDEBaseCmd):
             self.copy_files([icon.filename], dest_dir)
 
 
-class ThemeIcon(namedtuple('_ThemeIcon', 'theme size category filename')):
-    @property
-    def path(self):
-        return os.path.join(self.theme, self.size, self.category)
+class InstallMessages(KDEBaseCmd):
+    description = 'Install KDE message catalogs'
 
-StandAloneIcon = namedtuple('StandaloneIcon', 'filename')
+    def finalize_options(self):
+        KDEBaseCmd.finalize_options(self)
+        compile_catalog = self.get_finalized_command('compile_catalog')
+        self.build_dir = compile_catalog.build_dir
+        domain = self.distribution.metadata.name
+        self.catalog_name = domain + '.mo'
+
+    def install_catalog(self, catalog):
+        locale = os.path.splitext(catalog)[0]
+        target_tail = os.path.join(locale, 'LC_MESSAGES')
+        target_directory = os.path.join(
+            self._get_install_directory('locale'), target_tail)
+        self.mkpath(target_directory)
+        target_file = os.path.join(target_directory, self.catalog_name)
+        source_file = os.path.join(self.build_dir, catalog)
+        destname, _ = self.copy_file(source_file, target_file)
+        self._outputs.append(destname)
+
+    def run(self):
+        self.run_command('compile_catalog')
+        compiled_catalogs = os.listdir(self.build_dir)
+        for catalog in compiled_catalogs:
+            self.install_catalog(catalog)
 
 
 from setuptools.command.install import install as install_cls
 install_cls.sub_commands.extend([
     ('install_kde_files', lambda s: True),
     ('install_kde_icons', lambda s: True),
+    ('install_kde_messages', lambda s: True),
     ])
