@@ -234,7 +234,7 @@ class UpdateCatalog(POWorkerCommand):
     def run(self):
         for catalog in self._get_catalogs():
             msgmerge_command = [
-                self.msgmerge_exe, '--width', '80', '--quiet',
+                self.msgmerge_exe, '--width', '80', '--quiet', '--backup=none',
                 '--update', os.path.join(self.directory, catalog),
                 self.template_file]
             self.spawn(msgmerge_command)
