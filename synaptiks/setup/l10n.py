@@ -64,19 +64,30 @@ def find_python_sources(directory):
                 yield filename
 
 
+def get_current_locale():
+    old_locale = locale.getlocale()
+    try:
+        locale.setlocale(locale.LC_ALL, '')
+        country_code, _ = locale.getlocale()
+    finally:
+        # always restore locale
+        locale.setlocale(locale.LC_ALL, old_locale)
+    return country_code.split('_')[0]
+
+
 class ExtractMessages(BaseCommand):
     description = 'Extract messages from source'
 
     user_options = [(b'xgettext-exe=', None, 'Path to xgettext'),
                     (b'extractrc-exe=', None, 'Path to extractrc'),
-                    (b'output-file=', None, 'Output file'),
+                    (b'directory=', None, 'The locale directory'),
                     (b'msgid-bugs-address=', None,
                      'Mail address for bug reports concerning messages')]
 
     def initialize_options(self):
         self.xgettext_exe = None
         self.extractrc_exe = None
-        self.output_file = None
+        self.directory = None
         self.msgid_bugs_address = None
 
     def finalize_options(self):
@@ -86,9 +97,10 @@ class ExtractMessages(BaseCommand):
         if self.extractrc_exe is None:
             self.extractrc_exe = self._find_executable(
                 'extractrc', 'Please install extractrc')
-        if self.output_file is None:
-            self.output_file = os.path.join(
-                'po', self.distribution.metadata.name + '.pot')
+        if self.directory is None:
+            self.directory = 'po'
+        self.template_file = os.path.join(
+            self.directory, self.distribution.metadata.name + '.pot')
 
     def run(self):
         output_directory = os.path.dirname(self.output_file)
@@ -109,7 +121,7 @@ class ExtractMessages(BaseCommand):
         xgettext_command = [
             self.xgettext_exe, '-ci18n', '--from-code', 'UTF-8',
             '--language', 'Python', '--no-wrap', '--sort-output',
-            '--kde', '--keyword', '--output', self.output_file,
+            '--kde', '--keyword', '--output', self.template_file,
             '--foreign-user',
             '--package-name', self.distribution.metadata.name,
             '--package-version', self.distribution.metadata.version]
@@ -136,15 +148,15 @@ class InitCatalog(BaseCommand):
     description = 'Init a new message catalog'
 
     user_options = [(b'msginit-exe=', None, 'Path to msginit'),
-                    (b'input-file=', None,
+                    (b'directory=', None, 'The locale directory'),
+                    (b'template_file=', None,
                      'Input filename (template catalog)'),
-                    (b'output-file=', None, 'Output filename'),
                     (b'locale=', None, 'Locale name')]
 
     def initialize_options(self):
         self.msginit_exe = None
-        self.output_file = None
-        self.input_file = None
+        self.directory = None
+        self.template_file = None
         self.locale = None
 
     def finalize_options(self):
@@ -152,29 +164,19 @@ class InitCatalog(BaseCommand):
             self.msginit_exe = self._find_executable(
                 'msginit', 'Please install gettext')
         if self.locale is None:
-            # find out, what locale the user is currently running on
-            old_locale = locale.getlocale()
-            try:
-                locale.setlocale(locale.LC_ALL, '')
-                country_code, _ = locale.getlocale()
-            finally:
-                # always restore locale
-                locale.setlocale(locale.LC_ALL, old_locale)
-            lang_code = country_code.split('_')[0]
-            self.locale = lang_code
-        if self.input_file is None:
-            extract_messages = self.get_finalized_command('extract_messages')
-            self.input_file = extract_messages.output_file
-        if self.output_file is None:
-            output_directory = os.path.dirname(self.input_file)
-            self.output_file = os.path.join(output_directory,
-                                            self.locale + '.po')
+            self.locale = get_current_locale()
+        extract_messages = self.get_finalized_command('extract_messages')
+        if self.directory is None:
+            self.directory = extract_messages.directory
+        if self.template_file is None:
+            self.template_file = extract_messages.template_file
+        self.output_file = os.path.join(self.directory, self.locale + '.po')
 
     def run(self):
         output_directory = os.path.dirname(self.output_file)
         self.mkpath(output_directory)
 
         msginit_command = [self.msginit_exe, '--locale', self.locale,
-                           '--input', self.input_file,
+                           '--input', self.template_file,
                            '--output', self.output_file]
         self.spawn(msginit_command)
