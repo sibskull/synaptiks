@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string comment="@title:window general touchpad settings">Hardware </string>
+   <string comment="@title:window general touchpad settings">Hardware</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -50,9 +50,6 @@
        </widget>
       </item>
      </layout>
-     <zorder>label_2</zorder>
-     <zorder>label_2</zorder>
-     <zorder>touchpad_circular_touchpad</zorder>
     </widget>
    </item>
    <item>
