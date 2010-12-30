@@ -185,27 +185,78 @@ class InitCatalog(BaseCommand):
         self.spawn(msginit_command)
 
 
-class CompileCatalog(BaseCommand):
-    description = 'Compile message catalog(s)'
+class POWorkerCommand(BaseCommand):
 
-    user_options = [(b'msgfmt-exe=', None, 'Path to msgfmt'),
-                    (b'directory=', None, 'The locale directory'),
-                    (b'locale=', None, 'Locale name'),
-                    (b'build-dir=', None, 'The build directory')]
+    user_options = [(b'directory=', None, 'The locale directory'),
+                    (b'locale=', None, 'Locale name')]
 
     def initialize_options(self):
-        self.msgfmt_exe = None
         self.directory = None
         self.locale = None
-        self.build_dir = None
 
     def finalize_options(self):
-        if self.msgfmt_exe is None:
-            self.msgfmt_exe = self._find_executable(
-                'msgfmt', 'Please install gettext')
         if self.directory is None:
             extract_messages = self.get_finalized_command('extract_messages')
             self.directory = extract_messages.directory
+
+    def _get_catalogs(self):
+        if self.locale:
+            return [self.locale+'.po']
+        else:
+            return [fn for fn in os.listdir(self.directory) if is_po_file(fn)]
+
+    def _get_locale(self, catalog):
+        return os.path.splitext(catalog)[0]
+
+
+class UpdateCatalog(POWorkerCommand):
+    description = 'Update message catalog(s)'
+
+    user_options = POWorkerCommand.user_options + \
+                   [(b'msgmerge-exe=', None, 'Path to msgmerge'),
+                    (b'template-file=', None,
+                     'Input filename (template catalog)')]
+
+    def initialize_options(self):
+        POWorkerCommand.initialize_options(self)
+        self.template_file = None
+        self.msgmerge_exe = None
+
+    def finalize_options(self):
+        POWorkerCommand.finalize_options(self)
+        if self.msgmerge_exe is None:
+            self.msgmerge_exe = self._find_executable(
+                'msgmerge', 'Please install gettext')
+        if self.template_file is None:
+            extract_messages = self.get_finalized_command('extract_messages')
+            self.template_file = extract_messages.template_file
+
+    def run(self):
+        for catalog in self._get_catalogs():
+            msgmerge_command = [
+                self.msgmerge_exe, '--no-wrap', '--sort-output', '--quiet',
+                '--update', os.path.join(self.directory, catalog),
+                self.template_file]
+            self.spawn(msgmerge_command)
+
+
+class CompileCatalog(POWorkerCommand):
+    description = 'Compile message catalog(s)'
+
+    user_options = POWorkerCommand.user_options + \
+                   [(b'msgfmt-exe=', None, 'Path to msgfmt'),
+                    (b'build-dir=', None, 'The build directory')]
+
+    def initialize_options(self):
+        POWorkerCommand.initialize_options(self)
+        self.msgfmt_exe = None
+        self.build_dir = None
+
+    def finalize_options(self):
+        POWorkerCommand.finalize_options(self)
+        if self.msgfmt_exe is None:
+            self.msgfmt_exe = self._find_executable(
+                'msgfmt', 'Please install gettext')
         if self.build_dir is None:
             build = self.get_finalized_command('build')
             self.build_dir = os.path.join(build.build_base, 'locale')
@@ -213,16 +264,10 @@ class CompileCatalog(BaseCommand):
     def run(self):
         self.mkpath(self.build_dir)
 
-        if self.locale:
-            files_to_compile = [self.locale+'.po']
-        else:
-            files_to_compile = [fn for fn in os.listdir(self.directory)
-                                if is_po_file(fn)]
-
-        for filename in files_to_compile:
-            locale = os.path.splitext(filename)[0]
+        for catalog in self._get_catalogs():
+            locale = self._get_locale(catalog)
             output_file = os.path.join(self.build_dir, locale + '.mo')
             msgfmt_command = [self.msgfmt_exe, '--check',
                               '--output-file', output_file,
-                              os.path.join(self.directory, filename)]
+                              os.path.join(self.directory, catalog)]
             self.spawn(msgfmt_command)
