@@ -11,13 +11,13 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>General</string>
+   <string comment="@title:window general tray application settings">General</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QCheckBox" name="kcfg_Autostart">
      <property name="text">
-      <string>Automatically start at logon</string>
+      <string comment="@option:check">Automatically start at logon</string>
      </property>
     </widget>
    </item>

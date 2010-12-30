@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string comment="@title:window general touchpad settings">Hardware</string>
+   <string comment="@title:window hardware settings and information">Hardware</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
