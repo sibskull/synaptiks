@@ -119,7 +119,7 @@ class ExtractMessages(BaseCommand):
 
         xgettext_command = [
             self.xgettext_exe, '-ci18n', '--from-code', 'UTF-8',
-            '--language', 'Python', '--no-wrap', '--sort-output',
+            '--language', 'Python', '--width', '80', '--sort-output',
             '--kde', '--keyword', '--output', self.template_file,
             '--foreign-user',
             '--package-name', self.distribution.metadata.name,
@@ -234,7 +234,7 @@ class UpdateCatalog(POWorkerCommand):
     def run(self):
         for catalog in self._get_catalogs():
             msgmerge_command = [
-                self.msgmerge_exe, '--no-wrap', '--sort-output', '--quiet',
+                self.msgmerge_exe, '--width', '80', '--sort-output', '--quiet',
                 '--update', os.path.join(self.directory, catalog),
                 self.template_file]
             self.spawn(msgmerge_command)
