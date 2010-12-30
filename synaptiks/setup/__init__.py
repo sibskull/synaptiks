@@ -38,8 +38,10 @@ from __future__ import (print_function, division, unicode_literals,
 
 import os
 from subprocess import Popen, PIPE
-from distutils.cmd import Command
+from distutils import log
 from distutils import spawn
+from distutils.cmd import Command
+from distutils.errors import DistutilsExecError
 
 
 def get_output(command):
@@ -63,3 +65,22 @@ class BaseCommand(Command):
         self.announce(' ...{0} found at {1}'.format(executable, exe_path))
         return exe_path
 
+    def spawn(self, command, catch_output=False, input=None):
+        log.info(' '.join(command))
+        if not self.dry_run:
+            options = dict()
+            if catch_output:
+                options.update(stdout=PIPE)
+            if input is not None:
+                options.update(stdin=PIPE)
+            try:
+                proc = Popen(command, **options)
+                output = proc.communicate(input)[0]
+                if proc.returncode != 0:
+                    raise DistutilsExecError(
+                        'command "{0}" failed with exit status {1}'.format(
+                            command[0], proc.returncode))
+                return output
+            except EnvironmentError as error:
+                raise DistutilsExecError(
+                    'command "{0}" failed: {1}'.format(command[0], error))

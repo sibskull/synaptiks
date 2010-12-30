@@ -36,10 +36,6 @@ from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
 import os
-import posixpath
-from subprocess import Popen, PIPE
-from distutils import log
-from distutils.errors import DistutilsExecError
 
 from synaptiks.setup import BaseCommand
 
@@ -90,29 +86,8 @@ class ExtractMessages(BaseCommand):
             self.extractrc_exe = self._find_executable(
                 'extractrc', 'Please install extractrc')
         if self.output_file is None:
-            self.output_file = posixpath.join(
+            self.output_file = os.path.join(
                 'po', self.distribution.metadata.name + '.pot')
-
-    def spawn(self, command, catch_output=False, input=None):
-        log.info(' '.join(command))
-        if not self.dry_run:
-            options = dict()
-            if catch_output:
-                options.update(stdout=PIPE)
-            if input is not None:
-                options.update(stdin=PIPE)
-            try:
-                proc = Popen(command, **options)
-                output = proc.communicate(input)[0]
-                if proc.returncode != 0:
-                    raise DistutilsExecError(
-                        'command "{0}" failed with exit status {1}'.format(
-                            command[0], proc.returncode))
-                return output
-            except EnvironmentError as error:
-                raise DistutilsExecError(
-                    'command "{0}" failed: {1}'.format(command[0], error))
-
 
     def run(self):
         output_directory = os.path.dirname(self.output_file)
