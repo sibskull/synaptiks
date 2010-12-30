@@ -59,7 +59,7 @@ class Distribution(_Distribution):
 
 
 class KDEBaseCmd(BaseCommand):
-    user_options = [('kde4-config-exe=', None,
+    user_options = [(b'kde4-config-exe=', None,
                      'Full path to kde4-config executable')]
 
     def initialize_options(self):
