@@ -30,7 +30,7 @@ import sys
 from setuptools import setup
 
 import synaptiks
-from synaptiks.setup import kde
+from synaptiks.setup import kde, l10n
 
 
 if sys.version_info[0] >= 3:
@@ -45,7 +45,8 @@ if sys.version_info[:2] < (2, 7):
 setup(
     distclass=kde.Distribution,
     cmdclass={'install_kde_files': kde.InstallFiles,
-              'install_kde_icons': kde.InstallIcons},
+              'install_kde_icons': kde.InstallIcons,
+              'extract_messages': l10n.ExtractMessages},
     name='synaptiks',
     version=synaptiks.__version__,
     url='http://synaptiks.lunaryorn.de',
