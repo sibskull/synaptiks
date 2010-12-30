@@ -116,9 +116,6 @@ class ExtractMessages(BaseCommand):
                 os.path.join(srcdir, fn) for fn in filenames
                 if is_ui_file(fn))
         rc_data = self.spawn(extract_rc_command, catch_output=True)
-        if rc_data:
-            with open('rc.py', 'w') as stream:
-                stream.write(rc_data)
 
         xgettext_command = [
             self.xgettext_exe, '-ci18n', '--from-code', 'UTF-8',
@@ -140,10 +137,14 @@ class ExtractMessages(BaseCommand):
                                     is_python_file(fn))
         if rc_data:
             xgettext_command.append('rc.py')
-        self.spawn(xgettext_command, input=rc_data)
+            with open('rc.py', 'w') as stream:
+                stream.write(rc_data)
 
-        if os.path.isfile('rc.py'):
-            os.unlink('rc.py')
+        try:
+            self.spawn(xgettext_command)
+        finally:
+            if os.path.isfile('rc.py'):
+                os.unlink('rc.py')
 
 
 class InitCatalog(BaseCommand):
