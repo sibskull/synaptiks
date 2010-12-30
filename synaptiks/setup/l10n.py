@@ -106,8 +106,7 @@ class ExtractMessages(BaseCommand):
             self.directory, self.distribution.metadata.name + '.pot')
 
     def run(self):
-        output_directory = os.path.dirname(self.output_file)
-        self.mkpath(output_directory)
+        self.mkpath(self.directory)
 
         build_py = self.get_finalized_command('build_py')
         extract_rc_command = [
