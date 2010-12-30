@@ -66,17 +66,15 @@ class BaseCommand(Command):
         self.announce(' ...{0} found at {1}'.format(executable, exe_path))
         return exe_path
 
-    def spawn(self, command, catch_output=False, input=None):
+    def spawn(self, command, catch_output=False):
         log.info(' '.join(command))
         if not self.dry_run:
             options = dict()
             if catch_output:
                 options.update(stdout=PIPE)
-            if input is not None:
-                options.update(stdin=PIPE)
             try:
                 proc = Popen(command, **options)
-                output = proc.communicate(input)[0]
+                output = proc.communicate()[0]
                 if proc.returncode != 0:
                     raise DistutilsExecError(
                         'command "{0}" failed with exit status {1}'.format(
