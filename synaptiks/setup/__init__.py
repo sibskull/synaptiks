@@ -56,6 +56,7 @@ def change_prefix(path, old_prefix, new_prefix):
 
 
 class BaseCommand(Command):
+
     def _find_executable(self, executable, missing_message=''):
         self.announce('Searching {0}...'.format(executable))
         exe_path = spawn.find_executable(executable)
