@@ -38,6 +38,8 @@ from __future__ import (print_function, division, unicode_literals,
 
 import os
 from subprocess import Popen, PIPE
+from distutils.cmd import Command
+from distutils import spawn
 
 
 def get_output(command):
@@ -49,3 +51,15 @@ def change_prefix(path, old_prefix, new_prefix):
     path = os.path.normpath(path)
     unprefixed_path = path[len(old_prefix)+1:]
     return os.path.normpath(os.path.join(new_prefix, unprefixed_path))
+
+
+class BaseCommand(Command):
+    def _find_executable(self, executable, missing_message=''):
+        self.announce('Searching {0}...'.format(executable))
+        exe_path = spawn.find_executable(executable)
+        if exe_path is None:
+            raise SystemExit('Could not find {0}. {1}'.format(
+                executable, missing_message))
+        self.announce(' ...{0} found at {1}'.format(executable, exe_path))
+        return exe_path
+

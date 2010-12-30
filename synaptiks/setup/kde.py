@@ -39,13 +39,11 @@ from __future__ import (print_function, division, unicode_literals,
 import os
 from collections import namedtuple
 
-from distutils import spawn
-from distutils.cmd import Command
 from distutils.util import change_root
 from distutils.errors import DistutilsSetupError
 from setuptools import Distribution as _Distribution
 
-from synaptiks.setup import get_output, change_prefix
+from synaptiks.setup import BaseCommand, get_output, change_prefix
 
 
 class Distribution(_Distribution):
@@ -60,7 +58,7 @@ class Distribution(_Distribution):
         _Distribution.__init__(self, attrs=attrs)
 
 
-class KDEBaseCmd(Command):
+class KDEBaseCmd(BaseCommand):
     user_options = [('kde4-config-exe=', None,
                      'Full path to kde4-config executable')]
 
@@ -70,12 +68,8 @@ class KDEBaseCmd(Command):
 
     def finalize_options(self):
         if self.kde4_config_exe is None:
-            self.announce('Searching kde4-config...')
-            self.kde4_config_exe = spawn.find_executable('kde4-config')
-            if self.kde4_config_exe is None:
-                raise SystemExit('Could not find kde4-config. '
-                                 'Is kdelibs properly installed?')
-            self.announce(' ...kde4-config found at %s' % self.kde4_config_exe)
+            self.kde4_config_exe = self._find_executable(
+                'kde4-config', 'Please install kdelibs')
         self.kde4_prefix = get_output([self.kde4_config_exe, '--prefix'])
         if not self.kde4_prefix:
             raise SystemExit('Could not determine KDE4 installation prefix')
