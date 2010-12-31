@@ -26,6 +26,7 @@
 
 
 import sys
+from codecs import open
 
 from setuptools import setup
 
@@ -40,6 +41,9 @@ if sys.version_info[0] >= 3:
 requirements = []
 if sys.version_info[:2] < (2, 7):
     requirements.append('argparse>=1.1')
+
+with open('README.rst', encoding='utf-8') as stream:
+    long_description = stream.read()
 
 
 setup(
@@ -56,7 +60,8 @@ setup(
     url='http://synaptiks.lunaryorn.de',
     author='Sebastian Wiesner',
     author_email='lunaryorn@googlemail.com',
-    description='A KDE touchpad management tool',
+    description='A KDE touchpad configuration and management tool',
+    long_description=long_description,
     platforms='X11',
     license='BSD',
     classifiers=[
