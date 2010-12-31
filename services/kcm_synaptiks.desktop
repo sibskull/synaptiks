@@ -15,5 +15,7 @@ X-KDE-System-Settings-Parent-Category-V2=input-devices
 X-KDE-Weight=65
 
 Name=Touchpad
+Name[de]=Touchpad
 
 Comment=Touchpad configuration
+Comment[de]=Touchpad-Konfiguration

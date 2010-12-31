@@ -12,5 +12,7 @@ X-DBUS-StartupType=Unique
 X-DBUS-ServiceName=de.lunaryorn.synaptiks
 
 Name=synaptiks
+Name[de]=synaptiks
 
 GenericName=Touchpad management
+GenericName[de]=Touchpad-Verwaltung
