@@ -11,7 +11,7 @@ Changelog
   touchpad management settings anymore.
 
 Miscellaneous changes
--------
+---------------------
 
 - Detect two-finger emulation support and enable two-finger configuration, if
   emulation is supported
