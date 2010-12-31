@@ -70,6 +70,7 @@ setup(
         'Intended Audience :: End Users/Desktop',
         'License :: OSI Approved :: BSD License',
         'Operating System :: Unix',
+        'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Topic :: Desktop Environment :: K Desktop Environment (KDE)',
         'Topic :: System :: Hardware',
