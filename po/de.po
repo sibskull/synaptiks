@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: synaptiks 0.5.0\n"
 "Report-Msgid-Bugs-To: lunaryorn@googlemail.com\n"
 "POT-Creation-Date: 2010-12-31 00:20+0100\n"
-"PO-Revision-Date: 2010-12-31 00:31+0100\n"
+"PO-Revision-Date: 2010-12-31 01:07+0100\n"
 "Last-Translator: Sebastian Wiesner <lunaryorn@googlemail.com>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -359,28 +359,28 @@ msgstr " s"
 #: rc.py:93
 msgctxt "@title:window scrolling settings"
 msgid "Scrolling"
-msgstr "Scrolling"
+msgstr "Scrollen"
 
 #. i18n: file: synaptiks/kde/ui/scrollingpage.ui:23
 #. i18n: ectx: property (title), widget (QGroupBox, horizontalScrollingGroup)
 #: rc.py:96
 msgctxt "@title:group"
 msgid "Horizontal scrolling"
-msgstr "Horizontales Scrolling"
+msgstr "Horizontales Scrollen"
 
 #. i18n: file: synaptiks/kde/ui/scrollingpage.ui:32
 #. i18n: ectx: property (text), widget (QCheckBox, touchpad_horizontal_two_finger_scrolling)
 #: rc.py:99
 msgctxt "@option:check"
 msgid "Horizontal scrolling with two fingers"
-msgstr "Horizontales Scrolling mit zwei Fingern"
+msgstr "Horizontales Scrollen mit zwei Fingern"
 
 #. i18n: file: synaptiks/kde/ui/scrollingpage.ui:39
 #. i18n: ectx: property (text), widget (QCheckBox, touchpad_horizontal_edge_scrolling)
 #: rc.py:102
 msgctxt "@option:check"
 msgid "Horizontal scrolling at bottom edge"
-msgstr "Horizontales Scrolling an der unteren Kante"
+msgstr "Horizontales Scrollen an der unteren Kante"
 
 #. i18n: file: synaptiks/kde/ui/scrollingpage.ui:46
 #. i18n: ectx: property (label), widget (KIntNumInput, touchpad_horizontal_scrolling_distance)
@@ -396,21 +396,21 @@ msgstr "Bewegungsdistanz, um eine einzelne Zeile zu scrollen"
 #: rc.py:108
 msgctxt "@title:group"
 msgid "Vertical scrolling"
-msgstr "Vertikales Scrolling"
+msgstr "Vertikales Scrollen"
 
 #. i18n: file: synaptiks/kde/ui/scrollingpage.ui:77
 #. i18n: ectx: property (text), widget (QCheckBox, touchpad_vertical_two_finger_scrolling)
 #: rc.py:111
 msgctxt "@option:check"
 msgid "Vertical scrolling with two fingers"
-msgstr "Vertikales Scrolling mit zwei Fingern"
+msgstr "Vertikales Scrollen mit zwei Fingern"
 
 #. i18n: file: synaptiks/kde/ui/scrollingpage.ui:84
 #. i18n: ectx: property (text), widget (QCheckBox, touchpad_vertical_edge_scrolling)
 #: rc.py:114
 msgctxt "@option:check"
 msgid "Vertical scrolling at right edge"
-msgstr "Vertikales Scrolling an der rechten Kante"
+msgstr "Vertikales Scrollen an der rechten Kante"
 
 #. i18n: file: synaptiks/kde/ui/scrollingpage.ui:115
 #. i18n: ectx: property (title), widget (QGroupBox, coasting)
@@ -446,14 +446,14 @@ msgstr ""
 #: rc.py:132
 msgctxt "@option:check"
 msgid "Horizontal circular scrolling"
-msgstr "Horizontales kreisendes Scrolling"
+msgstr "Horizontales kreisendes Scrollen"
 
 #. i18n: file: synaptiks/kde/ui/scrollingpage.ui:164
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: rc.py:135
 msgctxt "@label:listbox"
 msgid "Area, which triggers circular scrolling"
-msgstr "Bereich, der kreisendes Scrolling aktiviert"
+msgstr "Bereich, der kreisendes Scrollen aktiviert"
 
 #. i18n: file: synaptiks/kde/ui/scrollingpage.ui:175
 #. i18n: ectx: property (text), item, widget (KComboBox, touchpad_circular_scrolling_trigger)
