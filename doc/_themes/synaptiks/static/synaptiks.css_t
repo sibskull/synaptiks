@@ -1,0 +1,68 @@
+/**
+ * Sphinx stylesheet -- pig theme
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
+
+@import url("default.css");
+
+/* -- page layout ----------------------------------------------------------- */
+
+div.logoheader {
+    background-color: white;
+    text-align: left;
+    padding: 10px 15px 10px 15px;
+}
+
+div.body {
+    {%- if theme_rightsidebar|tobool %}
+    border-right: 1px solid {{ theme_bordercolor }};
+    {%- else %}
+    border-left: 1px solid {{ theme_bordercolor }}
+    {%- endif %}
+}
+
+div.sphinxsidebar {
+    {%- if theme_stickysidebar|tobool %}
+    top: 150px;
+    {%- endif %}
+}
+
+div.related {
+    border-top: 1px solid {{ theme_bordercolor }};
+    border-bottom: 1px solid {{ theme_bordercolor }};
+}
+
+/* -- general body styles --------------------------------------------------- */
+
+
+a.headerlink {
+    color: {{ theme_linkcolor }};
+}
+
+a.headerlink:hover {
+    background-color: {{ theme_linkcolor }};
+}
+
+.issue-closed {
+    text-decoration: line-through;
+}
+
+.issue-closed:hover {
+    text-decoration: line-through underline;
+}
+
+.issue-closed:visited {
+    text-decoration: line-through;
+}
+
+/* -- other body styles ----------------------------------------------------- */
+
+div.body h1,
+div.body h2,
+div.body h3,
+div.body h4,
+div.body h5,
+div.body h6 {
+    background-color: #ffffff;
+    border-bottom: none;
+}
