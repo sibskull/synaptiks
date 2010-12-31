@@ -20,8 +20,8 @@ interested developers.
 Requirements
 ============
 
-synaptiks is implemented in Python_ atop of PyQt4_ and PyKDE4_ and consequently
-requires the following native libraries:
+synaptiks is implemented in Python_ atop of PyQt4_ and PyKDE4_ and requires the
+following native libraries:
 
 - Python_ (at least 2.6, Python 3 is *not* supported)
 - PyQt4_ (at least 4.8, 4.7 should work too, but is untested)
@@ -36,8 +36,8 @@ Moreover some additional Python modules are required:
 - argparse_ (at least 1.1, not required, if Python 2.7 is installed)
 
 It is recommended, that you also install these modules with the package
-manager, if the are available.  However, this is not strictly required, because
-the installation script will automatically install any missing Python module.
+manager, if available.  However, this is not strictly required, because the
+installation script will automatically install any missing Python module.
 
 Additionally xf86-input-synaptics 1.3 or newer must be installed and configured
 as touchpad driver.  synaptiks will not work, if the touchpad is managed by a
