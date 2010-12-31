@@ -46,6 +46,9 @@ from PyKDE4.kdecore import tr2i18n
 class PyKDEProperties(Properties):
     def _string(self, prop, notr=None):
         text = prop.text
+        if text is None:
+            return ''
+
         if prop.get('notr', notr) == 'true':
             return text
         if text:
