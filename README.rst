@@ -21,14 +21,16 @@ Requirements
 ============
 
 synaptiks is implemented in Python_ atop of PyQt4_ and PyKDE4_ and requires the
-following native libraries:
+following native libraries and tools:
 
 - Python_ (at least 2.6, Python 3 is *not* supported)
 - PyQt4_ (at least 4.8, 4.7 should work too, but is untested)
 - PyKDE4_ (at least 4.5)
 - libXi (at least 1.4, earlier releases are untested)
+- gettext_ (only required during installation to compile the translations, can
+  be removed after successful installation)
 
-These libraries must be installed through the package manager of your
+These libraries and tools must be installed through the package manager of your
 distribution before installing synaptiks.
 
 Moreover some additional Python modules are required:
@@ -99,6 +101,7 @@ also send patches through the issue tracker or through email.
 .. _PyQt4: http://riverbankcomputing.co.uk/software/pyqt/intro
 .. _PyKDE4: http://techbase.kde.org/Development/Languages/Python
 .. _argparse: http://code.google.com/p/argparse/
+.. _gettext: http://www.gnu.org/software/gettext/
 .. _pip: http://pip.openplans.org/
 .. _issue tracker: https://github.com/lunaryorn/synaptiks/issues
 .. _GitHub: https://github.com/lunaryorn/synaptiks
