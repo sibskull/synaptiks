@@ -1,4 +1,7 @@
-include *.py
+include COPYING README.rst CHANGES.rst
+include synaptiks.desktop synaptiks.notifyrc
 recursive-include synaptiks/ *.py *.ui
-include COPYING
-include *.desktop
+recursive-include autostart/ *.desktop
+recursive-include services/ *.py *.desktop
+recursive-include pics/ *.svgz
+recursive-include po/ *.po *.pot
