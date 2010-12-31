@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: synaptiks 0.5.0\n"
 "Report-Msgid-Bugs-To: lunaryorn@googlemail.com\n"
 "POT-Creation-Date: 2010-12-31 00:20+0100\n"
-"PO-Revision-Date: 2010-12-31 01:07+0100\n"
+"PO-Revision-Date: 2010-12-31 14:43+0100\n"
 "Last-Translator: Sebastian Wiesner <lunaryorn@googlemail.com>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -329,7 +329,7 @@ msgstr "Untere rechte Ecke"
 msgctxt "@option:check"
 msgid ""
 "Drag items by tapping the touchpad and then immediately touching it again"
-msgstr "Elemente ziehen, indem das Touchpad kurz angetippt und anschließend sofort wieder berührt wird"
+msgstr "Elemente durch kurzes Antippen und anschließendes Berühren ziehen"
 
 #. i18n: file: synaptiks/kde/ui/tappingpage.ui:211
 #. i18n: ectx: property (text), widget (QCheckBox, touchpad_locked_drags)
@@ -338,7 +338,7 @@ msgctxt "@option:check"
 msgid ""
 "Continue dragging when releasing the finger until the touchpad is touched "
 "again"
-msgstr "Ziehen nach dem Lösen des Fingers fortsetzen, bis das Touchpad wieder berührt wird"
+msgstr "Ziehen nach dem Lösen des Fingers bis zur erneuten Berührung fortsetzen"
 
 #. i18n: file: synaptiks/kde/ui/tappingpage.ui:221
 #. i18n: ectx: property (label), widget (KDoubleNumInput, touchpad_locked_drags_timeout)
