@@ -41,12 +41,13 @@ import sys
 import sip
 sip.setapi('QString', 2)
 sip.setapi('QVariant', 2)
-from PyQt4.QtGui import QWidget, QAction
+from PyQt4.QtGui import QWidget
 from PyKDE4.kdecore import KCmdLineArgs, ki18nc, i18nc
 from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem,
                           KConfigDialog, KShortcutsDialog,
-                          KShortcut, KShortcutsEditor, KStandardAction,
-                          KToggleAction, KHelpMenu, KIcon, KIconLoader,
+                          KShortcutsEditor, KShortcut,
+                          KStandardAction, KToggleAction, KAction,
+                          KHelpMenu, KIcon, KIconLoader,
                           KNotification, KConfigSkeleton)
 
 from synaptiks.qx11 import QX11Display
@@ -156,7 +157,7 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
         # not found, because KAction re-defines triggered with some other
         # signature.  I consider this an issue in PyQt/PyKDE, and the following
         # line a dirty workaround.
-        sip.cast(touchpad_on, QAction).triggered[bool].connect(
+        super(KAction, touchpad_on).triggered[bool].connect(
             self.toggle_touchpad)
         self.contextMenu().addAction(touchpad_on)
 
