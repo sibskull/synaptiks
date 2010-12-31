@@ -24,7 +24,7 @@ synaptiks is implemented in Python_ atop of PyQt4_ and PyKDE4_ and requires the
 following native libraries and tools:
 
 - Python_ (at least 2.6, Python 3 is *not* supported)
-- PyQt4_ (at least 4.8, 4.7 should work too, but is untested)
+- PyQt4_ (at least 4.7)
 - PyKDE4_ (at least 4.5)
 - libXi (at least 1.4, earlier releases are untested)
 - gettext_ (only required during installation to compile the translations, can
