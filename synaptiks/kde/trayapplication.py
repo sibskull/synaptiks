@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -83,9 +83,6 @@ class SynaptiksConfigDialog(KConfigDialog):
 
         self.touchpad_config_widget = TouchpadConfigurationWidget(
             self.touchpad_config, self)
-        self._touchpad_config_changed = False
-        self.touchpad_config_widget.configurationChanged.connect(
-            self._touchpad_config_changed_slot)
         self.touchpad_config_widget.configurationChanged.connect(
             self.settingsChangedSlot)
 
@@ -94,9 +91,6 @@ class SynaptiksConfigDialog(KConfigDialog):
         for page_widget, page_icon_name in pages:
             page = self.addPage(page_widget, page_widget.windowTitle())
             page.setIcon(KIcon(page_icon_name))
-
-    def _touchpad_config_changed_slot(self, has_changed):
-        self._touchpad_config_changed = has_changed
 
     def hasChanged(self):
         return (KConfigDialog.hasChanged(self) or
