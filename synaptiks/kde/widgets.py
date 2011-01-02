@@ -355,6 +355,8 @@ class TouchpadConfigurationWidget(KTabWidget):
         """
         config = self._get_mapping_from_widgets()
         self.touchpad_config.update(config)
+        self._changed_widgets.clear()
+        self.configurationChanged.emit(self.is_configuration_changed)
 
 
 class TouchpadConfigurationKCM(KCModule):
