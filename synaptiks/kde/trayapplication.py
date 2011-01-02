@@ -41,7 +41,7 @@ import sys
 from PyQt4.QtGui import QWidget
 from PyKDE4.kdecore import KCmdLineArgs, ki18nc, i18nc
 from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem,
-                          KConfigDialog, KShortcutsDialog,
+                          KConfigDialog, KShortcutsDialog, KMessageBox,
                           KShortcutsEditor, KShortcut,
                           KStandardAction, KToggleAction, KAction,
                           KHelpMenu, KIcon, KIconLoader,
@@ -130,23 +130,40 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
         self.setIconByName('synaptiks')
         self.setCategory(KStatusNotifierItem.Hardware)
         self.setStatus(KStatusNotifierItem.Passive)
+        self.setup_actions()
 
-        self.touchpad = Touchpad.find_first(QX11Display())
         self._config = SynaptiksTrayConfiguration(self)
 
-        self.setup_actions()
-        self.activateRequested.connect(self.show_configuration_dialog)
+        try:
+            self.touchpad = Touchpad.find_first(QX11Display())
+        except Exception as error:
+            # show an error message
+            from synaptiks.kde.error import get_localized_error_message
+            error_message = get_localized_error_message(error)
+            options = KMessageBox.Options(KMessageBox.Notify |
+                                          KMessageBox.AllowLink)
+            KMessageBox.error(None, error_message, '', options)
+            # disable all touchpad related actions
+            for act in (self.touchpad_on_action, self.preferences_action):
+                act.setEnabled(False)
+            # disable synaptiks autostart, the user can still start synaptiks
+            # manually again, if the reason of the error is fixed
+            self._config.findItem('Autostart').setProperty(False)
+            self._config.writeConfig()
+        else:
+            self.touchpad_on_action.setChecked(self.touchpad.off == 0)
+            self.activateRequested.connect(self.show_configuration_dialog)
 
     def setup_actions(self):
-        touchpad_on = KToggleAction(
+        self.touchpad_on_action = KToggleAction(
             i18nc('@action:inmenu', 'Touchpad on'), self.actionCollection())
-        touchpad_on.setChecked(self.touchpad.off == 0)
-        self.actionCollection().addAction('touchpadOn', touchpad_on)
-        touchpad_on.setGlobalShortcut(
+        self.actionCollection().addAction(
+            'touchpadOn', self.touchpad_on_action)
+        self.touchpad_on_action.setGlobalShortcut(
             KShortcut(i18nc('Touchpad toggle shortcut', 'Ctrl+Alt+T')))
-        super(KAction, touchpad_on).triggered[bool].connect(
+        super(KAction, self.touchpad_on_action).triggered[bool].connect(
             self.toggle_touchpad)
-        self.contextMenu().addAction(touchpad_on)
+        self.contextMenu().addAction(self.touchpad_on_action)
 
         self.contextMenu().addSeparator()
 
@@ -155,10 +172,11 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
         shortcuts.triggered.connect(self.show_shortcuts_dialog)
         self.contextMenu().addAction(shortcuts)
 
-        preferences = self.actionCollection().addAction(
+        self.preferences_action = self.actionCollection().addAction(
             KStandardAction.Preferences, 'preferences')
-        preferences.triggered.connect(self.show_configuration_dialog)
-        self.contextMenu().addAction(preferences)
+        self.preferences_action.triggered.connect(
+            self.show_configuration_dialog)
+        self.contextMenu().addAction(self.preferences_action)
 
         help_menu = KHelpMenu(self.contextMenu(), KCmdLineArgs.aboutData())
         self.contextMenu().addMenu(help_menu.menu())
