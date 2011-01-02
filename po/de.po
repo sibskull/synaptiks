@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: synaptiks 0.5.0\n"
 "Report-Msgid-Bugs-To: lunaryorn@googlemail.com\n"
-"POT-Creation-Date: 2010-12-31 00:20+0100\n"
-"PO-Revision-Date: 2010-12-31 14:43+0100\n"
+"POT-Creation-Date: 2011-01-02 20:24+0100\n"
+"PO-Revision-Date: 2011-01-02 20:24+0100\n"
 "Last-Translator: Sebastian Wiesner <lunaryorn@googlemail.com>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -16,132 +16,180 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: synaptiks/kde/trayapplication.py:150
+#: synaptiks/kde/error.py:48
+msgctxt "@info NoTouchpadError error message"
+msgid ""
+"<title>No touchpad found</title><para>No touchpad was found in this system.  "
+"If the system has a touchpad, please make sure, that the "
+"<application>synaptics</application> driver is properly installed and "
+"configured.</para><para>If your touchpad is not found, though the driver is "
+"installed and configured correctly, please compile detailed information about "
+"your touchpad hardware and report this issue to the <link url=\"%1\">issue "
+"tracker</link>.</para>"
+msgstr ""
+"<title>Kein Touchpad gefunden</title><para>Es wurde kein Touchpad in diesem "
+"System gefunden.  Besitzt das System ein Touchpad, so stellen Sie bitte "
+"sicher, dass der <application>synaptics</application> Treiber korrekt "
+"installiert und eingerichtet ist.</para><para>Wurde das Touchpad nicht "
+"gefunden, obwohl der Treiber korrekt installiert und eingerichtet ist, so "
+"stellen Sie bitte detaillierte Informationen über Ihr Touchpad zusammen und "
+"melden den Fehler in der <link url=\"%1\">Fehlerverwaltung</link>.</para>"
+
+#: synaptiks/kde/error.py:60
+msgctxt "@info XInputVersionError error message"
+msgid ""
+"<title>Version error</title><para>The version of the XInput extension "
+"installed on your system is too old.  Version %1 was found, but at least "
+"version %2 is required.</para><para>If you want to be able to configure your "
+"touchpad, you have to upgrade your system to a recent release of the Xorg "
+"display server.  This may likely involve a complete upgrade of your system.  "
+"Please excuse this inconvenience, but there is no way to make touchpad "
+"configuration work on systems as old as yours.</para>"
+msgstr ""
+"<title>Versionsfehler</title><para>Die Version der XInput-Erweiterung Ihres "
+"Systems ist zu alt.  Es wurde Version %1 gefunden, doch Version %2 wird "
+"benötigt.</para><para>Möchten Sie Ihr Touchpad konfigurieren, so müssen Sie "
+"Ihr System auf eine aktuelle Version des Xorg-Servers aktualisieren.  Dies "
+"erfordert wahrscheinlich eine vollständige Aktualisierung Ihres Systems.  "
+"Bitte verzeihen Sie diese Umstände, doch es gibt keine andere Möglichkeit, "
+"das Touchpad auf einem derartig alten System zu konfigurieren.</para>"
+
+#: synaptiks/kde/error.py:73
+msgctxt "@info error message for unexpected errors"
+msgid ""
+"<title>Unexpected error occurred</title><para>An unexpected error occurred: "
+"<message>%2</message></para><para>Please report this issue to the <link url="
+"\"%1\">issue tracker</link>.</para>"
+msgstr ""
+"<title>Unerwarteter Fehler aufgetreten</title><para>Ein unerwarteter Fehler "
+"ist aufgetreten: <message>%2</message></para><para>Bitte melden Sie diesen "
+"Fehler in der <link url=\"%1\">Fehlerverwaltung</link>.</para>"
+
+#: synaptiks/kde/trayapplication.py:142
 msgctxt "@action:inmenu"
 msgid "Touchpad on"
 msgstr "Touchpad eingeschaltet"
 
-#: synaptiks/kde/trayapplication.py:154
+#: synaptiks/kde/trayapplication.py:146
 msgctxt "Touchpad toggle shortcut"
 msgid "Ctrl+Alt+T"
 msgstr "Ctrl+Alt+T"
 
-#: synaptiks/kde/trayapplication.py:188
+#: synaptiks/kde/trayapplication.py:176
 msgctxt "touchpad switched notification"
 msgid "Touchpad switched on"
 msgstr "Touchpad eingeschaltet"
 
-#: synaptiks/kde/trayapplication.py:190
+#: synaptiks/kde/trayapplication.py:178
 msgctxt "touchpad switched notification"
 msgid "Touchpad switched off"
 msgstr "Touchpad ausgeschaltet"
 
-#: synaptiks/kde/trayapplication.py:239
+#: synaptiks/kde/trayapplication.py:227
 msgctxt "tray application description"
 msgid "touchpad management application"
 msgstr "Anwendung zur Touchpad-Verwaltung"
 
-#: synaptiks/kde/__init__.py:59
+#: synaptiks/kde/__init__.py:56
 msgctxt "Program name"
 msgid "synaptiks"
 msgstr "synaptiks"
 
-#: synaptiks/kde/__init__.py:63
+#: synaptiks/kde/__init__.py:60
 msgctxt "About data copyright"
 msgid "Copyright © 2009, 2010 Sebastian Wiesner"
 msgstr "Copyright © 2009, 2010 Sebastian Wiesner"
 
-#: synaptiks/kde/__init__.py:66
+#: synaptiks/kde/__init__.py:63
 msgctxt "custom author text plain text"
-msgid ""
-"Please report bugs to the issue tracker at https://github.com/lunaryorn/"
-"synaptiks/issues"
-msgstr "Bitte melden Sie Fehler in der Fehlerverwaltung unter https://github.com/lunaryorn/synaptiks/issues"
+msgid "Please report bugs to the issue tracker at %1"
+msgstr "Bitte melden Sie Fehler in der Fehlerverwaltung unter %1"
 
-#: synaptiks/kde/__init__.py:69
-msgctxt "custom author text rich text"
-msgid ""
-"Please report bugs to the <a href=\"https://github.com/lunaryorn/synaptiks/"
-"issues\">issue tracker</a>."
-msgstr "Bitte melden Sie Fehler in der <a href=\"https://github.com/lunaryorn/synaptiks/issues\">Fehlerverwaltung</a>."
+#: synaptiks/kde/__init__.py:66
+msgctxt "@info custom author text rich text"
+msgid "Please report bugs to the <link url=\"%1\">issue tracker</link>."
+msgstr ""
+"Bitte melden Sie Fehler in der <link url=\"%1\">Fehlerverwaltung</link>."
 
-#: synaptiks/kde/__init__.py:74
+#: synaptiks/kde/__init__.py:72
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
 msgstr "Sebastian Wiesner"
 
-#: synaptiks/kde/__init__.py:75
+#: synaptiks/kde/__init__.py:73
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
 msgstr "lunaryorn@googlemail.com"
 
-#: synaptiks/kde/__init__.py:76
+#: synaptiks/kde/__init__.py:74
 msgctxt "author name"
 msgid "Sebastian Wiesner"
 msgstr "Sebastian Wiesner"
 
-#: synaptiks/kde/__init__.py:77
+#: synaptiks/kde/__init__.py:75
 msgctxt "author task"
 msgid "Maintainer"
 msgstr "Kernentwickler"
 
-#: synaptiks/kde/__init__.py:79
+#: synaptiks/kde/__init__.py:77
 msgctxt "credit name"
 msgid "Valentyn Pavliuchenko"
 msgstr "Valentyn Pavliuchenko"
 
-#: synaptiks/kde/__init__.py:80
+#: synaptiks/kde/__init__.py:78
 msgctxt "credit task"
 msgid "Debian packaging, russian translation, bug reporting and testing"
 msgstr "Debian-Paketierung, russische Übersetzung, Fehlermeldungen und Testen"
 
-#: synaptiks/kde/widgets.py:86
+#: synaptiks/kde/widgets.py:83
 msgctxt "@item:inlistbox mouse button triggered by tapping"
 msgid "Disabled"
 msgstr "Deaktiviert"
 
 # Linke Maustaste
-#: synaptiks/kde/widgets.py:88
+#: synaptiks/kde/widgets.py:85
 msgctxt "@item:inlistbox mouse button triggered by tapping"
 msgid "Left mouse button"
 msgstr "Linke Maustaste"
 
-#: synaptiks/kde/widgets.py:90
+#: synaptiks/kde/widgets.py:87
 msgctxt "@item:inlistbox mouse button triggered by tapping"
 msgid "Middle mouse button"
 msgstr "Mittlere Maustaste"
 
-#: synaptiks/kde/widgets.py:92
+#: synaptiks/kde/widgets.py:89
 msgctxt "@item:inlistbox mouse button triggered by tapping"
 msgid "Right mouse button"
 msgstr "Rechte Maustaste"
 
-#: synaptiks/kde/widgets.py:122
+#: synaptiks/kde/widgets.py:119
 msgctxt "@info touchpad name"
 msgid "<title><resources>%1</resource></title>"
 msgstr "<title><resources>%1</resource></title>"
 
-#: synaptiks/kde/widgets.py:167
+#: synaptiks/kde/widgets.py:164
 msgctxt "@item coasting speed special value"
 msgid "Disabled"
 msgstr "Deaktiviert"
 
-#: synaptiks/kde/widgets.py:251
+#: synaptiks/kde/widgets.py:248
 msgctxt "@title:window"
 msgid "Touchpad configuration"
 msgstr "Touchpad-Konfiguration"
 
-#: synaptiks/kde/widgets.py:382
+#: synaptiks/kde/widgets.py:375
 msgctxt "kcmodule description"
 msgid "Touchpad configuration"
 msgstr "Touchpad-Konfiguration"
 
-#: synaptiks/kde/widgets.py:385
+#: synaptiks/kde/widgets.py:379
 msgctxt "@info:tooltip synaptiks kcmodule"
 msgid ""
 "<title>Touchpad configuration</title><para>This module lets you configure "
 "your touchpad.</para>"
-msgstr "<title>Touchpad-Einstellungen</title><para>Dieses Modul erlaubt Ihnen, Ihr Touchpad zu konfigurieren.</para>"
+msgstr ""
+"<title>Touchpad-Einstellungen</title><para>Dieses Modul erlaubt Ihnen, Ihr "
+"Touchpad zu konfigurieren.</para>"
 
 #. i18n: file: synaptiks/kde/ui/hardwarepage.ui:14
 #. i18n: ectx: property (windowTitle), widget (QWidget, GeneralPage)
@@ -265,7 +313,9 @@ msgstr "Allgemeine Tipp-Einstellungen"
 #: rc.py:54
 msgctxt "@option:check"
 msgid "Make single taps faster and double taps slower (fast taps)"
-msgstr "Einfaches Tippen auf Kosten des zweifachen Tippens beschleunigen (schnelles Tippen)"
+msgstr ""
+"Einfaches Tippen auf Kosten des zweifachen Tippens beschleunigen (schnelles "
+"Tippen)"
 
 #. i18n: file: synaptiks/kde/ui/tappingpage.ui:36
 #. i18n: ectx: property (title), widget (QGroupBox, tappingButtonGroup)
@@ -525,7 +575,9 @@ msgctxt "@info:tooltip"
 msgid ""
 "Move the finger by this angle on the touchpad to scroll a single line.  The "
 "higher the angle, the slower circular scrolling becomes"
-msgstr "Eine Bewegung des Fingers um diesen Winkel scrollt eine einzelne Zeile.  Je höher der Winkel, desto langsamer wird das kreisende Scrollen"
+msgstr ""
+"Eine Bewegung des Fingers um diesen Winkel scrollt eine einzelne Zeile.  Je "
+"höher der Winkel, desto langsamer wird das kreisende Scrollen"
 
 #. i18n: file: synaptiks/kde/ui/scrollingpage.ui:228
 #. i18n: ectx: property (whatsThis), widget (KDoubleNumInput, touchpad_circular_scrolling_distance)
@@ -534,7 +586,9 @@ msgctxt "@info:whatsthis"
 msgid ""
 "Move the finger by this angle on the touchpad to scroll a single line.  The "
 "higher the angle, the slower circular scrolling becomes"
-msgstr "Eine Bewegung des Fingers um diesen Winkel scrollt eine einzelne Zeile.  Je höher der Winkel, desto langsamer wird das kreisende Scrollen"
+msgstr ""
+"Eine Bewegung des Fingers um diesen Winkel scrollt eine einzelne Zeile.  Je "
+"höher der Winkel, desto langsamer wird das kreisende Scrollen"
 
 #. i18n: file: synaptiks/kde/ui/scrollingpage.ui:231
 #. i18n: ectx: property (label), widget (KDoubleNumInput, touchpad_circular_scrolling_distance)
@@ -599,7 +653,9 @@ msgctxt "@info:tooltip"
 msgid ""
 "The acceleration factor defines the acceleration between minimum and maximum "
 "speed"
-msgstr "Der Beschleunigungsfaktor bestimmt die Beschleunigung zwischen minimaler und maximaler Geschwindigkeit"
+msgstr ""
+"Der Beschleunigungsfaktor bestimmt die Beschleunigung zwischen minimaler und "
+"maximaler Geschwindigkeit"
 
 #. i18n: file: synaptiks/kde/ui/motionpage.ui:61
 #. i18n: ectx: property (whatsThis), widget (KDoubleNumInput, touchpad_acceleration_factor)
@@ -608,7 +664,10 @@ msgctxt "@info:whatsthis"
 msgid ""
 "The acceleration factor defines the acceleration between minimum and maximum "
 "speed.  If minimum and maximum speed are equal, acceleration is not used."
-msgstr "Der Beschleunigungsfaktor bestimmt die Beschleunigung zwischen minimaler und maximaler Geschwindigkeit.  Sind minimale und maximale Geschwindigkeit identisch, so wird keine Beschleunigung verwendet"
+msgstr ""
+"Der Beschleunigungsfaktor bestimmt die Beschleunigung zwischen minimaler und "
+"maximaler Geschwindigkeit.  Sind minimale und maximale Geschwindigkeit "
+"identisch, so wird keine Beschleunigung verwendet"
 
 #. i18n: file: synaptiks/kde/ui/motionpage.ui:64
 #. i18n: ectx: property (label), widget (KDoubleNumInput, touchpad_acceleration_factor)
