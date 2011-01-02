@@ -38,4 +38,5 @@ from __future__ import (print_function, division, unicode_literals,
 
 __version__ = '0.5.0'
 
+WEBSITE_URL = 'http://www.lunaryorn.de'
 ISSUE_TRACKER_URL = 'https://github.com/lunaryorn/synaptiks/issues'

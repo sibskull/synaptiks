@@ -1,6 +1,6 @@
 #!/usr/bin/python2
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -57,7 +57,7 @@ setup(
               'update_catalog': l10n.UpdateCatalog},
     name='synaptiks',
     version=synaptiks.__version__,
-    url='http://synaptiks.lunaryorn.de',
+    url=synaptiks.WEBSITE_URL,
     author='Sebastian Wiesner',
     author_email='lunaryorn@googlemail.com',
     description='A KDE touchpad configuration and management tool',

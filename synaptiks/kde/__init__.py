@@ -66,7 +66,7 @@ def make_about_data(description):
                'Please report bugs to the '
                '<a href="%1">issue tracker</a>.').subs(
             synaptiks.ISSUE_TRACKER_URL))
-    about.setHomepage('http://synaptiks.lunaryorn.de')
+    about.setHomepage(synaptiks.WEBSITE_URL)
     about.setOrganizationDomain('lunaryorn.de')
 
     about.setTranslator(ki18nc('NAME OF TRANSLATORS', 'Your names'),
