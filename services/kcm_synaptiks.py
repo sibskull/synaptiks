@@ -35,14 +35,9 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
-from synaptiks.qx11 import QX11Display
-from synaptiks.touchpad import Touchpad
-from synaptiks.config import TouchpadConfiguration
-from synaptiks.kde.widgets import TouchpadConfigurationKCM
+
+from synaptiks.kde.widgets import make_kcm_widget
 
 
 def CreatePlugin(widget_parent, parent, component_data):
-    # FIXME: error handling!
-    touchpad = Touchpad.find_first(QX11Display())
-    config = TouchpadConfiguration(touchpad)
-    return TouchpadConfigurationKCM(config, component_data, widget_parent)
+    return make_kcm_widget(component_data, widget_parent)

@@ -39,8 +39,8 @@ from __future__ import (print_function, division, unicode_literals,
 import os
 from functools import partial
 
-from PyQt4.QtCore import pyqtSignal, QRegExp
-from PyQt4.QtGui import QWidget, QHBoxLayout
+from PyQt4.QtCore import pyqtSignal, Qt, QRegExp
+from PyQt4.QtGui import QWidget, QHBoxLayout, QLabel, QSizePolicy
 from PyKDE4.kdecore import KGlobal, ki18nc, i18nc
 from PyKDE4.kdeui import KIconLoader, KTabWidget, KComboBox, KCModule
 
@@ -359,7 +359,58 @@ class TouchpadConfigurationWidget(KTabWidget):
         self.configurationChanged.emit(self.is_configuration_changed)
 
 
-class TouchpadConfigurationKCM(KCModule):
+class SynaptiksKCMBase(KCModule):
+    """
+    Base class for synaptiks kcm widgets.
+
+    This class sets up about data and l10n for synaptiks kcm widgets.
+    """
+
+    def __init__(self, component_data, parent=None):
+        KCModule.__init__(self, component_data, parent)
+        KGlobal.locale().insertCatalog('synaptiks')
+        # keep a reference to the generated about data to prevent it from being
+        # deleted by the GC
+        self._about = make_about_data(
+            ki18nc('kcmodule description', 'Touchpad configuration'))
+        self.setAboutData(self._about)
+        self.setQuickHelp(i18nc(
+            '@info:tooltip synaptiks kcmodule',
+            '<title>Touchpad configuration</title>'
+            '<para>This module lets you configure your touchpad.</para>'))
+
+
+class TouchpadErrorKCM(SynaptiksKCMBase):
+    """
+    KCM widget used to show a touchpad error.
+    """
+
+    def __init__(self, error, component_data, parent=None):
+        SynaptiksKCMBase.__init__(self, component_data, parent)
+        if isinstance(error, basestring):
+            error_message = error
+        else:
+            from synaptiks.kde.error import get_localized_error_message
+            error_message = get_localized_error_message(error)
+        self.setLayout(QHBoxLayout(self))
+        icon = QLabel('foobar', self)
+        icon.setPixmap(KIconLoader.global_().loadIcon(
+            'dialog-warning', KIconLoader.Desktop, KIconLoader.SizeLarge))
+        icon.setAlignment(Qt.AlignTop | Qt.AlignLeft)
+        # do not expand the icon horizontally, to avoid a wide empty space
+        # between icon and text, and to given as much space as possible to the
+        # text contents
+        icon.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Expanding)
+        self.layout().addWidget(icon)
+        message = QLabel(error_message, self)
+        message.setAlignment(Qt.AlignTop | Qt.AlignLeft)
+        message.setWordWrap(True)
+        message.setOpenExternalLinks(True)
+        self.layout().addWidget(message)
+        self.setButtons(self.Help)
+
+
+class TouchpadConfigurationKCM(SynaptiksKCMBase):
     """
     Synaptiks system settings module.
     """
@@ -373,17 +424,7 @@ class TouchpadConfigurationKCM(KCModule):
         this module.  ``component_data`` and ``parent`` come from the
         ``KCModule`` constructor and are passed from the plugin entry point.
         """
-        KCModule.__init__(self, component_data, parent)
-        KGlobal.locale().insertCatalog('synaptiks')
-        # keep a reference to the generated about data to prevent it from being
-        # deleted by the GC
-        self._about = make_about_data(
-            ki18nc('kcmodule description', 'Touchpad configuration'))
-        self.setQuickHelp(i18nc(
-            '@info:tooltip synaptiks kcmodule',
-            '<title>Touchpad configuration</title>'
-            '<para>This module lets you configure your touchpad.</para>'))
-        self.setAboutData(self._about)
+        SynaptiksKCMBase.__init__(self, component_data, parent)
         self.touchpad_config = touchpad_config
         self.setLayout(QHBoxLayout(self))
         self.config_widget = TouchpadConfigurationWidget(self.touchpad_config)
@@ -413,3 +454,26 @@ class TouchpadConfigurationKCM(KCModule):
         """
         self.config_widget.apply_configuration()
         self.touchpad_config.save()
+
+
+def make_kcm_widget(component_data, parent=None):
+    """
+    Create a KCModule object to configure the touchpad.
+
+    This function tries to find a touchpad on this system and get the
+    configuration of this touchpad.  If this succeeds, a
+    :class:`TouchpadConfigurationKCM` is returned, allowing the user to
+    configure the touchpad.
+
+    Otherwise a :class:`TouchpadErrorKCM` is returned, which gives the user a
+    description of the error and its cause.
+    """
+    from synaptiks.qx11 import QX11Display
+    from synaptiks.touchpad import Touchpad
+    from synaptiks.config import TouchpadConfiguration
+    try:
+        touchpad = Touchpad.find_first(QX11Display())
+        config = TouchpadConfiguration(touchpad)
+        return TouchpadConfigurationKCM(config, component_data, parent)
+    except Exception as error:
+        return TouchpadErrorKCM(error, component_data, parent)
