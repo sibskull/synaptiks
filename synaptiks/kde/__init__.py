@@ -60,11 +60,12 @@ def make_about_data(description):
                b'Copyright © 2009, 2010 Sebastian Wiesner'))
     about.setCustomAuthorText(
         ki18nc('custom author text plain text',
-               'Please report bugs to the issue tracker at '
-               'https://github.com/lunaryorn/synaptiks/issues'),
+               'Please report bugs to the issue tracker at %1').subs(
+            synaptiks.ISSUE_TRACKER_URL),
         ki18nc('custom author text rich text',
-               'Please report bugs to the <a href="https://github.com/'
-               'lunaryorn/synaptiks/issues">issue tracker</a>.'))
+               'Please report bugs to the '
+               '<a href="%1">issue tracker</a>.').subs(
+            synaptiks.ISSUE_TRACKER_URL))
     about.setHomepage('http://synaptiks.lunaryorn.de')
     about.setOrganizationDomain('lunaryorn.de')
 

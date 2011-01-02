@@ -37,3 +37,5 @@ from __future__ import (print_function, division, unicode_literals,
 
 
 __version__ = '0.5.0'
+
+ISSUE_TRACKER_URL = 'https://github.com/lunaryorn/synaptiks/issues'
