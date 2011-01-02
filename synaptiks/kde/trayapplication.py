@@ -188,15 +188,15 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
     def show_touchpad_state(self):
         is_touchpad_on = self.touchpad.off == 0
         # show a notification
-        notification = KNotification(
-            'touchpadOn' if is_touchpad_on else 'touchpadOff')
-        notification.setText(
-            i18nc('touchpad switched notification', 'Touchpad switched on')
-            if is_touchpad_on else
-            i18nc('touchpad switched notification', 'Touchpad switched off'))
-        notification.setPixmap(
-            KIconLoader.global_().loadIcon('synaptiks', KIconLoader.Panel))
-        notification.sendEvent()
+        event_id = 'touchpadOn' if is_touchpad_on else 'touchpadOff'
+        if is_touchpad_on:
+            text = i18nc('touchpad switched notification',
+                         'Touchpad switched on')
+        else:
+            text = i18nc('touchpad switched notification',
+                         'Touchpad switched off')
+        icon = KIconLoader.global_().loadIcon('synaptiks', KIconLoader.Panel)
+        KNotification.event(event_id, text, icon)
         # show an overlay, if the touchpad is disabled
         overlay_icon_name = '' if is_touchpad_on else 'off-overlay'
         self.setOverlayIconByName(overlay_icon_name)
