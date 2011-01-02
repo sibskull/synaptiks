@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -36,9 +36,6 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
-import sip
-sip.setapi('QString', 2)
-sip.setapi('QVariant', 2)
 from PyKDE4.kdecore import KAboutData, ki18nc
 
 import synaptiks

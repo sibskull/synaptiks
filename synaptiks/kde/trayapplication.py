@@ -38,9 +38,6 @@ from __future__ import (print_function, division, unicode_literals,
 
 import sys
 
-import sip
-sip.setapi('QString', 2)
-sip.setapi('QVariant', 2)
 from PyQt4.QtGui import QWidget
 from PyKDE4.kdecore import KCmdLineArgs, ki18nc, i18nc
 from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem,

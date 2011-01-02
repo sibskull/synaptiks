@@ -1,5 +1,5 @@
 #!/usr/bin/python2
-# Copyright (c) 2010, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -29,9 +29,6 @@ from __future__ import (print_function, division, unicode_literals,
 import sys
 from functools import partial
 
-import sip
-sip.setapi('QString', 2)
-sip.setapi('QVariant', 2)
 from PyQt4.QtGui import (QApplication, QMainWindow, QWidget, QLabel,
                          QVBoxLayout, QComboBox)
 
@@ -58,7 +55,7 @@ def main():
         combo_box.addItem(label, userdata)
 
     def _update_ignore_keys(index):
-        monitor.keys_to_ignore = combo_box.itemData(index)
+        monitor.keys_to_ignore = combo_box.itemData(index).toPyObject()
 
     combo_box.currentIndexChanged[int].connect(_update_ignore_keys)
     central_layout.addWidget(combo_box)

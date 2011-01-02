@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -39,9 +39,6 @@ from __future__ import (print_function, division, unicode_literals,
 import os
 from functools import partial
 
-import sip
-sip.setapi('QString', 2)
-sip.setapi('QVariant', 2)
 from PyQt4.QtCore import pyqtSignal, QRegExp
 from PyQt4.QtGui import QWidget, QHBoxLayout
 from PyKDE4.kdecore import KGlobal, ki18nc, i18nc
@@ -286,7 +283,7 @@ class TouchpadConfigurationWidget(KTabWidget):
         """
         Return the touchpad property name associated with the given ``widget``.
         """
-        return widget.objectName()[9:]
+        return unicode(widget.objectName()[9:])
 
     def _find_touchpad_configuration_widgets(self):
         """
@@ -306,7 +303,7 @@ class TouchpadConfigurationWidget(KTabWidget):
         for widget in self._find_touchpad_configuration_widgets():
             touchpad_property = self._get_touchpad_property(widget)
             widget_property = self.PROPERTY_MAP[type(widget).__name__]
-            value = widget.property(widget_property)
+            value = widget.property(widget_property).toPyObject()
             config[touchpad_property] = value
         return config
 

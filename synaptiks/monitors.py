@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (C) 2010, 2011 Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -42,9 +42,6 @@ from itertools import izip
 from array import array
 
 import pyudev
-import sip
-sip.setapi('QString', 2)
-sip.setapi('QVariant', 2)
 from pyudev.pyqt4 import QUDevMonitorObserver
 from PyQt4.QtCore import QObject, QTimer, QTime, pyqtSignal
 
