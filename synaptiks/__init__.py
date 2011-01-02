@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (C) 2010, 2011 Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -31,5 +31,9 @@
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
+
+from __future__ import (print_function, division, unicode_literals,
+                        absolute_import)
+
 
 __version__ = '0.5.0'
