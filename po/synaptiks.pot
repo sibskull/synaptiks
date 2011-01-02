@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: synaptiks 0.5.0\n"
 "Report-Msgid-Bugs-To: lunaryorn@googlemail.com\n"
-"POT-Creation-Date: 2010-12-31 00:20+0100\n"
+"POT-Creation-Date: 2011-01-02 20:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,126 +16,154 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: synaptiks/kde/trayapplication.py:150
+#: synaptiks/kde/error.py:48
+msgctxt "@info NoTouchpadError error message"
+msgid ""
+"<title>No touchpad found</title><para>No touchpad was found in this system.  "
+"If the system has a touchpad, please make sure, that the "
+"<application>synaptics</application> driver is properly installed and "
+"configured.</para><para>If your touchpad is not found, though the driver is "
+"installed and configured correctly, please compile detailed information about "
+"your touchpad hardware and report this issue to the <link url=\"%1\">issue "
+"tracker</link>.</para>"
+msgstr ""
+
+#: synaptiks/kde/error.py:60
+msgctxt "@info XInputVersionError error message"
+msgid ""
+"<title>Version error</title><para>The version of the XInput extension "
+"installed on your system is too old.  Version %1 was found, but at least "
+"version %2 is required.</para><para>If you want to be able to configure your "
+"touchpad, you have to upgrade your system to a recent release of the Xorg "
+"display server.  This may likely involve a complete upgrade of your system.  "
+"Please excuse this inconvenience, but there is no way to make touchpad "
+"configuration work on systems as old as yours.</para>"
+msgstr ""
+
+#: synaptiks/kde/error.py:73
+msgctxt "@info error message for unexpected errors"
+msgid ""
+"<title>Unexpected error occurred</title><para>An unexpected error occurred: "
+"<message>%2</message></para><para>Please report this issue to the <link url="
+"\"%1\">issue tracker</link>.</para>"
+msgstr ""
+
+#: synaptiks/kde/trayapplication.py:142
 msgctxt "@action:inmenu"
 msgid "Touchpad on"
 msgstr ""
 
-#: synaptiks/kde/trayapplication.py:154
+#: synaptiks/kde/trayapplication.py:146
 msgctxt "Touchpad toggle shortcut"
 msgid "Ctrl+Alt+T"
 msgstr ""
 
-#: synaptiks/kde/trayapplication.py:188
+#: synaptiks/kde/trayapplication.py:176
 msgctxt "touchpad switched notification"
 msgid "Touchpad switched on"
 msgstr ""
 
-#: synaptiks/kde/trayapplication.py:190
+#: synaptiks/kde/trayapplication.py:178
 msgctxt "touchpad switched notification"
 msgid "Touchpad switched off"
 msgstr ""
 
-#: synaptiks/kde/trayapplication.py:239
+#: synaptiks/kde/trayapplication.py:227
 msgctxt "tray application description"
 msgid "touchpad management application"
 msgstr ""
 
-#: synaptiks/kde/__init__.py:59
+#: synaptiks/kde/__init__.py:56
 msgctxt "Program name"
 msgid "synaptiks"
 msgstr ""
 
-#: synaptiks/kde/__init__.py:63
+#: synaptiks/kde/__init__.py:60
 msgctxt "About data copyright"
 msgid "Copyright © 2009, 2010 Sebastian Wiesner"
 msgstr ""
 
-#: synaptiks/kde/__init__.py:66
+#: synaptiks/kde/__init__.py:63
 msgctxt "custom author text plain text"
-msgid ""
-"Please report bugs to the issue tracker at https://github.com/lunaryorn/"
-"synaptiks/issues"
+msgid "Please report bugs to the issue tracker at %1"
 msgstr ""
 
-#: synaptiks/kde/__init__.py:69
-msgctxt "custom author text rich text"
-msgid ""
-"Please report bugs to the <a href=\"https://github.com/lunaryorn/synaptiks/"
-"issues\">issue tracker</a>."
+#: synaptiks/kde/__init__.py:66
+msgctxt "@info custom author text rich text"
+msgid "Please report bugs to the <link url=\"%1\">issue tracker</link>."
 msgstr ""
 
-#: synaptiks/kde/__init__.py:74
+#: synaptiks/kde/__init__.py:72
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
 msgstr ""
 
-#: synaptiks/kde/__init__.py:75
+#: synaptiks/kde/__init__.py:73
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
 msgstr ""
 
-#: synaptiks/kde/__init__.py:76
+#: synaptiks/kde/__init__.py:74
 msgctxt "author name"
 msgid "Sebastian Wiesner"
 msgstr ""
 
-#: synaptiks/kde/__init__.py:77
+#: synaptiks/kde/__init__.py:75
 msgctxt "author task"
 msgid "Maintainer"
 msgstr ""
 
-#: synaptiks/kde/__init__.py:79
+#: synaptiks/kde/__init__.py:77
 msgctxt "credit name"
 msgid "Valentyn Pavliuchenko"
 msgstr ""
 
-#: synaptiks/kde/__init__.py:80
+#: synaptiks/kde/__init__.py:78
 msgctxt "credit task"
 msgid "Debian packaging, russian translation, bug reporting and testing"
 msgstr ""
 
-#: synaptiks/kde/widgets.py:86
+#: synaptiks/kde/widgets.py:83
 msgctxt "@item:inlistbox mouse button triggered by tapping"
 msgid "Disabled"
 msgstr ""
 
-#: synaptiks/kde/widgets.py:88
+#: synaptiks/kde/widgets.py:85
 msgctxt "@item:inlistbox mouse button triggered by tapping"
 msgid "Left mouse button"
 msgstr ""
 
-#: synaptiks/kde/widgets.py:90
+#: synaptiks/kde/widgets.py:87
 msgctxt "@item:inlistbox mouse button triggered by tapping"
 msgid "Middle mouse button"
 msgstr ""
 
-#: synaptiks/kde/widgets.py:92
+#: synaptiks/kde/widgets.py:89
 msgctxt "@item:inlistbox mouse button triggered by tapping"
 msgid "Right mouse button"
 msgstr ""
 
-#: synaptiks/kde/widgets.py:122
+#: synaptiks/kde/widgets.py:119
 msgctxt "@info touchpad name"
 msgid "<title><resources>%1</resource></title>"
 msgstr ""
 
-#: synaptiks/kde/widgets.py:167
+#: synaptiks/kde/widgets.py:164
 msgctxt "@item coasting speed special value"
 msgid "Disabled"
 msgstr ""
 
-#: synaptiks/kde/widgets.py:251
+#: synaptiks/kde/widgets.py:248
 msgctxt "@title:window"
 msgid "Touchpad configuration"
 msgstr ""
 
-#: synaptiks/kde/widgets.py:382
+#: synaptiks/kde/widgets.py:375
 msgctxt "kcmodule description"
 msgid "Touchpad configuration"
 msgstr ""
 
-#: synaptiks/kde/widgets.py:385
+#: synaptiks/kde/widgets.py:379
 msgctxt "@info:tooltip synaptiks kcmodule"
 msgid ""
 "<title>Touchpad configuration</title><para>This module lets you configure "
