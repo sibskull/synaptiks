@@ -47,11 +47,11 @@ def main():
     window.setCentralWidget(splitter)
     left_view = _make_mouse_view(window)
     right_view = _make_mouse_view(window)
-    splitter.addWidget(right_view)
     splitter.addWidget(left_view)
+    splitter.addWidget(right_view)
 
     def _move_checked_state(source, dest):
-        source.model().checked_devices = dest.model().checked_devices
+        dest.model().checked_devices = source.model().checked_devices
 
     toolbar = window.addToolBar('Actions')
     move_selection_left = QAction(
