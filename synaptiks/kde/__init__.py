@@ -62,9 +62,9 @@ def make_about_data(description):
         ki18nc('custom author text plain text',
                'Please report bugs to the issue tracker at %1').subs(
             synaptiks.ISSUE_TRACKER_URL),
-        ki18nc('custom author text rich text',
+        ki18nc('@info custom author text rich text',
                'Please report bugs to the '
-               '<a href="%1">issue tracker</a>.').subs(
+               '<link url="%1">issue tracker</link>.').subs(
             synaptiks.ISSUE_TRACKER_URL))
     about.setHomepage(synaptiks.WEBSITE_URL)
     about.setOrganizationDomain('lunaryorn.de')
