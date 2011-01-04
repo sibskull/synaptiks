@@ -49,6 +49,7 @@ from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem,
 
 from synaptiks.qx11 import QX11Display
 from synaptiks.touchpad import Touchpad
+from synaptiks.management import TouchpadStateMachine
 from synaptiks.config import TouchpadConfiguration
 from synaptiks.kde import make_about_data
 from synaptiks.kde.widgets import (TouchpadConfigurationWidget,
@@ -151,8 +152,19 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
             self._config.findItem('Autostart').setProperty(False)
             self._config.writeConfig()
         else:
-            self.touchpad_on_action.setChecked(self.touchpad.off == 0)
             self.activateRequested.connect(self.show_configuration_dialog)
+            # setup the touchpad state machine
+            self.touchpad_states = TouchpadStateMachine(self.touchpad, self)
+            # transition upon touchpad_on_action
+            self.touchpad_states.add_touchpad_switch_transition(
+                self.touchpad_on_action.triggered)
+            # update checked state of touchpad_on_action according to current
+            # state
+            self.touchpad_states.touchpad_on.assignProperty(
+                self.touchpad_on_action, 'checked', True)
+            self.touchpad_states.touchpad_off.assignProperty(
+                self.touchpad_on_action, 'checked', False)
+            self.touchpad_states.start()
 
     def setup_actions(self):
         self.touchpad_on_action = KToggleAction(
@@ -161,8 +173,6 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
             'touchpadOn', self.touchpad_on_action)
         self.touchpad_on_action.setGlobalShortcut(
             KShortcut(i18nc('Touchpad toggle shortcut', 'Ctrl+Alt+T')))
-        super(KAction, self.touchpad_on_action).triggered[bool].connect(
-            self.toggle_touchpad)
         self.contextMenu().addAction(self.touchpad_on_action)
 
         self.contextMenu().addSeparator()
@@ -180,10 +190,6 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
 
         help_menu = KHelpMenu(self.contextMenu(), KCmdLineArgs.aboutData())
         self.contextMenu().addMenu(help_menu.menu())
-
-    def toggle_touchpad(self, on):
-        self.touchpad.off = not on
-        self.show_touchpad_state()
 
     def show_touchpad_state(self):
         is_touchpad_on = self.touchpad.off == 0
