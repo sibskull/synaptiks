@@ -43,7 +43,7 @@ from PyKDE4.kdecore import KCmdLineArgs, ki18nc, i18nc
 from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem,
                           KConfigDialog, KShortcutsDialog, KMessageBox,
                           KShortcutsEditor, KShortcut,
-                          KStandardAction, KToggleAction, KAction,
+                          KStandardAction, KToggleAction,
                           KHelpMenu, KIcon, KIconLoader,
                           KNotification, KConfigSkeleton)
 
