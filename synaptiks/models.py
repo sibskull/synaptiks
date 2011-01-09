@@ -35,7 +35,8 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
-from PyQt4.QtCore import Qt, QAbstractListModel, QModelIndex
+from PyQt4.QtCore import (pyqtProperty, pyqtSignal, Qt, QStringList,
+                          QAbstractListModel, QModelIndex)
 
 from synaptiks.monitors import MouseDevicesMonitor
 
@@ -46,8 +47,11 @@ class MouseDevicesModel(QAbstractListModel):
 
     The mouse devices are display with their product name, and their serial
     number as tooltip.  Each device is checkable, the checked devices are
-    available through :attr:`checked_devices`.
+    available through :attr:`checkedDevices`.
     """
+
+    #: emitted if the checked devices have changed
+    checkedDevicesChanged = pyqtSignal(QStringList)
 
     def __init__(self, parent=None):
         """
@@ -83,27 +87,27 @@ class MouseDevicesModel(QAbstractListModel):
         except ValueError:
             pass
 
-    @property
-    def checked_devices(self):
+    @pyqtProperty(QStringList, notify=checkedDevicesChanged)
+    def checkedDevices(self):
         """
-        All checked mouse devices as :func:`frozenset()`.
+        All checked mouse devices as :class:`~PyQt4.QtCore.QStringList`.
 
-        This property holds a :func:`frozenset()` with the serial numbers of
-        all checked mouse devices.  Any iterable yielding serial numbers or
-        :class:`synaptiks.monitors.MouseDevice` objects can be assigned to this
-        property.
+        Return a (copied!) list with the serial numbers of all checked mouse
+        devices.  The list is copied from the internal storage, modifications
+        are consequently discard.  Assign to this property to change the
+        checked devices.
         """
-        return frozenset(self._checked_devices)
+        return list(self._checked_devices)
 
-    @checked_devices.setter
-    def checked_devices(self, devices):
-        devices = set(d if isinstance(d, basestring) else d.serial
-                      for d in devices)
+    @checkedDevices.setter
+    def checkedDevices(self, devices):
+        devices = set(unicode(d) for d in devices)
         for row, device in enumerate(self._device_index):
             if device.serial in devices:
                 index = self.index(row, 0)
                 self.dataChanged.emit(index, index)
         self._checked_devices = devices
+        self.checkedDevicesChanged.emit(self.checkedDevices)
 
     def flags(self, index):
         """
@@ -148,4 +152,5 @@ class MouseDevicesModel(QAbstractListModel):
                         'add' if value == Qt.Checked else 'remove')
                 update_our_cache(device.serial)
                 self.dataChanged.emit(index, index)
+                self.checkedDevicesChanged.emit(self.checkedDevices)
                 return True

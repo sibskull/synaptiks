@@ -23,20 +23,19 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import (print_function, division, unicode_literals,
+                        absolute_import)
+
 import sys
 from functools import partial
 
-from PyQt4.QtGui import (QApplication, QMainWindow, QListView, QSplitter,
-                         QAction, QIcon)
+from PyQt4.QtGui import QApplication, QMainWindow, QSplitter, QAction, QIcon
 
-from synaptiks.models import MouseDevicesModel
+from synaptiks.views import MouseDevicesView
 
 
-def _make_mouse_view(parent):
-    view = QListView(parent)
-    model = MouseDevicesModel(view)
-    view.setModel(model)
-    return view
+def show(label, devices):
+    print(label, [unicode(d) for d in devices])
 
 
 def main():
@@ -45,13 +44,16 @@ def main():
     window = QMainWindow()
     splitter = QSplitter(window)
     window.setCentralWidget(splitter)
-    left_view = _make_mouse_view(window)
-    right_view = _make_mouse_view(window)
+    left_view = MouseDevicesView(window)
+    left_view.checkedDevicesChanged.connect(partial(show, 'left:'))
+    right_view = MouseDevicesView(window)
+    right_view.checkedDevicesChanged.connect(partial(show, 'right:'))
     splitter.addWidget(left_view)
     splitter.addWidget(right_view)
 
     def _move_checked_state(source, dest):
-        dest.model().checked_devices = source.model().checked_devices
+        checked = source.property('checkedDevices').toPyObject()
+        dest.setProperty('checkedDevices', checked)
 
     toolbar = window.addToolBar('Actions')
     move_selection_left = QAction(
