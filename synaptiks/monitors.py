@@ -162,7 +162,15 @@ class PollingKeyboardMonitor(QObject):
         self._activity = QTime()
         self._keys_to_ignore = self.IGNORE_NO_KEYS
         self._keymap_mask = self._setup_mask()
-        self.idle_time = self.DEFAULT_IDLETIME
+        self._idle_time = self.DEFAULT_IDLETIME
+
+    @property
+    def is_active(self):
+        """
+        ``True``, if the keyboard monitor is currently running, ``False``
+        otherwise.
+        """
+        return self._keyboard_timer.isActive()
 
     def start(self):
         """
@@ -174,7 +182,22 @@ class PollingKeyboardMonitor(QObject):
         """
         Stop monitoring the keyboard.
         """
+        # since we are not monitoring the keyboard anymore, we assume, that
+        # there is no keyboard activity anymore.
+        self.typingStopped.emit()
         self._keyboard_timer.stop()
+
+    @property
+    def idle_time(self):
+        """
+        The time to wait before assuming, that the typing has stopped, in
+        seconds as float.
+        """
+        return self._idle_time / 1000
+
+    @idle_time.setter
+    def idle_time(self, value):
+        self._idle_time = int(value*1000)
 
     @property
     def keys_to_ignore(self):
@@ -241,7 +264,7 @@ class PollingKeyboardMonitor(QObject):
             if not self._keyboard_was_active:
                 self._keyboard_was_active = True
                 self.typingStarted.emit()
-        elif self._activity.elapsed() > self.idle_time and \
+        elif self._activity.elapsed() > self._idle_time and \
                  self._keyboard_was_active:
             self._keyboard_was_active = False
             self.typingStopped.emit()
