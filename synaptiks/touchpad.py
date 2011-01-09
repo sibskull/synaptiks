@@ -73,6 +73,8 @@ class device_property(object):
         self.__doc__ = doc
 
     def __get__(self, obj, owner=None):
+        if obj is None:
+            return self
         values = obj[self.property_name]
         if self.property_type == 'bool':
             values = map(bool, values)
