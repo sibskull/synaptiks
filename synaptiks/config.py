@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -39,11 +39,9 @@ from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
 import os
-import json
-import errno
 from collections import MutableMapping
 
-from synaptiks.util import ensure_directory
+from synaptiks.util import ensure_directory, save_json, load_json_with_default
 
 
 PACKAGE_DIRECTORY = os.path.dirname(__file__)
@@ -79,22 +77,6 @@ def get_touchpad_defaults_file_path():
     return os.path.join(get_configuration_directory(), 'touchpad-defaults.json')
 
 
-def _load_json_with_default(filename, default=None):
-    """
-    Load the given JSON file.
-
-    If the given file does not exist and ``default`` is not ``None``, then the
-    given ``default`` is returned.
-    """
-    try:
-        with open(filename, 'r') as stream:
-            return json.load(stream)
-    except EnvironmentError as error:
-        if default is not None and error.errno == errno.ENOENT:
-            return default
-        raise
-
-
 def get_touchpad_defaults(filename=None):
     """
     Get the default touchpad settings as :func:`dict` *without* applying it to
@@ -102,7 +84,7 @@ def get_touchpad_defaults(filename=None):
     """
     if not filename:
         filename = get_touchpad_defaults_file_path()
-    return _load_json_with_default(filename, {})
+    return load_json_with_default(filename, {})
 
 
 class TouchpadConfiguration(MutableMapping):
@@ -149,7 +131,7 @@ class TouchpadConfiguration(MutableMapping):
         if not filename:
             filename = get_touchpad_config_file_path()
         config = cls(touchpad)
-        config.update(_load_json_with_default(filename, {}))
+        config.update(load_json_with_default(filename, {}))
         return config
 
     def __init__(self, touchpad):
@@ -203,8 +185,7 @@ class TouchpadConfiguration(MutableMapping):
         """
         if not filename:
             filename = get_touchpad_config_file_path()
-        with open(filename, 'w') as stream:
-            json.dump(dict(self), stream, indent=2)
+        save_json(filename, dict(self))
 
 
 def main():
