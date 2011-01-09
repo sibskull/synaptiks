@@ -36,9 +36,8 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
-from functools import partial
-
-from PyQt4.QtCore import pyqtSignal, QStateMachine, QState
+from PyQt4.QtCore import (pyqtSignal, pyqtProperty, QObject,
+                          QStateMachine, QState)
 
 from synaptiks.monitors import (MouseDevicesMonitor, MouseDevice,
                                 PollingKeyboardMonitor)
@@ -155,6 +154,21 @@ class MouseDevicesManager(MouseDevicesMonitor):
                 self._reset_registry()
 
 
+class TouchpadQtWrapper(QObject):
+
+    def __init__(self, touchpad, parent=None):
+        QObject.__init__(self, parent)
+        self.touchpad = touchpad
+
+    @pyqtProperty(int)
+    def off(self):
+        return self.touchpad.off
+
+    @off.setter
+    def off(self, value):
+        self.touchpad.off = value
+
+
 class TouchpadStateMachine(QStateMachine):
     """
     A state machine, which manages the touchpad state.
@@ -168,19 +182,20 @@ class TouchpadStateMachine(QStateMachine):
     def __init__(self, touchpad, parent=None):
         QStateMachine.__init__(self, parent)
         self.touchpad = touchpad
+        self._touchpad_wrapper = TouchpadQtWrapper(self.touchpad, self)
         # setup the states
         self.touchpad_off = QState(self)
         self.touchpad_off.setObjectName('touchpad_off')
-        self.touchpad_off.entered.connect(partial(self._set_touchpad_off, 1))
+        self.touchpad_off.assignProperty(self._touchpad_wrapper, 'off', 1)
         self.touchpad_not_off = QState(self)
         self.touchpad_not_off.setObjectName('touchpad_not_off')
         self.touchpad_on = QState(self.touchpad_not_off)
         self.touchpad_on.setObjectName('touchpad_on')
-        self.touchpad_on.entered.connect(partial(self._set_touchpad_off, 0))
+        self.touchpad_on.assignProperty(self._touchpad_wrapper, 'off', 0)
         self.touchpad_temporarily_off = QState(self.touchpad_not_off)
         self.touchpad_temporarily_off.setObjectName('touchpad_temporarily_off')
-        self.touchpad_temporarily_off.entered.connect(
-            partial(self._set_touchpad_off, 1))
+        self.touchpad_temporarily_off.assignProperty(self._touchpad_wrapper,
+                                                     'off', 1)
         self.touchpad_not_off.setInitialState(self.touchpad_on)
         # set the initial state to reflect the actual state of the touchpad
         self.setInitialState(
@@ -213,9 +228,6 @@ class TouchpadStateMachine(QStateMachine):
         """
         self.touchpad_not_off.addTransition(signal, self.touchpad_off)
         self.touchpad_off.addTransition(signal, self.touchpad_not_off)
-
-    def _set_touchpad_off(self, off):
-        self.touchpad.off = off
 
     @property
     def monitor_mouses(self):
