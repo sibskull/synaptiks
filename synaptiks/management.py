@@ -40,7 +40,8 @@ from functools import partial
 
 from PyQt4.QtCore import pyqtSignal, QStateMachine, QState
 
-from synaptiks.monitors import MouseDevicesMonitor, MouseDevice
+from synaptiks.monitors import (MouseDevicesMonitor, MouseDevice,
+                                PollingKeyboardMonitor)
 
 
 class MouseDevicesManager(MouseDevicesMonitor):
@@ -171,18 +172,31 @@ class TouchpadStateMachine(QStateMachine):
         self.touchpad_off = QState(self)
         self.touchpad_off.setObjectName('touchpad_off')
         self.touchpad_off.entered.connect(partial(self._set_touchpad_off, 1))
-        self.touchpad_on = QState(self)
+        self.touchpad_not_off = QState(self)
+        self.touchpad_not_off.setObjectName('touchpad_not_off')
+        self.touchpad_on = QState(self.touchpad_not_off)
         self.touchpad_on.setObjectName('touchpad_on')
         self.touchpad_on.entered.connect(partial(self._set_touchpad_off, 0))
+        self.touchpad_temporarily_off = QState(self.touchpad_not_off)
+        self.touchpad_temporarily_off.setObjectName('touchpad_temporarily_off')
+        self.touchpad_temporarily_off.entered.connect(
+            partial(self._set_touchpad_off, 1))
+        self.touchpad_not_off.setInitialState(self.touchpad_on)
         # set the initial state to reflect the actual state of the touchpad
         self.setInitialState(
-            self.touchpad_on if self.touchpad.off == 0 else self.touchpad_off)
+            self.touchpad_off if self.touchpad.off else self.touchpad_not_off)
         # setup a mouse manager
         self.mouse_manager = MouseDevicesManager(self)
-        self.touchpad_on.addTransition(self.mouse_manager.firstMousePlugged,
-                                       self.touchpad_off)
+        self.touchpad_not_off.addTransition(self.mouse_manager.firstMousePlugged,
+                                            self.touchpad_off)
         self.touchpad_off.addTransition(self.mouse_manager.lastMouseUnplugged,
-                                        self.touchpad_on)
+                                        self.touchpad_not_off)
+        # setup a keyboard monitor
+        self.keyboard_monitor = PollingKeyboardMonitor(self)
+        self.touchpad_on.addTransition(self.keyboard_monitor.typingStarted,
+                                       self.touchpad_temporarily_off)
+        self.touchpad_temporarily_off.addTransition(
+            self.keyboard_monitor.typingStopped, self.touchpad_on)
 
     def add_touchpad_switch_signal(self, signal):
         """
@@ -197,8 +211,8 @@ class TouchpadStateMachine(QStateMachine):
 
         ``signal`` is a bound PyQt signal.
         """
-        self.touchpad_on.addTransition(signal, self.touchpad_off)
-        self.touchpad_off.addTransition(signal, self.touchpad_on)
+        self.touchpad_not_off.addTransition(signal, self.touchpad_off)
+        self.touchpad_off.addTransition(signal, self.touchpad_not_off)
 
     def _set_touchpad_off(self, off):
         self.touchpad.off = off
@@ -223,3 +237,21 @@ class TouchpadStateMachine(QStateMachine):
         elif not enabled and self.monitor_mouses:
             self.mouse_manager.stop()
             self.started.disconnect(self.mouse_manager.start)
+
+    @property
+    def monitor_keyboard(self):
+        """
+        ``True``, if the touchpad is temporarily disabled on keyboard activity,
+        ``False`` otherwise.
+        """
+        return self.keyboard_monitor.is_active
+
+    @monitor_keyboard.setter
+    def monitor_keyboard(self, enabled):
+        if enabled and not self.monitor_keyboard:
+            self.started.connect(self.keyboard_monitor.start)
+            if self.isRunning():
+                self.keyboard_monitor.start()
+        elif not enabled and self.monitor_keyboard:
+            self.keyboard_monitor.stop()
+            self.started.disconnect(self.keyboard_monitor.start)
