@@ -77,6 +77,13 @@ def get_touchpad_defaults_file_path():
     return os.path.join(get_configuration_directory(), 'touchpad-defaults.json')
 
 
+def get_management_config_file_path():
+    """
+    Get the path to the file which stores the touchpad management configuration.
+    """
+    return os.path.join(get_configuration_directory(), 'management.json')
+
+
 def get_touchpad_defaults(filename=None):
     """
     Get the default touchpad settings as :func:`dict` *without* applying it to
@@ -185,6 +192,109 @@ class TouchpadConfiguration(MutableMapping):
         """
         if not filename:
             filename = get_touchpad_config_file_path()
+        save_json(filename, dict(self))
+
+
+class ManagementConfiguration(MutableMapping):
+    """
+    A mutable mapping class representing the current configuration of the
+    state machine, which manages the touchpad.
+    """
+
+    #: the default values
+    DEFAULTS = {'monitor_mouses': False, 'ignored_mouses': []}
+
+    #: config keys to be applied to the mouse_manager
+    MOUSE_MANAGER_KEYS = frozenset(['ignored_mouses'])
+
+    @classmethod
+    def load(cls, state_machine, filename=None):
+        """
+        Load the configuration for the given ``state_machine`` from disc.
+
+        If no ``filename`` is given, the configuration is loaded from the
+        default configuration file as returned by
+        :func:`get_management_config_file_path`.  Otherwise the configuration
+        is loaded from the given file.  If the file doesn't exist, the default
+        config as given by :attr:`DEFAULTS` is loaded.
+
+        After the configuration is loaded, it is applied to the given
+        ``state_machine``.
+
+        ``touchpad`` is a :class:`~synaptiks.management.TouchpadStateMachine`
+        object.  ``filename`` is either ``None`` or a string containing the
+        path to a file.
+
+        Return a :class:`ManagementConfiguration` object.  Raise
+        :exc:`~exceptions.EnvironmentError`, if the file could not be loaded,
+        but *not* in case of a non-existing file.
+        """
+        if not filename:
+            filename = get_management_config_file_path()
+        config = cls(state_machine)
+        config.update(load_json_with_default(filename, {}))
+        return config
+
+    def __init__(self, state_machine):
+        self.state_machine = state_machine
+
+    @property
+    def mouse_manager(self):
+        return self.state_machine.mouse_manager
+
+    def __contains__(self, key):
+        return key in self.DEFAULTS
+
+    def __len__(self):
+        return len(self.DEFAULTS)
+
+    def __iter__(self):
+        return iter(self.DEFAULTS)
+
+    def __getitem__(self, key):
+        if key not in self:
+            raise KeyError(key)
+        target = self.state_machine
+        if key in self.MOUSE_MANAGER_KEYS:
+            target = self.mouse_manager
+        return getattr(target, key)
+
+    def __setitem__(self, key, value):
+        if key not in self:
+            raise KeyError(key)
+        target = self.state_machine
+        if key in self.MOUSE_MANAGER_KEYS:
+            target = self.mouse_manager
+        setattr(target, key, value)
+
+    def __delitem__(self, key):
+        raise NotImplementedError
+
+    def update(self, other):
+        if other['monitor_mouses']:
+            self.mouse_manager.ignored_mouses = other['ignored_mouses']
+            self.state_machine.monitor_mouses = True
+        else:
+            self.state_machine.monitor_mouses = False
+            self.mouse_manager.ignored_mouses = other['ignored_mouses']
+
+    def save(self, filename=None):
+        """
+        Save the configuration.
+
+        If no ``filename`` is given, the configuration is saved to the default
+        configuration file as returned by
+        :func:`get_management_config_file_path`.  Otherwise the configuration
+        is saved to the given file.
+
+        ``filename`` is either ``None`` or a string containing the path to a
+        file.
+
+        Raise :exc:`~exceptions.EnvironmentError`, if the file could not be
+        written.
+        """
+        if not filename:
+            filename = get_management_config_file_path()
         save_json(filename, dict(self))
 
 
