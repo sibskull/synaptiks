@@ -203,6 +203,10 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
                 self.touchpad_on_action, 'checked', True)
             self.touchpad_states.touchpad_off.assignProperty(
                 self.touchpad_on_action, 'checked', False)
+            self.touchpad_states.touchpad_on.entered.connect(
+                self.show_touchpad_state)
+            self.touchpad_states.touchpad_off.entered.connect(
+                self.show_touchpad_state)
             self.touchpad_states.start()
 
     def setup_actions(self):
