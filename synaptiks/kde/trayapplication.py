@@ -38,8 +38,6 @@ from __future__ import (print_function, division, unicode_literals,
 
 import sys
 
-from PyQt4.QtCore import pyqtSignal, QStringList
-from PyQt4.QtGui import QWidget
 from PyKDE4.kdecore import KCmdLineArgs, ki18nc, i18nc
 from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem,
                           KConfigDialog, KShortcutsDialog, KMessageBox,
@@ -53,45 +51,8 @@ from synaptiks.touchpad import Touchpad
 from synaptiks.management import TouchpadStateMachine
 from synaptiks.config import TouchpadConfiguration, ManagementConfiguration
 from synaptiks.kde import make_about_data
-from synaptiks.kde.widgets import (TouchpadConfigurationWidget,
-                                   ConfigurationWidgetMixin,
-                                   DynamicUserInterfaceMixin)
-
-
-class ManagementPage(QWidget, ConfigurationWidgetMixin,
-                     DynamicUserInterfaceMixin):
-    """
-    Configuration page for touchpad management.
-    """
-
-    configurationChanged = pyqtSignal(bool)
-
-    NAME_PREFIX = 'management'
-
-    PROPERTY_MAP = dict(
-        QGroupBox='checked', MouseDevicesView='checkedDevices')
-
-    CHANGED_SIGNAL_MAP = dict(
-        QGroupBox='toggled', MouseDevicesView='checkedDevicesChanged')
-
-    def __init__(self, config, parent=None):
-        QWidget.__init__(self, parent)
-        self._load_userinterface()
-        self.management_config = config
-        self._setup(self.management_config)
-
-    def _convert_to_property(self, key, value):
-        if key == 'ignored_mouses':
-            return QStringList(value)
-        return value
-
-    def _convert_from_property(self, key, value):
-        if key == 'ignored_mouses':
-            return [unicode(d) for d in value]
-        return value
-
-    def _get_defaults(self):
-        return self.management_config.DEFAULTS
+from synaptiks.kde.widgets.touchpad import TouchpadConfigurationWidget
+from synaptiks.kde.widgets.management import TouchpadManagementWidget
 
 
 class SynaptiksConfigDialog(KConfigDialog):
@@ -110,7 +71,7 @@ class SynaptiksConfigDialog(KConfigDialog):
 
         self.touchpad_config_widget = TouchpadConfigurationWidget(
             self.touchpad_config, self)
-        self.management_config_widget = ManagementPage(
+        self.management_config_widget = TouchpadManagementWidget(
             self.management_config, self)
 
         self.config_widgets = [self.touchpad_config_widget,

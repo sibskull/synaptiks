@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -23,11 +23,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-"""
-    kcm_synaptiks
-    =============
 
-    KCM wrapper for synaptiks
+"""
+    synaptiks.kde.widgets.management
+    ================================
+
+    Widgets for touchpad management configuration.
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
@@ -35,9 +36,44 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
+from PyQt4.QtCore import pyqtSignal, QStringList
+from PyQt4.QtGui import QWidget
 
-from synaptiks.kde.widgets.kcm import make_kcm_widget
+from synaptiks.kde.widgets import DynamicUserInterfaceMixin
+from synaptiks.kde.widgets.config import ConfigurationWidgetMixin
 
 
-def CreatePlugin(widget_parent, parent, component_data):
-    return make_kcm_widget(component_data, widget_parent)
+class TouchpadManagementWidget(QWidget, ConfigurationWidgetMixin,
+                               DynamicUserInterfaceMixin):
+    """
+    Configuration page for touchpad management.
+    """
+
+    configurationChanged = pyqtSignal(bool)
+
+    NAME_PREFIX = 'management'
+
+    PROPERTY_MAP = dict(
+        QGroupBox='checked', MouseDevicesView='checkedDevices')
+
+    CHANGED_SIGNAL_MAP = dict(
+        QGroupBox='toggled', MouseDevicesView='checkedDevicesChanged')
+
+    def __init__(self, config, parent=None):
+        QWidget.__init__(self, parent)
+        self._load_userinterface()
+        self.management_config = config
+        self._setup(self.management_config)
+
+    def _convert_to_property(self, key, value):
+        if key == 'ignored_mouses':
+            return QStringList(value)
+        return value
+
+    def _convert_from_property(self, key, value):
+        if key == 'ignored_mouses':
+            return [unicode(d) for d in value]
+        return value
+
+    def _get_defaults(self):
+        return self.management_config.DEFAULTS

@@ -251,7 +251,7 @@
   <customwidget>
    <class>MouseButtonComboBox</class>
    <extends>QComboBox</extends>
-   <header>synaptiks.kde.widgets</header>
+   <header>synaptiks.kde.widgets.util</header>
   </customwidget>
  </customwidgets>
  <resources/>

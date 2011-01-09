@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -23,11 +23,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-"""
-    kcm_synaptiks
-    =============
 
-    KCM wrapper for synaptiks
+"""
+    synaptiks.kde.widgets
+    =====================
+
+    Widgets for the KDE part of synaptiks.
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
@@ -35,9 +36,32 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
+import os
 
-from synaptiks.kde.widgets.kcm import make_kcm_widget
+from synaptiks.kde.uic import loadUi
 
 
-def CreatePlugin(widget_parent, parent, component_data):
-    return make_kcm_widget(component_data, widget_parent)
+PACKAGE_DIRECTORY = os.path.dirname(__file__)
+
+
+class DynamicUserInterfaceMixin(object):
+    """
+    Mixin class for widgets to load their user interface dynamically from the
+    :mod:`synaptiks.kde` package.  It provides a single method
+    :meth:`_load_userinterface()`, which loads the user interface into the
+    instance.
+    """
+
+    def _load_userinterface(self):
+        """
+        Load the user interface for this object.
+
+        The user interface is loaded from a user interface file with the
+        lower-cased class name in ``ui/`` sub-directory of this package.  For
+        instance, the user interface file for class ``FooBar`` would be
+        ``ui/foobar.ui``.
+        """
+        ui_description_filename = os.path.join(
+            PACKAGE_DIRECTORY, 'ui',
+            self.__class__.__name__.lower() + '.ui')
+        loadUi(ui_description_filename, self)

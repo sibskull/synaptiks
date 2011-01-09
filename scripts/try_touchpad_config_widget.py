@@ -37,7 +37,7 @@ import synaptiks
 from synaptiks.qx11 import QX11Display
 from synaptiks.touchpad import Touchpad
 from synaptiks.config import TouchpadConfiguration
-from synaptiks.kde.widgets import TouchpadConfigurationWidget
+from synaptiks.kde.widgets.touchpad import TouchpadConfigurationWidget
 
 
 def main():

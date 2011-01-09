@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -24,10 +24,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-    kcm_synaptiks
-    =============
+    synaptiks.kde.widgets.util
+    ==========================
 
-    KCM wrapper for synaptiks
+    Utility widgets.
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
@@ -35,9 +35,24 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
+from PyKDE4.kdecore import i18nc
+from PyKDE4.kdeui import KComboBox
 
-from synaptiks.kde.widgets.kcm import make_kcm_widget
 
+class MouseButtonComboBox(KComboBox):
+    """
+    A combox box, which provides a choice between different mouse buttons.
+    """
 
-def CreatePlugin(widget_parent, parent, component_data):
-    return make_kcm_widget(component_data, widget_parent)
+    def __init__(self, parent=None):
+        KComboBox.__init__(self, parent)
+        self.addItems([
+            i18nc('@item:inlistbox mouse button triggered by tapping',
+                  'Disabled'),
+            i18nc('@item:inlistbox mouse button triggered by tapping',
+                  'Left mouse button'),
+            i18nc('@item:inlistbox mouse button triggered by tapping',
+                  'Middle mouse button'),
+            i18nc('@item:inlistbox mouse button triggered by tapping',
+                   'Right mouse button')
+            ])

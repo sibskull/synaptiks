@@ -71,7 +71,7 @@
   <customwidget>
    <class>TouchpadInformationWidget</class>
    <extends>QWidget</extends>
-   <header>synaptiks.kde.widgets</header>
+   <header>synaptiks.kde.widgets.touchpad</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
