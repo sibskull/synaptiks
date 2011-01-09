@@ -202,10 +202,14 @@ class ManagementConfiguration(MutableMapping):
     """
 
     #: the default values
-    DEFAULTS = {'monitor_mouses': False, 'ignored_mouses': []}
+    DEFAULTS = {'monitor_mouses': False, 'ignored_mouses': [],
+                'monitor_keyboard': False, 'idle_time': 2.0,
+                'keys_to_ignore': 2}
 
     #: config keys to be applied to the mouse_manager
     MOUSE_MANAGER_KEYS = frozenset(['ignored_mouses'])
+    #: config keys to be applied to the keyboard monitor
+    KEYBOARD_MONITOR_KEYS = frozenset(['idle_time', 'keys_to_ignore'])
 
     @classmethod
     def load(cls, state_machine, filename=None):
@@ -245,6 +249,10 @@ class ManagementConfiguration(MutableMapping):
     def mouse_manager(self):
         return self.state_machine.mouse_manager
 
+    @property
+    def keyboard_monitor(self):
+        return self.state_machine.keyboard_monitor
+
     def __contains__(self, key):
         return key in self.DEFAULTS
 
@@ -260,6 +268,8 @@ class ManagementConfiguration(MutableMapping):
         target = self.state_machine
         if key in self.MOUSE_MANAGER_KEYS:
             target = self.mouse_manager
+        elif key in self.KEYBOARD_MONITOR_KEYS:
+            target = self.keyboard_monitor
         return getattr(target, key)
 
     def __setitem__(self, key, value):
@@ -268,18 +278,22 @@ class ManagementConfiguration(MutableMapping):
         target = self.state_machine
         if key in self.MOUSE_MANAGER_KEYS:
             target = self.mouse_manager
+        elif key in self.KEYBOARD_MONITOR_KEYS:
+            target = self.keyboard_monitor
         setattr(target, key, value)
 
     def __delitem__(self, key):
         raise NotImplementedError
 
     def update(self, other):
-        if other['monitor_mouses']:
-            self.mouse_manager.ignored_mouses = other['ignored_mouses']
+        ignored_mouses = other.pop('ignored_mouses')
+        if other.pop('monitor_mouses'):
+            self.mouse_manager.ignored_mouses = ignored_mouses
             self.state_machine.monitor_mouses = True
         else:
             self.state_machine.monitor_mouses = False
-            self.mouse_manager.ignored_mouses = other['ignored_mouses']
+            self.mouse_manager.ignored_mouses = ignored_mouses
+        super(ManagementConfiguration, self).update(other)
 
     def save(self, filename=None):
         """

@@ -61,15 +61,15 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="monitor_keyboard">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
+    <widget class="QGroupBox" name="management_monitor_keyboard">
      <property name="title">
       <string comment="@option:check">Automatically switch off touchpad on keyboard activity</string>
      </property>
      <property name="checkable">
       <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
@@ -80,12 +80,12 @@
            <string comment="@label:listbox">Ignore these keys</string>
           </property>
           <property name="buddy">
-           <cstring>keys_to_ignore</cstring>
+           <cstring>management_keys_to_ignore</cstring>
           </property>
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="KComboBox" name="keys_to_ignore">
+         <widget class="KComboBox" name="management_keys_to_ignore">
           <property name="toolTip">
            <string comment="@info:tooltip">&lt;para&gt;These keys will be ignored when monitoring the keyboard:&lt;/para&gt;
 &lt;para&gt;
@@ -127,7 +127,7 @@
        </layout>
       </item>
       <item>
-       <widget class="KDoubleNumInput" name="keyboard_idle_time">
+       <widget class="KDoubleNumInput" name="management_idle_time">
         <property name="label">
          <string comment="@label:spinbox">Time to wait before switching the keyboard on again</string>
         </property>

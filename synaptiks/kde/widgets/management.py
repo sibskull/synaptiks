@@ -54,10 +54,12 @@ class TouchpadManagementWidget(QWidget, ConfigurationWidgetMixin,
     NAME_PREFIX = 'management'
 
     PROPERTY_MAP = dict(
-        QGroupBox='checked', MouseDevicesView='checkedDevices')
+        QGroupBox='checked', MouseDevicesView='checkedDevices',
+        KDoubleNumInput='value', KComboBox='currentIndex')
 
     CHANGED_SIGNAL_MAP = dict(
-        QGroupBox='toggled', MouseDevicesView='checkedDevicesChanged')
+        QGroupBox='toggled', MouseDevicesView='checkedDevicesChanged',
+        KDoubleNumInput='valueChanged', KComboBox='currentIndexChanged')
 
     def __init__(self, config, parent=None):
         QWidget.__init__(self, parent)
