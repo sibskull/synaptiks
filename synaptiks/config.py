@@ -232,7 +232,10 @@ class ManagementConfiguration(MutableMapping):
         if not filename:
             filename = get_management_config_file_path()
         config = cls(state_machine)
-        config.update(load_json_with_default(filename, {}))
+        # use defaults for all non-existing settings
+        loaded_config = dict(cls.DEFAULTS)
+        loaded_config.update(load_json_with_default(filename, {}))
+        config.update(loaded_config)
         return config
 
     def __init__(self, state_machine):
