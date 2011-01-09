@@ -38,7 +38,7 @@ if sys.version_info[0] >= 3:
     sys.exit('Python 3 is not yet supported.  Try "python2".')
 
 
-requirements = []
+requirements = ['pyudev>=0.6']
 if sys.version_info[:2] < (2, 7):
     requirements.append('argparse>=1.1')
 
