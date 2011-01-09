@@ -37,6 +37,7 @@ from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
 import sys
+from functools import partial
 
 from PyKDE4.kdecore import KCmdLineArgs, ki18nc, i18nc
 from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem,
@@ -160,14 +161,21 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
                 self.touchpad_on_action.triggered)
             # update checked state of touchpad_on_action according to current
             # state
-            self.touchpad_states.touchpad_on.assignProperty(
+            self.touchpad_states.touchpad_not_off.assignProperty(
                 self.touchpad_on_action, 'checked', True)
             self.touchpad_states.touchpad_off.assignProperty(
                 self.touchpad_on_action, 'checked', False)
+            # update the overlay icon
             self.touchpad_states.touchpad_on.entered.connect(
-                self.show_touchpad_state)
+                partial(self.setOverlayIconByName, 'touchpad-off'))
+            self.touchpad_states.touchpad_on.exited.connect(
+                partial(self.setOverlayIconByName, ''))
+            # emit a notification, if the touchpad state changed (except for
+            # temporary state changes)
+            self.touchpad_states.touchpad_not_off.entered.connect(
+                partial(self.notify_touchpad_state, False))
             self.touchpad_states.touchpad_off.entered.connect(
-                self.show_touchpad_state)
+                partial(self.notify_touchpad_state, True))
             self.touchpad_states.start()
 
     def setup_actions(self):
@@ -195,21 +203,20 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
         help_menu = KHelpMenu(self.contextMenu(), KCmdLineArgs.aboutData())
         self.contextMenu().addMenu(help_menu.menu())
 
-    def show_touchpad_state(self):
-        is_touchpad_on = self.touchpad.off == 0
+    def notify_touchpad_state(self, is_off=None):
+        if is_off is None:
+            is_off = self.touchpad.off
         # show a notification
-        event_id = 'touchpadOn' if is_touchpad_on else 'touchpadOff'
-        if is_touchpad_on:
-            text = i18nc('touchpad switched notification',
-                         'Touchpad switched on')
-        else:
+        if is_off:
+            event_id = 'touchpadOff'
             text = i18nc('touchpad switched notification',
                          'Touchpad switched off')
+        else:
+            event_id = 'touchpadOn'
+            text = i18nc('touchpad switched notification',
+                         'Touchpad switched on')
         icon = KIconLoader.global_().loadIcon('synaptiks', KIconLoader.Panel)
         KNotification.event(event_id, text, icon)
-        # show an overlay, if the touchpad is disabled
-        overlay_icon_name = '' if is_touchpad_on else 'off-overlay'
-        self.setOverlayIconByName(overlay_icon_name)
 
     def show_shortcuts_dialog(self):
         # The dialog is shown in non-modal form, and consequently must exists
