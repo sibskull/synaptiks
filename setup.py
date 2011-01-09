@@ -79,7 +79,7 @@ setup(
     packages=['synaptiks', 'synaptiks.kde', 'synaptiks.kde.widgets',
               'synaptiks._bindings'],
     package_data={
-        'synaptiks.kde': ['ui/*.ui'],
+        'synaptiks.kde.widgets': ['ui/*.ui'],
         },
     entry_points={
         'gui_scripts': ['synaptiks = synaptiks.kde.trayapplication:main'],
