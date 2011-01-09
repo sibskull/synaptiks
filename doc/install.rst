@@ -21,6 +21,7 @@ your distribution before installing **synaptiks**.
 
 Moreover some additional Python modules are required:
 
+- pyudev_ (at least 0.6)
 - argparse_ (at least 1.1, not required, if Python 2.7 is installed)
 
 It is recommended, that you also install these modules with the package
@@ -127,6 +128,7 @@ Optionally remove the installation-only requirements again::
 .. _python: http://www.python.org
 .. _PyQt4: http://riverbankcomputing.co.uk/software/pyqt/intro
 .. _PyKDE4: http://techbase.kde.org/Development/Languages/Python
+.. _pyudev: http://packages.python.org/pyudev
 .. _argparse: http://code.google.com/p/argparse/
 .. _gettext: http://www.gnu.org/software/gettext/
 .. _pip: http://pip.openplans.org/
