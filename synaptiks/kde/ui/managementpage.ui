@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>Sebastian Wiesner</author>
+ <class>AutoTouchpadControlPage</class>
+ <widget class="QWidget" name="AutoTouchpadControlPage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>411</width>
+    <height>381</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string comment="@title:window">Touchpad management</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <item>
+    <widget class="QCheckBox" name="kcfg_Autostart">
+     <property name="text">
+      <string comment="@option:check">Automatically start at logon</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="management_monitor_mouses">
+     <property name="whatsThis">
+      <string comment="@info:whatsthis">Automatically switch off touchpad, if a mouse is plugged in. If the mouse is unplugged, the touchpad is switched on again.</string>
+     </property>
+     <property name="title">
+      <string comment="@option:check">Automatically switch off touchpad, if a mouse is plugged</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string comment="@label">Ignore the following mouse devices</string>
+        </property>
+        <property name="buddy">
+         <cstring>management_ignored_mouses</cstring>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="MouseDevicesView" name="management_ignored_mouses">
+        <property name="whatsThis">
+         <string comment="@info:whatsthis">All checked mouse devices are ignored. If such a mouse is plugged, the touchpad will remain on.</string>
+        </property>
+        <property name="kcfg_property" stdset="0">
+         <cstring>checkedDevices</cstring>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="monitor_keyboard">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="title">
+      <string comment="@option:check">Automatically switch off touchpad on keyboard activity</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QFormLayout" name="formLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string comment="@label:listbox">Ignore these keys</string>
+          </property>
+          <property name="buddy">
+           <cstring>keys_to_ignore</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="KComboBox" name="keys_to_ignore">
+          <property name="toolTip">
+           <string comment="@info:tooltip">&lt;para&gt;These keys will be ignored when monitoring the keyboard:&lt;/para&gt;
+&lt;para&gt;
+&lt;list&gt;
+&lt;item&gt;&lt;interface&gt;No keys&lt;/interface&gt;:  No keys are ignored.  Every key causes the touchpad to be switched off.&lt;/item&gt;
+&lt;item&gt;&lt;interface&gt;Modifier keys&lt;/interface&gt;: Modifier keys (e.g. Shift, Ctrl) are ignored.  Every other key causes the touchpad to be switched off, even when pressed in combination with a modifier key (e.g. Ctrl+S).&lt;/item&gt;
+&lt;item&gt;&lt;interface&gt;Modifier combinations&lt;/interface&gt;: Modifier keys and normal keys in combination with modifier keys are ignored.  Every other key causes the touchpad to be switched off. Note, that even Shift-combinations for uppercase letters are ignored with this setting.&lt;/item&gt;
+&lt;/list&gt;</string>
+          </property>
+          <property name="whatsThis">
+           <string comment="@info:whatsthis">&lt;para&gt;These keys will be ignored when monitoring the keyboard:&lt;/para&gt;
+&lt;para&gt;
+&lt;list&gt;
+&lt;item&gt;&lt;interface&gt;No keys&lt;/interface&gt;:  No keys are ignored.  Every key causes the touchpad to be switched off.&lt;/item&gt;
+&lt;item&gt;&lt;interface&gt;Modifier keys&lt;/interface&gt;: Modifier keys (e.g. Shift, Ctrl) are ignored.  Every other key causes the touchpad to be switched off, even when pressed in combination with a modifier key (e.g. Ctrl+S).&lt;/item&gt;
+&lt;item&gt;&lt;interface&gt;Modifier combinations&lt;/interface&gt;: Modifier keys and normal keys in combination with modifier keys are ignored.  Every other key causes the touchpad to be switched off. Note, that even Shift-combinations for uppercase letters are ignored with this setting.&lt;/item&gt;
+&lt;/list&gt;</string>
+          </property>
+          <property name="frame">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string comment="@item:inlistbox automatic touchpad control">No keys</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string comment="@item:inlistbox automatic touchpad control">Modifier keys</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string comment="@item:inlistbox automatic touchpad control">Modifier combinations</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="KDoubleNumInput" name="keyboard_idle_time">
+        <property name="label">
+         <string comment="@label:spinbox">Time to wait before switching the keyboard on again</string>
+        </property>
+        <property name="maximum">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="suffix">
+         <string comment="@label:spinbox"> s</string>
+        </property>
+        <property name="sliderEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KDoubleNumInput</class>
+   <extends>QWidget</extends>
+   <header>knuminput.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MouseDevicesView</class>
+   <extends>QListView</extends>
+   <header>synaptiks.views</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

@@ -38,6 +38,7 @@ from __future__ import (print_function, division, unicode_literals,
 
 import sys
 
+from PyQt4.QtCore import pyqtSignal, QStringList
 from PyQt4.QtGui import QWidget
 from PyKDE4.kdecore import KCmdLineArgs, ki18nc, i18nc
 from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem,
@@ -50,20 +51,47 @@ from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem,
 from synaptiks.qx11 import QX11Display
 from synaptiks.touchpad import Touchpad
 from synaptiks.management import TouchpadStateMachine
-from synaptiks.config import TouchpadConfiguration
+from synaptiks.config import TouchpadConfiguration, ManagementConfiguration
 from synaptiks.kde import make_about_data
 from synaptiks.kde.widgets import (TouchpadConfigurationWidget,
+                                   ConfigurationWidgetMixin,
                                    DynamicUserInterfaceMixin)
 
 
-class GeneralPage(QWidget, DynamicUserInterfaceMixin):
+class ManagementPage(QWidget, ConfigurationWidgetMixin,
+                     DynamicUserInterfaceMixin):
     """
-    Configuration page to configure the general behaviour of the tray application
+    Configuration page for touchpad management.
     """
 
-    def __init__(self, parent=None):
+    configurationChanged = pyqtSignal(bool)
+
+    NAME_PREFIX = 'management'
+
+    PROPERTY_MAP = dict(
+        QGroupBox='checked', MouseDevicesView='checkedDevices')
+
+    CHANGED_SIGNAL_MAP = dict(
+        QGroupBox='toggled', MouseDevicesView='checkedDevicesChanged')
+
+    def __init__(self, config, parent=None):
         QWidget.__init__(self, parent)
         self._load_userinterface()
+        self.management_config = config
+        self._setup(self.management_config)
+
+    def _convert_to_property(self, key, value):
+        if key == 'ignored_mouses':
+            return QStringList(value)
+        return value
+
+    def _convert_from_property(self, key, value):
+        if key == 'ignored_mouses':
+            return [unicode(d) for d in value]
+        return value
+
+    def _get_defaults(self):
+        return self.management_config.DEFAULTS
 
 
 class SynaptiksConfigDialog(KConfigDialog):
@@ -73,18 +101,24 @@ class SynaptiksConfigDialog(KConfigDialog):
 
     DIALOG_NAME = 'synaptiks-configuration'
 
-    def __init__(self, touchpad, tray_config, parent=None):
+    def __init__(self, touchpad, state_machine, tray_config, parent=None):
         KConfigDialog.__init__(self, parent, self.DIALOG_NAME, tray_config)
         self.touchpad_config = TouchpadConfiguration(touchpad)
+        self.management_config = ManagementConfiguration(state_machine)
 
         self.setFaceType(self.List)
 
         self.touchpad_config_widget = TouchpadConfigurationWidget(
             self.touchpad_config, self)
-        self.touchpad_config_widget.configurationChanged.connect(
-            self.settingsChangedSlot)
+        self.management_config_widget = ManagementPage(
+            self.management_config, self)
 
-        pages = [(GeneralPage(self), 'configure'),
+        self.config_widgets = [self.touchpad_config_widget,
+                               self.management_config_widget]
+        for widget in self.config_widgets:
+            widget.configurationChanged.connect(self.settingsChangedSlot)
+
+        pages = [(self.management_config_widget, 'configure'),
                  (self.touchpad_config_widget, 'synaptiks')]
         for page_widget, page_icon_name in pages:
             page = self.addPage(page_widget, page_widget.windowTitle())
@@ -92,24 +126,28 @@ class SynaptiksConfigDialog(KConfigDialog):
 
     def hasChanged(self):
         return (KConfigDialog.hasChanged(self) or
-                self.touchpad_config_widget.is_configuration_changed)
+                any(w.is_configuration_changed for w in self.config_widgets))
 
     def isDefault(self):
         return (KConfigDialog.isDefault(self) or
-                self.touchpad_config_widget.shows_defaults())
+                any(w.shows_defaults() for w in self.config_widgets))
 
     def updateWidgetsDefault(self):
         KConfigDialog.updateWidgetsDefault(self)
-        self.touchpad_config_widget.load_defaults()
+        for widget in self.config_widgets:
+            widget.load_defaults()
 
     def updateWidgets(self):
         KConfigDialog.updateWidgets(self)
-        self.touchpad_config_widget.load_configuration()
+        for widget in self.config_widgets:
+            widget.load_configuration()
 
     def updateSettings(self):
         KConfigDialog.updateSettings(self)
-        self.touchpad_config_widget.apply_configuration()
+        for widget in self.config_widgets:
+            widget.apply_configuration()
         self.touchpad_config.save()
+        self.management_config.save()
 
 
 class SynaptiksTrayConfiguration(KConfigSkeleton):
@@ -155,8 +193,9 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
             self.activateRequested.connect(self.show_configuration_dialog)
             # setup the touchpad state machine
             self.touchpad_states = TouchpadStateMachine(self.touchpad, self)
+            ManagementConfiguration.load(self.touchpad_states)
             # transition upon touchpad_on_action
-            self.touchpad_states.add_touchpad_switch_transition(
+            self.touchpad_states.add_touchpad_switch_signal(
                 self.touchpad_on_action.triggered)
             # update checked state of touchpad_on_action according to current
             # state
@@ -223,7 +262,8 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
         self.shortcuts_dialog.configure()
 
     def show_configuration_dialog(self):
-        self.config_dialog = SynaptiksConfigDialog(self.touchpad, self._config)
+        self.config_dialog = SynaptiksConfigDialog(
+            self.touchpad, self.touchpad_states, self._config)
         self.config_dialog.finished.connect(self.config_dialog.deleteLater)
         self.config_dialog.show()
 
