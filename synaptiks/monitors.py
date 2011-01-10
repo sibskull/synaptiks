@@ -118,7 +118,7 @@ class MouseDevicesMonitor(QObject):
             yield MouseDevice.from_udev(device)
 
     def _handle_udev_event(self, evt, device):
-        signal = self._event_signal_map.get(evt)
+        signal = self._event_signal_map.get(unicode(evt))
         if signal and _is_mouse(device):
             signal.emit(MouseDevice.from_udev(device))
 
