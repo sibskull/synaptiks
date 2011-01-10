@@ -253,7 +253,7 @@ class TouchpadStateMachine(QStateMachine):
                 self.mouse_manager.start()
         elif not enabled and self.monitor_mouses:
             self.mouse_manager.stop()
-            self.initialState.entered.disconnect(self.mouse_manager.start)
+            self.initialState().entered.disconnect(self.mouse_manager.start)
 
     @property
     def monitor_keyboard(self):
