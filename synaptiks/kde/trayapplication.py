@@ -157,25 +157,18 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
             self.touchpad_states = TouchpadStateMachine(self.touchpad, self)
             ManagementConfiguration.load(self.touchpad_states)
             # transition upon touchpad_on_action
-            self.touchpad_states.add_touchpad_switch_signal(
-                self.touchpad_on_action.triggered)
-            # update checked state of touchpad_on_action according to current
-            # state
-            self.touchpad_states.touchpad_not_off.assignProperty(
+            self.touchpad_states.add_touchpad_switch_action(
+                self.touchpad_on_action)
+            # update checked state of touchpad_on_action
+            self.touchpad_states.touchpad_on.assignProperty(
                 self.touchpad_on_action, 'checked', True)
-            self.touchpad_states.touchpad_off.assignProperty(
+            self.touchpad_states.touchpad_manually_off.assignProperty(
                 self.touchpad_on_action, 'checked', False)
             # update the overlay icon
             self.touchpad_states.touchpad_on.entered.connect(
                 partial(self.setOverlayIconByName, 'touchpad-off'))
             self.touchpad_states.touchpad_on.exited.connect(
                 partial(self.setOverlayIconByName, ''))
-            # emit a notification, if the touchpad state changed (except for
-            # temporary state changes)
-            self.touchpad_states.touchpad_not_off.entered.connect(
-                partial(self.notify_touchpad_state, False))
-            self.touchpad_states.touchpad_off.entered.connect(
-                partial(self.notify_touchpad_state, True))
             self.touchpad_states.start()
 
     def setup_actions(self):
