@@ -36,6 +36,8 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
+from collections import defaultdict
+
 from PyQt4.QtCore import (pyqtSignal, pyqtProperty, QObject,
                           QStateMachine, QState)
 
@@ -176,17 +178,29 @@ class TouchpadManager(QStateMachine):
     Based upon :class:`~PyQt4.QtCore.QStateMachine` this class manages four
     different states of the touchpad.
 
-    - The touchpad is currently on
-    - The touchpad is automatically switched off temporarily (e.g. by keyboard
-      activity)
-    - The touchpad is automatically switched off permanently (e.g. by an
-      external mouse plugged)
-    - The touchpad is manually switched off by user interaction
+    - ``on``: The touchpad is currently on.  This is the initial state.
+    - ``temporarily_off``: The touchpad is automatically switched off
+      temporarily (e.g. by keyboard activity)
+    - ``automatically_off``: The touchpad is automatically switched off
+      permanently (e.g. by an external mouse plugged)
+    - ``manually_off``: The touchpad is manually switched off by user
+      interaction
+
+    The :attr:`states` mapping represents the states.  It the names of these
+    states to :class:`~PyQt4.QtCore.QState` objects, which represent these
+    states.  You may freely access these objects, and for instance connect to
+    their ``entered()`` signals to display notifications or something like
+    this.  The state names are also the object names of the state objects.
+
+    The :attr:`transitions` mapping represents the transitions between these
+    states.  It maps pairs of state names in the form ``(source, destination)``
+    to a list of :class:`~PyQt4.QtCore.QAbstractTransition`-derived objects,
+    each of which represents a single transition from the ``source`` state to
+    the ``destination`` state.
     """
 
-    _STATES = dict(
-        touchpad_on=False, touchpad_temporarily_off=True,
-        touchpad_automatically_off=True, touchpad_manually_off=True)
+    _STATE_NAMES = dict(on=False, temporarily_off=True,
+                        automatically_off=True, manually_off=True)
 
     def __init__(self, touchpad, parent=None):
         QStateMachine.__init__(self, parent)
@@ -196,26 +210,37 @@ class TouchpadManager(QStateMachine):
         self.mouse_manager = MouseDevicesManager(self)
         self.keyboard_monitor = PollingKeyboardMonitor(self)
         # setup the states
-        for name, touchpad_off in self._STATES.iteritems():
+        self.states = {}
+        for name, touchpad_off in self._STATE_NAMES.iteritems():
             state = QState(self)
             state.setObjectName(name)
             state.assignProperty(self._touchpad_wrapper, 'off', touchpad_off)
-            setattr(self, name, state)
+            self.states[name] = state
         # setup the initial state
-        self.setInitialState(self.touchpad_on)
+        self.setInitialState(self.states['on'])
         # setup the transitions
+        self.transitions = defaultdict(list)
         # mouse management transitions
-        for state_name in ('touchpad_on', 'touchpad_temporarily_off'):
-            state = getattr(self, state_name)
-            state.addTransition(self.mouse_manager.firstMousePlugged,
-                                self.touchpad_automatically_off)
-        self.touchpad_automatically_off.addTransition(
-            self.mouse_manager.lastMouseUnplugged, self.touchpad_on)
+        for state in ('on', 'temporarily_off'):
+            self._add_transition(state, 'automatically_off',
+                                 self.mouse_manager.firstMousePlugged)
+        self._add_transition('automatically_off', 'on',
+                             self.mouse_manager.lastMouseUnplugged)
         # keyboard management transitions
-        self.touchpad_on.addTransition(self.keyboard_monitor.typingStarted,
-                                       self.touchpad_temporarily_off)
-        self.touchpad_temporarily_off.addTransition(
-            self.keyboard_monitor.typingStopped, self.touchpad_on)
+        self._add_transition('on', 'temporarily_off',
+                             self.keyboard_monitor.typingStarted)
+        self._add_transition('temporarily_off', 'on',
+                             self.keyboard_monitor.typingStopped)
+
+    def _add_transition(self, source, dest, signal):
+        if isinstance(source, basestring):
+            source = self.states[source]
+        if isinstance(dest, basestring):
+            dest = self.states[dest]
+        transition = source.addTransition(signal, dest)
+        source_name = unicode(source.objectName())
+        dest_name = unicode(dest.objectName())
+        self.transitions[(source_name, dest_name)].append(transition)
 
     def add_touchpad_switch_action(self, action):
         """
@@ -226,12 +251,9 @@ class TouchpadManager(QStateMachine):
         or :attr:`touchpad_automatically_off` to :attr:`touchpad_manually_off`,
         or from :attr:`touchpad_manually_off` to :attr:`touchpad_on`.
         """
-        for state_name in ('touchpad_on', 'touchpad_temporarily_off',
-                           'touchpad_automatically_off'):
-            state = getattr(self, state_name)
-            state.addTransition(action.triggered, self.touchpad_manually_off)
-        self.touchpad_manually_off.addTransition(action.triggered,
-                                                 self.touchpad_on)
+        for state in ('on', 'temporarily_off', 'automatically_off'):
+            self._add_transition(state, 'manually_off', action.triggered)
+        self._add_transition('manually_off', 'on', action.triggered)
 
     @property
     def monitor_mouses(self):

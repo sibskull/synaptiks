@@ -160,14 +160,14 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
             self.touchpad_manager.add_touchpad_switch_action(
                 self.touchpad_on_action)
             # update checked state of touchpad_on_action
-            self.touchpad_manager.touchpad_on.assignProperty(
+            self.touchpad_manager.states['on'].assignProperty(
                 self.touchpad_on_action, 'checked', True)
-            self.touchpad_manager.touchpad_manually_off.assignProperty(
+            self.touchpad_manager.states['manually_off'].assignProperty(
                 self.touchpad_on_action, 'checked', False)
             # update the overlay icon
-            self.touchpad_manager.touchpad_on.entered.connect(
+            self.touchpad_manager.states['on'].entered.connect(
                 partial(self.setOverlayIconByName, 'touchpad-off'))
-            self.touchpad_manager.touchpad_on.exited.connect(
+            self.touchpad_manager.states['on'].exited.connect(
                 partial(self.setOverlayIconByName, ''))
             self.touchpad_manager.start()
 
