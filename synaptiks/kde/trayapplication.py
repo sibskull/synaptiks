@@ -38,6 +38,7 @@ from __future__ import (print_function, division, unicode_literals,
 
 import sys
 from functools import partial
+from itertools import chain
 
 from PyKDE4.kdecore import KCmdLineArgs, ki18nc, i18nc
 from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem,
@@ -169,6 +170,21 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
                 partial(self.setOverlayIconByName, 'touchpad-off'))
             self.touchpad_manager.states['on'].exited.connect(
                 partial(self.setOverlayIconByName, ''))
+            # display notifications on all but transitions between on and
+            # temporarily_off.  No user wants to be nagged by a notification
+            # everytime she is typing :)
+            off_states = ['automatically_off', 'manually_off']
+            off_transitions = (self.touchpad_manager.transitions[('on', d)]
+                               for d in off_states)
+            for transition in chain.from_iterable(off_transitions):
+                transition.triggered.connect(
+                    partial(self.notify_touchpad_state, True))
+            on_transitions = (self.touchpad_manager.transitions[(d, 'on')]
+                              for d in off_states)
+            for transition in chain.from_iterable(on_transitions):
+                transition.triggered.connect(
+                    partial(self.notify_touchpad_state, False))
+            # and eventually start managing the touchpad
             self.touchpad_manager.start()
 
     def setup_actions(self):
