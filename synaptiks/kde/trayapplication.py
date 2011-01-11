@@ -49,7 +49,7 @@ from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem,
 
 from synaptiks.qx11 import QX11Display
 from synaptiks.touchpad import Touchpad
-from synaptiks.management import TouchpadStateMachine
+from synaptiks.management import TouchpadManager
 from synaptiks.config import TouchpadConfiguration, ManagementConfiguration
 from synaptiks.kde import make_about_data
 from synaptiks.kde.widgets.touchpad import TouchpadConfigurationWidget
@@ -63,10 +63,10 @@ class SynaptiksConfigDialog(KConfigDialog):
 
     DIALOG_NAME = 'synaptiks-configuration'
 
-    def __init__(self, touchpad, state_machine, tray_config, parent=None):
+    def __init__(self, touchpad, touchpad_manager, tray_config, parent=None):
         KConfigDialog.__init__(self, parent, self.DIALOG_NAME, tray_config)
         self.touchpad_config = TouchpadConfiguration(touchpad)
-        self.management_config = ManagementConfiguration(state_machine)
+        self.management_config = ManagementConfiguration(touchpad_manager)
 
         self.setFaceType(self.List)
 
@@ -154,22 +154,22 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
         else:
             self.activateRequested.connect(self.show_configuration_dialog)
             # setup the touchpad state machine
-            self.touchpad_states = TouchpadStateMachine(self.touchpad, self)
-            ManagementConfiguration.load(self.touchpad_states)
+            self.touchpad_manager = TouchpadManager(self.touchpad, self)
+            ManagementConfiguration.load(self.touchpad_manager)
             # transition upon touchpad_on_action
-            self.touchpad_states.add_touchpad_switch_action(
+            self.touchpad_manager.add_touchpad_switch_action(
                 self.touchpad_on_action)
             # update checked state of touchpad_on_action
-            self.touchpad_states.touchpad_on.assignProperty(
+            self.touchpad_manager.touchpad_on.assignProperty(
                 self.touchpad_on_action, 'checked', True)
-            self.touchpad_states.touchpad_manually_off.assignProperty(
+            self.touchpad_manager.touchpad_manually_off.assignProperty(
                 self.touchpad_on_action, 'checked', False)
             # update the overlay icon
-            self.touchpad_states.touchpad_on.entered.connect(
+            self.touchpad_manager.touchpad_on.entered.connect(
                 partial(self.setOverlayIconByName, 'touchpad-off'))
-            self.touchpad_states.touchpad_on.exited.connect(
+            self.touchpad_manager.touchpad_on.exited.connect(
                 partial(self.setOverlayIconByName, ''))
-            self.touchpad_states.start()
+            self.touchpad_manager.start()
 
     def setup_actions(self):
         self.touchpad_on_action = KToggleAction(
@@ -228,7 +228,7 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
 
     def show_configuration_dialog(self):
         self.config_dialog = SynaptiksConfigDialog(
-            self.touchpad, self.touchpad_states, self._config)
+            self.touchpad, self.touchpad_manager, self._config)
         self.config_dialog.finished.connect(self.config_dialog.deleteLater)
         self.config_dialog.show()
 

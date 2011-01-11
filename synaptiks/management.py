@@ -169,19 +169,19 @@ class TouchpadQtWrapper(QObject):
         self.touchpad.off = value
 
 
-class TouchpadStateMachine(QStateMachine):
+class TouchpadManager(QStateMachine):
     """
-    A state machine, which manages the touchpad state.
+    Manage the touchpad state state.
 
-    This state machine has two states:
+    Based upon :class:`~PyQt4.QtCore.QStateMachine` this class manages four
+    different states of the touchpad.
 
-    - ``touchpad_on``: The touchpad is currently on
-    - ``touchpad_temporarily_off``: The touchpad is temporarily switched off
-      (e.g. by keyboard activity)
-    - ``touchpad_automatically_off``: The touchpad is automatically switched
-      off (e.g. by an external mouse plugged)
-    - ``touchpad_manually_off``: The touchpad is manually switched off by user
-      interaction
+    - The touchpad is currently on
+    - The touchpad is automatically switched off temporarily (e.g. by keyboard
+      activity)
+    - The touchpad is automatically switched off permanently (e.g. by an
+      external mouse plugged)
+    - The touchpad is manually switched off by user interaction
     """
 
     _STATES = dict(

@@ -197,8 +197,8 @@ class TouchpadConfiguration(MutableMapping):
 
 class ManagementConfiguration(MutableMapping):
     """
-    A mutable mapping class representing the current configuration of the
-    state machine, which manages the touchpad.
+    A mutable mapping class representing the configuration of a
+    :class:`~synaptiks.management.TouchpadManager`.
     """
 
     #: the default values
@@ -212,9 +212,9 @@ class ManagementConfiguration(MutableMapping):
     KEYBOARD_MONITOR_KEYS = frozenset(['idle_time', 'keys_to_ignore'])
 
     @classmethod
-    def load(cls, state_machine, filename=None):
+    def load(cls, touchpad_manager, filename=None):
         """
-        Load the configuration for the given ``state_machine`` from disc.
+        Load the configuration for the given ``touchpad_manager`` from disc.
 
         If no ``filename`` is given, the configuration is loaded from the
         default configuration file as returned by
@@ -223,11 +223,11 @@ class ManagementConfiguration(MutableMapping):
         config as given by :attr:`DEFAULTS` is loaded.
 
         After the configuration is loaded, it is applied to the given
-        ``state_machine``.
+        ``touchpad_manager``.
 
-        ``touchpad`` is a :class:`~synaptiks.management.TouchpadStateMachine`
-        object.  ``filename`` is either ``None`` or a string containing the
-        path to a file.
+        ``touchpad_manager`` is a
+        :class:`~synaptiks.management.TouchpadManager` object.  ``filename`` is
+        either ``None`` or a string containing the path to a file.
 
         Return a :class:`ManagementConfiguration` object.  Raise
         :exc:`~exceptions.EnvironmentError`, if the file could not be loaded,
@@ -235,23 +235,23 @@ class ManagementConfiguration(MutableMapping):
         """
         if not filename:
             filename = get_management_config_file_path()
-        config = cls(state_machine)
+        config = cls(touchpad_manager)
         # use defaults for all non-existing settings
         loaded_config = dict(cls.DEFAULTS)
         loaded_config.update(load_json_with_default(filename, {}))
         config.update(loaded_config)
         return config
 
-    def __init__(self, state_machine):
-        self.state_machine = state_machine
+    def __init__(self, touchpad_manager):
+        self.touchpad_manager = touchpad_manager
 
     @property
     def mouse_manager(self):
-        return self.state_machine.mouse_manager
+        return self.touchpad_manager.mouse_manager
 
     @property
     def keyboard_monitor(self):
-        return self.state_machine.keyboard_monitor
+        return self.touchpad_manager.keyboard_monitor
 
     def __contains__(self, key):
         return key in self.DEFAULTS
@@ -265,7 +265,7 @@ class ManagementConfiguration(MutableMapping):
     def __getitem__(self, key):
         if key not in self:
             raise KeyError(key)
-        target = self.state_machine
+        target = self.touchpad_manager
         if key in self.MOUSE_MANAGER_KEYS:
             target = self.mouse_manager
         elif key in self.KEYBOARD_MONITOR_KEYS:
@@ -275,7 +275,7 @@ class ManagementConfiguration(MutableMapping):
     def __setitem__(self, key, value):
         if key not in self:
             raise KeyError(key)
-        target = self.state_machine
+        target = self.touchpad_manager
         if key in self.MOUSE_MANAGER_KEYS:
             target = self.mouse_manager
         elif key in self.KEYBOARD_MONITOR_KEYS:
@@ -289,9 +289,9 @@ class ManagementConfiguration(MutableMapping):
         ignored_mouses = other.pop('ignored_mouses')
         if other.pop('monitor_mouses'):
             self.mouse_manager.ignored_mouses = ignored_mouses
-            self.state_machine.monitor_mouses = True
+            self.touchpad_manager.monitor_mouses = True
         else:
-            self.state_machine.monitor_mouses = False
+            self.touchpad_manager.monitor_mouses = False
             self.mouse_manager.ignored_mouses = ignored_mouses
         super(ManagementConfiguration, self).update(other)
 
