@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -28,8 +28,36 @@
     synaptiks.touchpad
     ==================
 
-    This module provides the :class:`Touchpad` class, which provides access to
-    the touchpads on this system.
+    This module provides the :class:`Touchpad` class to access the touchpad of
+    the system.
+
+    Finding the touchpad
+    --------------------
+
+    Most likely a system has just a single touchpad.  Just use
+    :meth:`Touchpad.find_first()` to get a :class:`Touchpad` object for this
+    touchpad:
+
+    >>> from synaptiks.qx11 import QX11Display
+    >>> touchpad = Touchpad.find_first(QX11Display())
+    >>> touchpad.name
+    u'AlpsPS/2 ALPS GlidePoint'
+
+    Touchpad properties
+    -------------------
+
+    The touchpad settings are configured through properties of the
+    :class:`Touchpad` object.  Though the underlying property API of
+    :class:`~synaptiks.xinput.InputDevice` is also available, it is strongly
+    recommended, that you use the much more convenient property layer of the
+    :class:`Touchpad` class:
+
+    >>> touchpad.circular_scrolling
+    True
+    >>> touchpad.has_two_finger_emulation
+    False
+    >>> touchpad.finger_detection
+    1
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
@@ -243,12 +271,26 @@ Whether the touchpad is off or not.  Three valid values:
         '``True``, if circular scrolling is enabled, ``False`` otherwise')
 
     circular_scrolling_trigger = device_property(
-        'Synaptics Circular Scrolling Trigger', 'byte', 0,
-        'The trigger area for circular scrolling')
+        'Synaptics Circular Scrolling Trigger', 'byte', 0, """\
+The trigger area for circular scrolling.  Accepts the following values:
+
+- ``0``: All edges
+- ``1``: Top edge
+- ``2``: Top right corner
+- ``3``: Right edge
+- ``4``: Bottom right corner
+- ``5``: Bottom edge
+- ``6``: Bottom left corner
+- ``7``: Left edge
+- ``8``: Top left corner
+""")
 
     circular_scrolling_distance = device_property(
-        'Synaptics Circular Scrolling Distance', 'float', 0,
-        'The circular scrolling distance in degrees as float.')
+        'Synaptics Circular Scrolling Distance', 'float', 0, """\
+The circular scrolling distance in degrees as float.  The distance is simply
+the amount of degrees, the finger has to move on the circle in order to
+generate a single scroll event.
+""")
     circular_scrolling_distance.convert_from_property = math.degrees
     circular_scrolling_distance.convert_to_property = math.radians
 

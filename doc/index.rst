@@ -22,7 +22,7 @@ The current release is **synaptiks** |release|:
 Documentation
 -------------
 
-To be written!
+For interested developers :doc:`API documentation <api/index>` is provided.
 
 
 Issues and feedback
@@ -67,3 +67,4 @@ also send patches through the issue tracker or through email.
    install
    licence
    changes
+   api/index

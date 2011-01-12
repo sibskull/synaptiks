@@ -27,7 +27,17 @@
     synaptiks
     =========
 
-    Main package of synaptiks
+    A touchpad configuration and management application.
+
+    Touchpad access
+    ---------------
+
+    The :mod:`~synaptiks.touchpad` module provides the
+    :class:`~touchpad.Touchpad` class to access and configured the touchpad.
+    This class uses the XInput API provided by Xorg to access the properties of
+    the touchpad driver.  This API is wrapped in a pythonic interface by the
+    :mod:`~synaptiks.xinput` module.
+
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
