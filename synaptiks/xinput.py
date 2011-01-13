@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (C) 2010, 2011 Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,40 @@
     synaptiks.qxinput
     =================
 
-    Pythonic API API to access XInput functionality
+    This module mainly provides the :class:`InputDevice` class, which gives
+    access to properties of input devices registered on the X11 server.
+
+    Finding input devices
+    ---------------------
+
+    :class:`InputDevice` provides various class methods to find input devices.
+    You can iterate over all devices using :meth:`InputDevice.all_devices()`,
+    or you can get a filtered list of devices using
+    :meth:`InputDevice.find_devices_by_name()` or
+    :meth:`InputDevice.find_devices_with_property()`.
+
+    Working with input devices
+    --------------------------
+
+    The :class:`InputDevice` class is a read-only mapping of property names to
+    property values:
+
+    >>> from synaptiks.qx11 import QX11Display
+    >>> devices = list(InputDevice.find_devices_with_property(QX11Display(), 'Synaptics Off'))
+    >>> devices
+    [<synaptiks.xinput.InputDevice object at 0xa599bcc>]
+    >>> devices[0].name
+    u'AlpsPS/2 ALPS GlidePoint'
+    >>> devices[0]['Synaptics Off']
+    [0]
+    >>> devices[0]['Synaptics Edge Scrolling']
+    [0, 1, 0]
+
+    To change properties, this interface can't be used, because properties
+    require explicit type information on write access.  Therefore separate
+    setters are provided:
+
+    >>> devices[0].set_bool('Synaptics Edge Scrolling', [False, False, False])
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
@@ -112,7 +145,7 @@ class UndefinedPropertyError(KeyError):
     @property
     def name(self):
         """
-        The name of the undefined property
+        The name of the undefined property as string.
         """
         return self.args[0]
 
@@ -146,7 +179,7 @@ class InputDeviceNotFoundError(Exception):
     @property
     def id(self):
         """
-        The id of the non-existing device.
+        The id of the non-existing device as integer.
         """
         return self.args[0]
 
@@ -161,14 +194,14 @@ class PropertyTypeError(ValueError):
     """
 
     @property
-    def type(self):
+    def type_atom(self):
         """
-        The property type that caused this error
+        The property type that caused this error as Xlib atom.
         """
         return self.args[0]
 
     def __str__(self):
-        return 'Unexpected property type: {0}'.format(self.type)
+        return 'Unexpected property type: {0}'.format(self.type_atom)
 
 
 #: maps property formats to :mod:`struct` format codes
@@ -179,11 +212,10 @@ class InputDevice(Mapping):
     """
     An input device registered on the X11 server.
 
-    This class subclasses the MutableMapping ABC, providing a writable
-    dictionary mapping device property names to the corresponding
-    values. Therefore all well-known dicitionary methods and operators
-    (e.g. .keys(), .items(), in) are available to access the properties of a
-    input device.
+    This class subclasses the ``Mapping`` ABC, providing a dictionary mapping
+    device property names to the corresponding values. Therefore all well-known
+    dicitionary methods and operators (e.g. ``.keys()``, ``.items()``, ``in``)
+    are available to access the properties of a input device.
 
     :class:`InputDevice` objects compare equal and unequal to other devices
     and to strings (based on :attr:`id`). However, there is no ordering on

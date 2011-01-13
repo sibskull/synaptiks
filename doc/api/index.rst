@@ -11,4 +11,5 @@ Package contents
 
 .. toctree::
 
+   xinput
    touchpad
