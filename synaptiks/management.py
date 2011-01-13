@@ -247,13 +247,14 @@ class TouchpadManager(QStateMachine):
         Add the given ``action`` to switch the touchpad manually.
 
         Whenever the given ``action`` is triggered, the state machine
-        transitions from :attr:`touchpad_on`, :attr:`touchpad_temporarily_off`
-        or :attr:`touchpad_automatically_off` to :attr:`touchpad_manually_off`,
-        or from :attr:`touchpad_manually_off` to :attr:`touchpad_on`.
+        transitions from ``on``, ``temporarily_off`` and ``automatically_off``
+        to ``manually_off`` and back from ``manually_off`` and
+        ``automatically_off`` to ``on``.
         """
         for state in ('on', 'temporarily_off', 'automatically_off'):
             self._add_transition(state, 'manually_off', action.triggered)
-        self._add_transition('manually_off', 'on', action.triggered)
+        for state in ('manually_off', 'automatically_off'):
+            self._add_transition(state, 'on', action.triggered)
 
     @property
     def monitor_mouses(self):
