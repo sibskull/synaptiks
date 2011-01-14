@@ -27,6 +27,7 @@ import sys, os
 
 # add project directory to module path in order to import synaptiks correctly
 doc_directory = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, doc_directory)
 sys.path.insert(0, os.path.normpath(
     os.path.join(doc_directory, os.pardir)))
 
@@ -34,7 +35,8 @@ import synaptiks
 
 needs_sphinx = '1.0'
 
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx',
+              'handbook']
 
 master_doc = 'index'
 exclude_patterns = ['_build/*']
