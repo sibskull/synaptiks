@@ -163,7 +163,7 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
             # update checked state of touchpad_on_action
             self.touchpad_manager.states['on'].assignProperty(
                 self.touchpad_on_action, 'checked', True)
-            self.touchpad_manager.states['manually_off'].assignProperty(
+            self.touchpad_manager.states['off'].assignProperty(
                 self.touchpad_on_action, 'checked', False)
             # update the overlay icon
             self.touchpad_manager.states['on'].entered.connect(
@@ -173,17 +173,10 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
             # display notifications on all but transitions between on and
             # temporarily_off.  No user wants to be nagged by a notification
             # everytime she is typing :)
-            off_states = ['automatically_off', 'manually_off']
-            off_transitions = (self.touchpad_manager.transitions[('on', d)]
-                               for d in off_states)
-            for transition in chain.from_iterable(off_transitions):
-                transition.triggered.connect(
-                    partial(self.notify_touchpad_state, True))
-            on_transitions = (self.touchpad_manager.transitions[(d, 'on')]
-                              for d in off_states)
-            for transition in chain.from_iterable(on_transitions):
-                transition.triggered.connect(
-                    partial(self.notify_touchpad_state, False))
+            self.touchpad_manager.states['off'].entered.connect(
+                partial(self.notify_touchpad_state, True))
+            self.touchpad_manager.states['off'].exited.connect(
+                partial(self.notify_touchpad_state, False))
             # and eventually start managing the touchpad
             self.touchpad_manager.start()
 

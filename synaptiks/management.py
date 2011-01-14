@@ -181,10 +181,8 @@ class TouchpadManager(QStateMachine):
     - ``on``: The touchpad is currently on.  This is the initial state.
     - ``temporarily_off``: The touchpad is automatically switched off
       temporarily (e.g. by keyboard activity)
-    - ``automatically_off``: The touchpad is automatically switched off
-      permanently (e.g. by an external mouse plugged)
-    - ``manually_off``: The touchpad is manually switched off by user
-      interaction
+    - ``off``: The touchpad is permanently off (e.g. by user interaction, or by
+      a plugged mouse device)
 
     The :attr:`states` mapping represents the states.  It the names of these
     states to :class:`~PyQt4.QtCore.QState` objects, which represent these
@@ -199,8 +197,7 @@ class TouchpadManager(QStateMachine):
     the ``destination`` state.
     """
 
-    _STATE_NAMES = dict(on=False, temporarily_off=True,
-                        automatically_off=True, manually_off=True)
+    _STATE_NAMES = dict(on=False, temporarily_off=True, off=True)
 
     def __init__(self, touchpad, parent=None):
         QStateMachine.__init__(self, parent)
@@ -222,10 +219,10 @@ class TouchpadManager(QStateMachine):
         self.transitions = defaultdict(list)
         # mouse management transitions
         for state in ('on', 'temporarily_off'):
-            self._add_transition(state, 'automatically_off',
-                                 self.mouse_manager.firstMousePlugged)
-        self._add_transition('automatically_off', 'on',
-                             self.mouse_manager.lastMouseUnplugged)
+            self._add_transition(
+                state, 'off', self.mouse_manager.firstMousePlugged)
+        self._add_transition(
+            'off', 'on', self.mouse_manager.lastMouseUnplugged)
         # keyboard management transitions
         self._add_transition('on', 'temporarily_off',
                              self.keyboard_monitor.typingStarted)
@@ -247,14 +244,12 @@ class TouchpadManager(QStateMachine):
         Add the given ``action`` to switch the touchpad manually.
 
         Whenever the given ``action`` is triggered, the state machine
-        transitions from ``on``, ``temporarily_off`` and ``automatically_off``
-        to ``manually_off`` and back from ``manually_off`` and
-        ``automatically_off`` to ``on``.
+        transitions from ``on`` and ``temporarily_off`` to ``off``
+        and back from ``off`` to ``on``.
         """
-        for state in ('on', 'temporarily_off', 'automatically_off'):
-            self._add_transition(state, 'manually_off', action.triggered)
-        for state in ('manually_off', 'automatically_off'):
-            self._add_transition(state, 'on', action.triggered)
+        for state in ('on', 'temporarily_off'):
+            self._add_transition(state, 'off', action.triggered)
+        self._add_transition('off', 'on', action.triggered)
 
     @property
     def monitor_mouses(self):
