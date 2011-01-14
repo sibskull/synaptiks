@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@ import sys, os
 
 # add project directory to module path in order to import synaptiks correctly
 doc_directory = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.normpath(
+sys.path.insert(0, os.path.normpath(
     os.path.join(doc_directory, os.pardir)))
 
 import synaptiks
