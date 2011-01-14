@@ -22,7 +22,15 @@ The current release is **synaptiks** |release|:
 Documentation
 -------------
 
+Though most of the previously described features should be fairly easy to use,
+**synaptiks** of course has a extensive Handbook_.  You should at last cast a
+short look at the Usage_ chapter to make sure, that you know everything that
+**synaptiks** can do for you.
+
 For interested developers :doc:`API documentation <api/index>` is provided.
+Read this, if you are want to develop **synaptiks** (see :ref:`contribution`
+for more information on how to contribute to **synaptiks**), or if you are just
+interested in the internals.
 
 
 Issues and feedback
@@ -38,6 +46,8 @@ get into your report, including especially any error messages or tracebacks.
 If unsure, better post more information than required.
 
 
+.. _contribution:
+
 Contribution and development
 ============================
 
@@ -52,6 +62,8 @@ a pull requests with your work.  Of course, should you dislike GitHub, you can
 also send patches through the issue tracker or through email.
 
 
+.. _handbook: handbook/index.html
+.. _usage: handbook/usage.html
 .. _KDE: http://www.kde.org
 .. _simplified BSD licence: http://www.opensource.org/licenses/bsd-license.php
 .. _complete changelog: https://github.com/lunaryorn/synaptiks/commits/master
