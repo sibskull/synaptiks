@@ -52,6 +52,7 @@ html_theme_path = ['_themes']
 html_static_path = ['_static']
 html_title = 'synaptiks {0}'.format(version)
 html_favicon = 'favicon.ico'
+html_logo = '_static/synaptiks.png'
 
 intersphinx_mapping = {'http://docs.python.org/': None}
 
