@@ -5,12 +5,36 @@ Welcome to synaptiks!
 available under the terms of the `simplified BSD licence`_ (see
 :doc:`licence`).
 
-It provides a System Settings module to configure basic and advanced features
-of the touchpad.
+Features
+--------
 
-Additionally it comes with a little system tray application,
-which can switch the touchpad automatically off, while an external mouse is
-plugged or while you are typing.
+**synaptiks** provides a System Settings module to configure both basic and
+more advanced settings of the touchpad:
+
+.. image:: handbook/scrolling.png
+   :align: center
+   :scale: 50%
+
+This includes:
+
+- Cursor motion speed settings
+- Edge scrolling
+- Two finger scrolling
+- Circular scrolling (which allows you to scroll by moving your fingers in
+  circles across the touchpad, much less tedious than edge scrolling in my
+  opinion)
+- Tapping settings (e.g. which mouse buttons are triggered by tapping into
+  touchpad corners or with multiple touchpad)
+
+Additionally it comes with a little system tray application, which "manages"
+the touchpad:
+
+.. image:: handbook/traymenu.png
+   :align: center
+
+It does not only provide a global hotkey to conveniently switch the touchpad on
+or off, it can also do this automatically while you are typing, or if you plug
+in an external mouse.
 
 The current release is **synaptiks** |release|:
 
