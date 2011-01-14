@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" "dtd/kdex.dtd" [
+  <!ENTITY synaptiks "<application>synaptiks</application>">
+  <!ENTITY kappname "&synaptiks;">
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % English "INCLUDE">
+  <!ENTITY synaptics "<application>xf86-input-synaptics</application>">
+  <!ENTITY libxi "<application>libXi</application>">
+  <!ENTITY x.org "<application>X.org</application>">
+]>
+
+<book lang="&language;">
+<bookinfo>
+<title>The &synaptiks; Handbook</title>
+
+<authorgroup>
+<author>
+<personname>
+<firstname>Sebastian</firstname>
+<surname>Wiesner</surname>
+</personname>
+<email>lunaryorn@googlemail.com</email>
+</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<copyright>
+<year>2009, 2010</year>
+<holder>Sebastian Wiesner</holder>
+</copyright>
+<legalnotice>&underBSDLicense;</legalnotice>
+<date>1011-01-14</date>
+<releaseinfo>0.5.0</releaseinfo>
+
+<abstract>
+<para>
+&synaptiks; provides a touchpad configuration module and a touchpad management
+application for &kde;.
+</para>
+</abstract>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>hardware</keyword>
+<keyword>touchpad</keyword>
+<keyword>synaptics</keyword>
+</keywordset>
+
+</bookinfo>
+
+
+<chapter id="introduction">
+<title>Introduction</title>
+
+<para>
+&synaptiks; provides a &systemsettings; module for touchpad configuration and
+a little touchpad management tool.
+</para>
+<para>
+The &systemsettings; module configures the touchpad, including:
+<itemizedlist>
+<listitem><para>Cursor motion speed settings</para></listitem>
+<listitem><para>Edge scrolling</para></listitem>
+<listitem><para>Two finger scrolling</para></listitem>
+<listitem><para>Circular scrolling (which allows you to scroll by moving your
+fingers in circles across the touchpad, much less tedious than edge scrolling
+in my opinion)</para></listitem>
+<listitem><para>Tapping settings (e.g. which mouse buttons are triggered by
+tapping into touchpad corners or with multiple touchpad)</para></listitem>
+</itemizedlist>
+<screenshot>
+<mediaobject>
+<imageobject><imagedata fileref="scrolling.png" format="PNG"/></imageobject>
+<textobject><phrase>Screenshot of scrolling configuration the &synaptiks;
+&systemsettings; module.</phrase></textobject>
+</mediaobject>
+</screenshot>
+It is located in <menuchoice><guimenuitem>System Administration</guimenuitem>
+<guimenuitem>Input Devices</guimenuitem>
+<guimenuitem>Touchpad</guimenuitem></menuchoice>.
+</para>
+<para>
+The touchpad management tool resides in the system tray and provides a global
+hotkey to conveniently switch the touchpad on or off.  It can also do so
+automatically while you are typing, or if you plug in an external mouse:
+<screenshot>
+<mediaobject>
+<imageobject><imagedata fileref="traymenu.png" format="PNG"/></imageobject>
+<textobject><phrase>Screenshot of the &synaptiks; tray application and its
+menu.</phrase></textobject>
+</mediaobject>
+</screenshot>
+<screenshot>
+<mediaobject>
+<imageobject><imagedata fileref="management.png" format="PNG"/></imageobject>
+<textobject><phrase>Screenshot of the configuration dialog of the tray
+application</phrase></textobject>
+</mediaobject>
+</screenshot>
+It is available under in the &kde; menu under <menuchoice><guimenuitem>Applications</guimenuitem>
+<guimenuitem>Utilities</guimenuitem> <guimenuitem>Touchpad
+management</guimenuitem></menuchoice>.
+</para>
+
+</chapter>
+
+<chapter id="usage">
+<title>Usage of &synaptiks;</title>
+<para>TO BE WRITTEN</para>
+</chapter>
+
+<chapter id="commands">
+<title>Command reference</title>
+<para>TO BE WRITTEN</para>
+</chapter>
+
+<chapter id="credits">
+<title>Credits and License</title>
+
+<para>
+&synaptiks;
+</para>
+<para>
+Program copyright 2009, 2010 Sebastian Wiesner
+<email>lunaryorn@googlemail.com</email>
+</para>
+<para>
+Contributors:
+<itemizedlist>
+<listitem>
+<para>
+<personname><firstname>Mehmet</firstname>
+<surname>Nur Olcay</surname></personname>
+<email>mnurolcay@gmail.com</email>
+</para>
+</listitem>
+<listitem>
+<para>
+<personname><firstname>Valentyn</firstname>
+<surname>Pavliuchenko</surname></personname>
+<email>valentyn.pavliuchenko@gmail.com</email>
+</para>
+</listitem>
+<listitem>
+<para>
+<personname><firstname>Martin</firstname>
+<surname>Schlander</surname></personname>
+<email>mschlander@opensuse.org</email>
+</para>
+</listitem>
+</itemizedlist>
+</para>
+
+<para>
+Documentation Copyright &copy; 2009, 2010 Sebastian Wiesner
+<email>lunaryorn@googlemail.com</email>
+</para>
+
+<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
+
+&underBSDLicense;
+</chapter>
+
+<appendix id="installation-appendix">
+<title>Installation</title>
+
+<sect1 id="getting-synaptiks">
+<title>How to obtain &synaptiks;</title>
+<para>TO BE WRITTEN</para>
+</sect1>
+
+<sect1 id="requirements">
+<title>Requirements</title>
+<para>TO BE WRITTEN</para>
+</sect1>
+
+<sect1 id="installation">
+<title>Installation</title>
+<para>TO BE WRITTEN</para>
+</sect1>
+
+</appendix>
+
+&documentation.index;
+</book>
+
+<!--
+Local Variables:
+mode: nxml
+nxml-child-indent: 0
+End:
+
+vim:tabstop=2:shiftwidth=2:expandtab
+kate: space-indent on; indent-width 2; tab-width 2; indent-mode none;
+-->
