@@ -143,6 +143,16 @@ def post_process_files(target):
         for element, attribute, link, pos in tree.getroot().iterlinks():
             if link.startswith('common/'):
                 commons.add(link)
+        # replace the KDE logo in the header with the synaptiks logo and make
+        # the logo a backlink to the homepage
+        header = tree.getroot().get_element_by_id('header_right')
+        header_img = header.find('img')
+        header_img.attrib['src'] = '../_static/synaptiks.png'
+        header_link = lxml.html.Element('a', href='../index.html')
+        header.replace(header_img, header_link)
+        header_link.append(header_img)
+        header_link.tail = header_img.tail
+        header_img.tail = ''
         with open(filename, 'wb') as stream:
             stream.write(lxml.html.tostring(
                 tree, pretty_print=True, encoding='utf-8',
