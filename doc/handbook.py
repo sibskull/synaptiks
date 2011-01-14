@@ -141,15 +141,6 @@ def post_process_files(target):
         filename = os.path.join(target, filename)
         tree = lxml.html.parse(filename)
         for element, attribute, link, pos in tree.getroot().iterlinks():
-            if element.text == 'docs.kde.org':
-                element.attrib.update({
-                    'href': '../index.html',
-                    'accesskey': 'h'})
-                element.text = 'Home'
-            elif link == '/search_form.html':
-                element.drop_tree()
-            elif posixpath.basename(link) == 'kde_logo.png':
-                element.drop_tree()
             if link.startswith('common/'):
                 commons.add(link)
         with open(filename, 'wb') as stream:
