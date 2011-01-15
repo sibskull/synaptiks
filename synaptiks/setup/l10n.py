@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -271,3 +271,9 @@ class CompileCatalog(POWorkerCommand):
                               '--output-file', output_file,
                               os.path.join(self.directory, catalog)]
             self.spawn(msgfmt_command)
+
+#: exported command classes
+CMDCLASS = {'extract_messages': ExtractMessages,
+            'init_catalog': InitCatalog,
+            'compile_catalog': CompileCatalog,
+            'update_catalog': UpdateCatalog}

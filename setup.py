@@ -46,15 +46,12 @@ with open('README.rst', encoding='utf-8') as stream:
     long_description = stream.read()
 
 
+cmdclass = dict(kde.CMDCLASS)
+cmdclass.update(l10n.CMDCLASS)
+
 setup(
     distclass=kde.Distribution,
-    cmdclass={'install_kde_files': kde.InstallFiles,
-              'install_kde_icons': kde.InstallIcons,
-              'install_kde_messages': kde.InstallMessages,
-              'extract_messages': l10n.ExtractMessages,
-              'init_catalog': l10n.InitCatalog,
-              'compile_catalog': l10n.CompileCatalog,
-              'update_catalog': l10n.UpdateCatalog},
+    cmdclass=cmdclass,
     name='synaptiks',
     version=synaptiks.__version__,
     url=synaptiks.WEBSITE_URL,
@@ -86,6 +83,7 @@ setup(
         'console_scripts': ['synaptikscfg = synaptiks.config:main']},
     zip_safe=False,
     install_requires=requirements,
+    kde_handbook = 'doc/handbook/index.docbook',
     kde_files={
         'xdgdata-apps': ['synaptiks.desktop'],
         'services': ['services/kcm_synaptiks.desktop'],

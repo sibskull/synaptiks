@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -37,8 +37,11 @@ from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
 import os
+from glob import glob
 from collections import namedtuple
+from itertools import chain
 
+from distutils import log
 from distutils.util import change_root
 from distutils.errors import DistutilsSetupError
 from setuptools import Distribution as _Distribution
@@ -55,6 +58,7 @@ class Distribution(_Distribution):
         # register kde_* attributes for distutils
         self.kde_files = None
         self.kde_icons = None
+        self.kde_handbook = None
         _Distribution.__init__(self, attrs=attrs)
 
 
@@ -76,7 +80,7 @@ class KDEBaseCmd(BaseCommand):
         else:
             self.kde4_prefix = os.path.normpath(self.kde4_prefix)
 
-    def _get_install_directory(self, resource_type):
+    def _get_install_directory(self, resource_type, with_root=True):
         if resource_type == 'appdata':
             tail_path = self.distribution.metadata.name
             resource_type = 'data'
@@ -101,7 +105,7 @@ class KDEBaseCmd(BaseCommand):
             install_directory, self.kde4_prefix, install_cmd.prefix)
         if tail_path:
             actual_install_dir = os.path.join(actual_install_dir, tail_path)
-        if install_cmd.root:
+        if with_root and install_cmd.root:
             # respect a changed root
             actual_install_dir = change_root(
                 install_cmd.root, actual_install_dir)
@@ -191,9 +195,91 @@ class InstallMessages(KDEBaseCmd):
             self.install_catalog(catalog)
 
 
+class BuildHandbook(BaseCommand):
+    user_options = [
+        (b'meinproc4-exe=', None, 'Full path to meinproc4 executable'),
+        (b'build-dir=', None, 'Build directory')]
+
+    def initialize_options(self):
+        self.meinproc4_exe = None
+        self.build_dir = None
+
+    def finalize_options(self):
+        if self.meinproc4_exe is None:
+            self.meinproc4_exe = self._find_executable(
+                'meinproc4', 'Please install kdelibs')
+        if self.build_dir is None:
+            build = self.get_finalized_command('build')
+            self.build_dir = os.path.join(build.build_base, 'handbook')
+        self.handbook = self.distribution.kde_handbook
+        self.handbook_directory = os.path.dirname(self.handbook)
+
+    def run(self):
+        self.mkpath(self.build_dir)
+        docbook_files = glob(os.path.join(
+            self.handbook_directory, '*.docbook'))
+        image_files = glob(os.path.join(self.handbook_directory, '*.png'))
+        for filename in chain(docbook_files, image_files):
+            self.copy_file(filename, self.build_dir)
+        # build the index cache
+        cache_file = os.path.join(self.build_dir, 'index.cache.bz2')
+        self.spawn([self.meinproc4_exe, '--check', '--cache', cache_file,
+                   self.handbook])
+
+
+class InstallHandbook(KDEBaseCmd):
+    description = 'Install a KDE handbook'
+
+    user_options = KDEBaseCmd.user_options + [
+        (b'build-dir=', None, 'Build directory')]
+
+    def initialize_options(self):
+        KDEBaseCmd.initialize_options(self)
+        self.build_dir = None
+
+    def finalize_options(self):
+        KDEBaseCmd.finalize_options(self)
+        if self.build_dir is None:
+            build = self.get_finalized_command('build_kde_handbook')
+            self.build_dir = build.build_dir
+        self.name = self.distribution.metadata.name
+
+    def symlink(self, source, dest):
+        if self.verbose >= 1:
+            log.info('symbolically linking %s -> %s', source, dest)
+        if self.dry_run:
+            return (dest, True)
+        if os.path.isdir(dest):
+            dest = os.path.join(dest, os.path.basename(source))
+        os.symlink(source, dest)
+        return (dest, True)
+
+    def run(self):
+        files = [os.path.join(self.build_dir, fn)
+                 for fn in os.listdir(self.build_dir)]
+        handbook_install_directory = os.path.join(
+            self._get_install_directory('html'), 'en', self.name)
+        self.copy_files(files, handbook_install_directory)
+        html_directory = self._get_install_directory('html', with_root=False)
+        self.symlink(os.path.join(html_directory, 'en', 'common'),
+                     os.path.join(handbook_install_directory))
+
+
 from setuptools.command.install import install as install_cls
 install_cls.sub_commands.extend([
     ('install_kde_files', lambda s: True),
     ('install_kde_icons', lambda s: True),
     ('install_kde_messages', lambda s: True),
+    ('install_kde_handbook', lambda s: True),
     ])
+
+from distutils.command.build import build as build_cls
+build_cls.sub_commands.append(('build_kde_handbook', lambda s: True))
+
+
+CMDCLASS = {'install_kde_files': InstallFiles,
+            'install_kde_icons': InstallIcons,
+            'install_kde_messages': InstallMessages,
+            'build_kde_handbook': BuildHandbook,
+            'install_kde_handbook': InstallHandbook,
+            }
