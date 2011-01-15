@@ -124,7 +124,7 @@
          <double>0.000000000000000</double>
         </property>
         <property name="maximum">
-         <double>15.000000000000000</double>
+         <double>30.000000000000000</double>
         </property>
         <property name="specialValueText">
          <string comment="@item num input special value zero">Disabled</string>
