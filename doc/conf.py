@@ -55,7 +55,7 @@ html_favicon = 'favicon.ico'
 html_logo = '_static/synaptiks.png'
 
 intersphinx_mapping = {'http://docs.python.org/': None}
-handbook_source_directory = '../handbook'
+handbook_source_directory = 'handbook'
 
 
 def setup(app):
