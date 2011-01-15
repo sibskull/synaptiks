@@ -334,6 +334,118 @@ dragging</guilabel> expires.
 </sect2>
 </sect1>
 
+<sect1 id="touchpad-management">
+<title>Touchpad management</title>
+
+<para>
+To use the hotkey to switch the touchpad on or off, and to have your touchpad
+managed automatically, please start the tray application, available in &kde;
+menu under <menuchoice><guimenuitem>Applications</guimenuitem>
+<guimenuitem>Utilities</guimenuitem> <guimenuitem>Touchpad
+management</guimenuitem></menuchoice>.
+<screenshot>
+<mediaobject>
+<imageobject><imagedata fileref="traymenu.png" format="PNG"/></imageobject>
+<textobject><phrase>Screenshot of the &synaptiks; tray application and its
+menu.</phrase></textobject>
+</mediaobject>
+</screenshot>
+This tray application provides a global shortcut <keycombo
+action="simul">&Ctrl;&Alt;<keycap>T</keycap></keycombo> to switch the touchpad
+on or off.
+</para>
+<para>
+The tray application does not start automatically at logon by default.  If you
+want to continue using the tray application, please use <guilabel>Configure
+synaptiks...</guilabel> to open the configuration dialog and enable
+<guilabel>Automatically start at logon</guilabel>:
+<screenshot>
+<mediaobject>
+<imageobject><imagedata fileref="management.png" format="PNG"/></imageobject>
+<textobject><phrase>Screenshot of the configuration dialog of the tray
+application</phrase></textobject>
+</mediaobject>
+</screenshot>
+</para>
+
+<sect2 id="automatic-management">
+<title>Automatic touchpad management</title>
+<para>
+The tray application can also switch your touchpad automatically off while you
+are typing or if you plug in an external mouse.  These features are disabled by
+default to not confuse users, you need to explicitly enable them in the
+configuration dialog shown above.
+</para>
+
+<sect3 id="mouses">
+<title>Mouses</title>
+<para>
+To switch off the touchpad, if an external mouse is plugged, check
+<guilabel>Automatically switch off touchpad, if mouse is plugged</guilabel>.
+In case, your laptop has <quote>virtual</quote> mouse devices (&eg;
+<guilabel>Broadcom Corp</guilabel> and <guilabel>PS/2 Mouse</guilabel> in the
+Screenshot), you can use the list box <guilabel>Ignore the following mouse
+devices</guilabel>.  This box lists all connected mouses.  Any mouse, that is
+checked in this box, will be completed ignored.
+</para>
+</sect3>
+
+<sect3 id="keyboard-activity">
+<title>Keyboard activity</title>
+<para>
+To switch off the touchpad while you are typing, check
+<guilabel>Automatically switch off touchpad on keyboard activity</guilabel>.
+Depending on your personal preferences, you might not want the touchpad to
+be switched off, if you press modifier keys like &Ctrl; or &Alt;.  The
+<guilabel>Ignore these keys</guilabel> box provides three choices to match
+your preferences:
+<variablelist>
+<varlistentry>
+<term><guilabel>No keys</guilabel></term>
+<listitem>
+<para>
+Use this setting, if any key press should switch off the touchpad.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Modifier keys</guilabel></term>
+<listitem>
+<para>
+Use this setting, if you want to ignore modifier keys
+<emphasis>only</emphasis>.  Common modifier keys are <simplelist
+type="inline"><member>&Ctrl;</member> <member>&Alt;</member>
+<member>&Shift;</member></simplelist>.  Combinations of modifier keys and
+standard keys (&eg; <keycombo
+action="simul">&Ctrl;<keycap>Q</keycap></keycombo>) are
+<emphasis>not</emphasis> ignored.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Modifier combinations</guilabel></term>
+<listitem>
+<para>
+If you also want combinations of standard keys and modifier keys to be
+ignored, use this last setting.  Combinations of modifier keys and standard
+keys like <keycombo action="simul">&Ctrl;<keycap>Q</keycap></keycombo>
+ignored.  However, standard &Shift; combinations for uppercase letters (&eg;
+<keycombo action="simul">&Shift;<keycap>S</keycap></keycombo>) are also
+ignored, which may not be, what you want.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+After you stopped typing, and before switching the touchpad on again,
+&synaptiks; will wait a short moment (two seconds by default), just in case,
+you did not stop typing, but just typed a bit slower.  If you type fast, the
+standard delay will be way to long, so decrease the <guilabel>Time to wait
+before switching the keyboard on again</guilabel>.
+</para>
+</sect3>
+</sect2>
+</sect1>
+
 </chapter>
 
 <chapter id="commands">
