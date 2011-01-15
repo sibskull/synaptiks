@@ -88,6 +88,11 @@ class TouchpadInformationWidget(QWidget, DynamicUserInterfaceMixin):
 
         self.fingerDetection.setValue(touchpad.finger_detection)
 
+        # disable the emulation box, if the touchpad natively supports two
+        # fingers natively.
+        if touchpad.finger_detection > 2:
+            self.twoFingerEmulationBox.setEnabled(False)
+        # nonetheless always assign proper pixmaps
         self.fingerWidthDetection.setPixmap(
             pixmaps[touchpad.has_finger_width_detection])
         self.pressureDetection.setPixmap(
