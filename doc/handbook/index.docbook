@@ -162,23 +162,10 @@ Documentation Copyright &copy; 2009, 2010 Sebastian Wiesner
 </chapter>
 
 <appendix id="installation-appendix">
-<title>Installation</title>
-
-<sect1 id="getting-synaptiks">
-<title>How to obtain &synaptiks;</title>
-<para>TO BE WRITTEN</para>
-</sect1>
-
-<sect1 id="requirements">
-<title>Requirements</title>
-<para>TO BE WRITTEN</para>
-</sect1>
-
-<sect1 id="installation">
-<title>Installation</title>
-<para>TO BE WRITTEN</para>
-</sect1>
-
+<title>Installation</title> <para>Detailled installation instructions are
+available on the &synaptiks; website at <ulink
+url="http://synaptiks.lunaryorn.de/install.html"/>.
+</para>
 </appendix>
 
 &documentation.index;
