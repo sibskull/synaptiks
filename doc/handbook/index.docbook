@@ -75,7 +75,7 @@ tapping into touchpad corners or with multiple touchpad)</para></listitem>
 &systemsettings; module.</phrase></textobject>
 </mediaobject>
 </screenshot>
-It is located in <menuchoice><guimenuitem>System Administration</guimenuitem>
+It is located in &systemsettings; under <menuchoice>
 <guimenuitem>Input Devices</guimenuitem>
 <guimenuitem>Touchpad</guimenuitem></menuchoice>.
 </para>
