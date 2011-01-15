@@ -106,7 +106,234 @@ management</guimenuitem></menuchoice>.
 
 <chapter id="usage">
 <title>Usage of &synaptiks;</title>
-<para>TO BE WRITTEN</para>
+
+<sect1 id="touchpad-configuration">
+<title>Touchpad configuration</title>
+
+<para> To configure the behaviour of your touchpad, please open the &synaptiks;
+module in &systemsettings; at <menuchoice>
+<guimenuitem>Input Devices</guimenuitem>
+<guimenuitem>Touchpad</guimenuitem></menuchoice>.
+</para>
+
+<sect2 id="hardware-configuration">
+<title>Hardware</title>
+<para>
+The <guilabel>Hardware</guilabel> page provides information about the touchpad,
+and configures some general hardware properties.
+</para>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="hardware.png" format="PNG"/>
+</imageobject>
+<textobject>
+<phrase>Screenshot of the <guilabel>Hardware</guilabel> page</phrase>
+</textobject>
+</mediaobject>
+</screenshot>
+<para>
+The bold centered text shows the product name of the touchpad.  The line right
+below tells you, how many fingers the touchpad can detect separately.  Many
+modern or more expensive laptops will have touchpads, which detect two or more
+fingers separately, which allows for two-finger scrolling and taps with
+multiple fingers.  Some touchpads do not provide native support for two
+fingers, however they can emulate this feature.  The <guilabel>Two-finger
+emulation</guilabel> box informs about whether this is supported or not.  If
+the touchpad does neither detect multiple fingers nor support two-finger
+emulation, you are stuck with using a single finger.
+</para>
+<para>
+The <guilabel>Buttons</guilabel> box tells how, what physical buttons the
+touchpad provides.  Most touchpads have a physical &LMB; and a physical &RMB;.
+Sometimes a physical &MMB; is detected, though the touchpad does not actually
+have one.  In this case, the &MMB; is triggered by pressing the &LMB; and the
+&RMB; at the same time.
+</para>
+<para>
+Some systems have a circular touchpad.  Unfortunately the touchpad driver does
+not detect circular touchpad automatically, so if you have a circular touchpad,
+please enable <guilabel>The touchpad is circular</guilabel> to let the driver
+know, that your touchpad is circular.
+</para>
+</sect2>
+
+<sect2 id="motion-configuration">
+<title>Motion configuration</title>
+<para>
+To configure the cursor motion, please activate the <guilabel>Cursor
+motion</guilabel> page.
+</para>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="motion.png" format="PNG"/>
+</imageobject>
+<textobject>
+<phrase>Screenshot of the <guilabel>Cursor motion</guilabel>page</phrase>
+</textobject>
+</mediaobject>
+</screenshot>
+<para>
+The <guilabel>Minimum speed</guilabel> and <guilabel>Maximum speed</guilabel>
+controls configure the speed, at which the cursors moves, if you move your
+finger.  The higher the speed is, the more the cursor moves, if you move your
+finger across the touchpad.  When moving the finger very slowly, the
+<guilabel>Minimum speed</guilabel> is used, when moving very fast, the
+<guilabel>Maximum speed</guilabel> is used by the touchpad driver.  When moving
+at moderate speed, a value somewhere in between is used.  The
+<guilabel>Acceleration factor</guilabel> defines, how fast the driver increases
+the speed as you move your finger faster.
+</para>
+<para>
+If you do not want cursor acceleration, set <guilabel>Minimum speed</guilabel>
+and <guilabel>Maximum speed</guilabel> to the same value.  Acceleration is then
+disabled, the cursor always moves at the same speed.
+</para>
+<para>
+If you drag something and hit the edge of the touchpad with your finger, the
+touchpad driver automatically continues the cursor movements.  After all, you
+cannot release the touchpad without interrupting the drag action.  If you want
+to enable this feature for all movements, not only drags, enable <guilabel>For
+all movements, not only dragging</guilabel> in the <guilabel>Continue cursor
+motion when hitting the touchpad edge</guilabel> group.
+</para>
+</sect2>
+
+<sect2 id="scrolling-configuration">
+<title>Scrolling configuration</title>
+<para>
+To configure scrolling, please activate the <guilabel>Scrolling</guilabel>
+page.
+</para>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="scrolling.png" format="PNG"/>
+</imageobject>
+<textobject>
+<phrase>Screenshot of the <guilabel>Scrolling</guilabel> page</phrase>
+</textobject>
+</mediaobject>
+</screenshot>
+<para>
+In the upper half of the dialog you can configure <guilabel>Horizontal
+scrolling</guilabel> and <guilabel>Vertical scrolling</guilabel>.  Scrolling
+with two fingers is only possible, if your touchpad can detect two fingers
+separately or at least emulate this feature (see <xref
+linkend="hardware-configuration"/>).  In the screenshot above, this is not the
+case, and therefore the corresponding items are disabled.
+</para>
+<para>
+The setting <guilabel>Move distance to scroll a single line</guilabel> defines,
+how much the finger must move to scroll a single line.  The larger this value,
+the slower scrolling gets.
+</para>
+<para>
+If <guilabel>Scrolling speed threshold to continue scrolling</guilabel> is not
+zero, edge scrolling will continue automatically:
+<itemizedlist>
+<listitem>
+<para>If <guilabel>Continue edge scrolling, while the finger stays in an edge
+corner</guilabel> is checked, edge scrolling will continue automatically as
+long as your finger stays in the touchpad corner.</para>
+</listitem>
+<listitem>
+<para>If it is unchecked, edge scrolling will automatically continue, if you
+lift your finger from the touchpad, while your scrolling speed is above the
+<guilabel>Scrolling speed threshold to continue scrolling</guilabel>.
+Scrolling will stop, if you touch the touchpad again.</para>
+</listitem>
+</itemizedlist>
+</para>
+<sect3 id="circular-scrolling">
+<title><guilabel>Horizontal circular scrolling</guilabel></title>
+<para>
+An alternative approach to scrolling is <guilabel>Circular
+scrolling</guilabel>, which allows you to scroll up and down by moving your
+fingers in circles across the touchpad.  Circular scrolling starts, if you move
+your finger into the <guilabel>Area, which triggers circular
+scrolling</guilabel>.  This avoids interference with normal moves on the
+touchpads.  If you move your finger in this <quote>trigger</quote> area, the
+circular scrolling mode is activated.  Now you can move in clockwise or
+counter-clockwise circles to scroll downwards or upwards, moving your finger by
+a certain angle scrolls by a single line.  The speed is configured by
+<guilabel>Angle by which to move the finger to scroll a single line</guilabel>.
+The higher this angle, the more you need to move your finger to scroll a single
+line.  For instance, if you set it to <userinput>90°</userinput>, you need to
+move your finger a quarter of the touchpad perimeter to scroll a single line.
+Obviously, circular scrolling gets slower as you increase the angle.
+</para>
+</sect3>
+</sect2>
+
+<sect2 id="tapping-configuration">
+<title>Tapping configuration</title>
+<para>
+To configure tapping, please activate the <guilabel>Tapping</guilabel> page.
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="tapping.png" format="PNG"/>
+</imageobject>
+<textobject>
+<phrase>Screenshot of the <guilabel>Tappng</guilabel> configuration
+page</phrase>
+</textobject>
+</mediaobject>
+</screenshot>
+Tapping on the touchpad works just like pressing mouse buttons.  In this dialog
+page you can configure, which mouse buttons are triggered by tapping the
+touchpad in a specific manner.
+</para>
+<para>
+You will notice slight delays between the tap on the touchpad and actual mouse
+click.  The touchpad driver needs this delay to distinguish between single
+clicks and double clicks.  If you are mainly using single clicks, you can check
+<guilabel>Make single taps faster and double taps slower (fast
+taps)</guilabel>.  The touchpad driver will then react faster to a single tap,
+at the cost of making double clicks caused by double tapping slower.
+</para>
+<para>
+To configure, which mouse clicks are actually triggered by tapping, refer to
+the group <guilabel>Mouse clicks triggered by tapping</guilabel>.  In the
+center of this group, multi-finger tapping is configured.  If your touchpad
+doesn't support multi-finger taps or at least an emulation of two-finger taps
+(see <xref linkend="hardware-configuration"/>), the corresponding items are
+greyed out.  In the screenshot above, taps with two and three fingers are
+obviously not supported by the touchpad, and tapping with one finger is
+equivalent to the &LMB;.
+</para>
+<para>
+The four boxes in the corner configure taps in the touchpad corners.  In the
+screenshot above, special corner taps are all disabled.  In this case, tapping
+the corners works just like tapping the rest of the touchpad.  If however the
+<guilabel>Top right corner</guilabel> was set to <guilabel>Right mouse
+button</guilabel> for instance, tapping the top right corner with one finger
+would be like pressing the &RMB;.
+</para>
+<sect3 id="tap-and-drag-gesture">
+<title>Drag and drop with tapping</title>
+<para>
+Tapping can also be used to perform drag and drop operations, just check
+<guilabel>Drag items by tapping the touchpad and then immediately touching it
+again</guilabel>.  To drag something, tap the touchpad, and then immediately
+touch the touchpad again and move your finger on the touchpad.  The item will
+be dragged along with your finger's movements.
+</para>
+<para>
+A drag operation started this way can continue, if you release the finger.
+This gives you more freedom to move the item around, but may interfere with
+other actions.  Check <guilabel>Continue dragging when releasing the finger
+until the touchpad is touched again</guilabel> to enable this feature.  If you
+now release your finger, the drag operation simply continues until you tap the
+touchpad again or the <guilabel>Timeout to automatically stop
+dragging</guilabel> expires.
+</para>
+</sect3>
+</sect2>
+</sect1>
+
 </chapter>
 
 <chapter id="commands">
