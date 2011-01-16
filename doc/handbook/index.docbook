@@ -117,7 +117,7 @@ module in &systemsettings; at <menuchoice>
 </para>
 
 <sect2 id="hardware-configuration">
-<title>Hardware</title>
+<title>Hardware information and configuration</title>
 <para>
 The <guilabel>Hardware</guilabel> page provides information about the touchpad,
 and configures some general hardware properties.
