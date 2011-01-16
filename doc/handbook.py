@@ -81,7 +81,7 @@ def meinproc4(document, stylesheet, target_directory):
     # turn arguments into absolute paths, as meinproc4 uses a different
     # working directory
     check_call(['meinproc4', '--param', 'kde.common="common/"',
-                '--stylesheet', os.path.abspath(stylesheet),
+                '--check', '--stylesheet', os.path.abspath(stylesheet),
                 os.path.abspath(document)],
                cwd=target_directory)
 
