@@ -7,7 +7,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>527</width>
+    <width>537</width>
     <height>432</height>
    </rect>
   </property>
@@ -114,6 +114,12 @@
      <property name="title">
       <string comment="@option:check">Continue edge scrolling automatically</string>
      </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <widget class="KDoubleNumInput" name="touchpad_coasting_speed">
@@ -136,9 +142,6 @@
       </item>
       <item>
        <widget class="QCheckBox" name="touchpad_corner_coasting">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
         <property name="text">
          <string comment="@option:radio">Continue edge scrolling, while the finger stays in an edge corner</string>
         </property>

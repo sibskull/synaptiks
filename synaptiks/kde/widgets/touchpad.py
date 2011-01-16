@@ -125,15 +125,29 @@ class ScrollingPage(QWidget, DynamicUserInterfaceMixin):
         self.touchpad_coasting_speed.setSpecialValueText(
             i18nc('@item coasting speed special value', 'Disabled'))
         self.touchpad_coasting_speed.valueChanged.connect(
-            self._coasting_speed_value_changed)
+            self._coasting_speed_changed)
+        self.coasting.toggled.connect(self._coasting_toggled)
+        step = self.touchpad_coasting_speed.singleStep()
+        value = self.touchpad_coasting_speed.value()
+        self._saved_coasting_speed = value or step
         if touchpad.finger_detection >= 2 or touchpad.has_two_finger_emulation:
             two_finger_widgets = self.findChildren(
                 QWidget, QRegExp('touchpad_(.*)_two_finger_scrolling'))
             for widget in two_finger_widgets:
                 widget.setEnabled(True)
 
-    def _coasting_speed_value_changed(self, value):
-        self.touchpad_corner_coasting.setEnabled(value != 0)
+    def _coasting_toggled(self, checked):
+        if checked and not self.touchpad_coasting_speed.value():
+            self.touchpad_coasting_speed.setValue(self._saved_coasting_speed)
+        elif not checked:
+            self.touchpad_coasting_speed.setValue(0)
+
+    def _coasting_speed_changed(self, value):
+        if value:
+            # remember any non-zero value to restore it, when the user
+            # re-checks "coasting"
+            self._saved_coasting_speed = value
+        self.coasting.setChecked(bool(value))
 
 
 class TappingPage(QWidget, DynamicUserInterfaceMixin):

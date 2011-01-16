@@ -231,8 +231,8 @@ how much the finger must move to scroll a single line.  The larger this value,
 the slower scrolling gets.
 </para>
 <para>
-If <guilabel>Scrolling speed threshold to continue scrolling</guilabel> is not
-zero, edge scrolling will continue automatically:
+If <guilabel>Continue edge scrolling automatically</guilabel> is checked, edge
+scrolling will continue automatically:
 <itemizedlist>
 <listitem>
 <para>If <guilabel>Continue edge scrolling, while the finger stays in an edge
@@ -246,6 +246,9 @@ lift your finger from the touchpad, while your scrolling speed is above the
 Scrolling will stop, if you touch the touchpad again.</para>
 </listitem>
 </itemizedlist>
+If <guilabel>Scrolling speed threshold to continue scrolling</guilabel> is set
+to zero, <guilabel>Continue edge scrolling automatically</guilabel> is
+automatically disabled.
 </para>
 <sect3 id="circular-scrolling">
 <title><guilabel>Horizontal circular scrolling</guilabel></title>
@@ -637,6 +640,7 @@ event.  The higher this value, the slower is vertical scrolling.</para>
 <varlistentry>
 <term><guilabel>Continue edge scrolling automatically</guilabel></term>
 <listitem>
+<para>If checked, edge scrolling will continue automatically:</para>
 <variablelist>
 <varlistentry>
 <term><guilabel>Scrolling speed threshold to continue
@@ -644,8 +648,8 @@ scrolling</guilabel></term>
 <listitem>
 <para>The threshold of scrolling speed to automatically continue edge scrolling
 after lifting the finger from the touchpad (<emphasis>conventional
-coasting</emphasis>).  If zero, edge scrolling will never continue
-automatically.</para>
+coasting</emphasis>).  If zero, <guilabel>Continue edge scrolling
+automatically</guilabel> is automatically disabled.</para>
 </listitem>
 </varlistentry>
 <varlistentry>
