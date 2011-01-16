@@ -152,7 +152,7 @@ class InitCatalog(BaseCommand):
 
     user_options = [(b'msginit-exe=', None, 'Path to msginit'),
                     (b'directory=', None, 'The locale directory'),
-                    (b'template_file=', None,
+                    (b'template-file=', None,
                      'Input filename (template catalog)'),
                     (b'locale=', None, 'Locale name')]
 
