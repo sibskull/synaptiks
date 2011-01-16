@@ -63,9 +63,9 @@ Issues and feedback
 If you like or dislike synaptiks or if you have any problems with synaptiks,
 feel free to send an email with compliments or blame or with some questions.
 
-If you have found a bug in synaptiks, if miss a certain feature or have any
-proposals concerning synaptiks, please report them to the `issue tracker`_.
-To help us with solving this issue, please include any information that you can
+If you have found a bug in synaptiks, if miss a certain feature or if have any
+proposals concerning synaptiks, please report them to the `issue tracker`_.  To
+help us with solving this issue, please include any information that you can
 get into your report, including especially any error messages or tracebacks.
 If unsure, better post more information than required.
 
@@ -80,10 +80,13 @@ available in a git_ repository::
 
    git clone git://github.com/lunaryorn/synaptiks
 
-If you want to create or update translations, or fix some issue in synaptiks,
-or even add some new features, please fork this repository on GitHub_ and send
-a pull requests with your work.  Of course, should you dislike GitHub, you can
-also send patches through the issue tracker or through email.
+Just clone this repository and want to fix some issue in **synaptiks** or
+add some new features.  Feel free to send pull requests with your work, or
+provide patches by email or in the issue tracker.
+
+If you want to translate **synaptiks** into other languages, please read the
+:doc:`translation_guide`.  It explains, how translations are handled in
+**synaptiks** and how you can create new translations or update existing ones.
 
 
 .. _handbook: handbook/index.html
@@ -101,6 +104,7 @@ also send patches through the issue tracker or through email.
    :hidden:
 
    install
+   translation_guide
+   api/index
    licence
    changes
-   api/index
