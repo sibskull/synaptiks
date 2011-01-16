@@ -567,7 +567,7 @@ only when dragging</para>
 </variablelist>
 </sect2>
 
-<sect2>
+<sect2 id="commands-scrolling-configuration">
 <title><guilabel>Scrolling</guilabel></title>
 <screenshot>
 <mediaobject>
