@@ -35,7 +35,6 @@
 
 
 import os
-import posixpath
 from subprocess import Popen, PIPE, check_call, CalledProcessError
 from shutil import copy
 
