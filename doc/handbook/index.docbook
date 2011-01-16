@@ -451,7 +451,488 @@ before switching the keyboard on again</guilabel>.
 
 <chapter id="commands">
 <title>Command reference</title>
-<para>TO BE WRITTEN</para>
+
+<sect1 id="commands-touchpad-configuration">
+<title>Touchpad configuration</title>
+
+<para>The touchpad configuration module is available in &systemsettings; under <menuchoice>
+<guimenuitem>Input Devices</guimenuitem>
+<guimenuitem>Touchpad</guimenuitem></menuchoice>.</para>
+
+<sect2 id="commands-hardware-configuration">
+<title><guilabel>Hardware</guilabel></title>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="hardware.png" format="PNG"/>
+</imageobject>
+<textobject>
+<phrase>Screenshot of the <guilabel>Hardware</guilabel> page</phrase>
+</textobject>
+</mediaobject>
+</screenshot>
+<variablelist>
+<varlistentry>
+<term><guilabel>How many fingers are detected by this
+touchpad?</guilabel></term>
+<listitem><para>How many separate fingers the touchpad detects during
+tapping.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Two-finger emulation</guilabel></term>
+<listitem><para>The state of two finger emulation support</para>
+<variablelist>
+<varlistentry>
+<term><guilabel>Pressure detection</guilabel></term>
+<listitem><para>The driver can detect the pressure of a touch</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Finger width detection</guilabel></term>
+<listitem><para>The driver can detect the width of the touched
+area</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Two-finger emulation</guilabel></term>
+<listitem><para>The driver supports two-finger emulation</para></listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Buttons</guilabel></term>
+<listitem><para>The mouse buttons provided by the touchpad</para></listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+
+<sect2 id="commands-motion-configuration">
+<title><guilabel>Cursor motion</guilabel></title>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="motion.png" format="PNG"/>
+</imageobject>
+<textobject>
+<phrase>Screenshot of the <guilabel>Cursor motion</guilabel>page</phrase>
+</textobject>
+</mediaobject>
+</screenshot>
+<variablelist>
+<varlistentry>
+<term><guilabel>Cursor motion speed</guilabel></term>
+<listitem>
+<variablelist>
+<varlistentry>
+<term><guilabel>Minimum speed</guilabel></term>
+<listitem>
+<para>The scaling between touchpad coordinates and screen coordinates at
+slow finger movement</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Maximum speed</guilabel></term>
+<listitem>
+<para>The scaling between touchpad coordinates and screen coordinates at
+very fast finger movement</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Acceleration factor</guilabel></term>
+<listitem>
+<para>The acceleration between <guilabel>Minimum speed</guilabel> and
+<guilabel>Maximum speed</guilabel></para>
+</listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Continue cursor motion when hitting the touchpad
+edge</guilabel></term>
+<listitem>
+<variablelist>
+<varlistentry>
+<term><guilabel>For all movements, not only dragging</guilabel></term>
+<listitem>
+<para>Always continue cursor movement, when hitting the touchpad edge, not
+only when dragging</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+
+<sect2>
+<title><guilabel>Scrolling</guilabel></title>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="scrolling.png" format="PNG"/>
+</imageobject>
+<textobject>
+<phrase>Screenshot of the scrolling configuration page</phrase>
+</textobject>
+</mediaobject>
+</screenshot>
+<variablelist>
+<varlistentry>
+<term><guilabel>Horizontal scrolling</guilabel></term>
+<listitem>
+<para>Configure horizontal scrolling</para>
+<variablelist>
+<varlistentry>
+<term><guilabel>Horizontal scrolling with two fingers</guilabel></term>
+<listitem>
+<para>If checked, scrolling horizontally by dragging with two fingers is
+enabled.  If the touchpad does not support two-finger touches or two-finger
+emulation, this is disabled.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Horizontal scrolling at the bottom edge</guilabel></term>
+<listitem>
+<para>If checked, horizontal scrolling at the bottom edge is enabled</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Move distance to scroll a single line</guilabel></term>
+<listitem>
+<para>The move distance of the finger to generate a horizontal scrolling
+event.  The higher this value, the slower is horizontal scrolling.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Vertical scrolling</guilabel></term>
+<listitem>
+<variablelist>
+<varlistentry>
+<term><guilabel>Vertical scrolling with two fingers</guilabel></term>
+<listitem>
+<para>If checked, scrolling vertically by dragging with two fingers is enabled.
+If the touchpad does not support two-finger touches or two-finger emulation,
+this is disabled.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Vertical scrolling at the right edge</guilabel></term>
+<listitem>
+<para>If checked, vertical scrolling at the right edge is enabled</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Move distance to scroll a single line</guilabel></term>
+<listitem>
+<para>The move distance of the finger to generate a vertical scrolling
+event.  The higher this value, the slower is vertical scrolling.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Continue edge scrolling automatically</guilabel></term>
+<listitem>
+<variablelist>
+<varlistentry>
+<term><guilabel>Scrolling speed threshold to continue
+scrolling</guilabel></term>
+<listitem>
+<para>The threshold of scrolling speed to automatically continue edge scrolling
+after lifting the finger from the touchpad (<emphasis>conventional
+coasting</emphasis>).  If zero, edge scrolling will never continue
+automatically.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Continue edge scrolling, while the finger stays in an edge
+corner</guilabel></term>
+<listitem>
+<para>If checked, continue edge scrolling not after lifting the finger from the
+touchpad, but while the finger stays in the corner (<emphasis>corner
+coasting</emphasis>).</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Horizontal circular scrolling</guilabel></term>
+<listitem>
+<para>Enable or disable circular scrolling</para>
+<variablelist>
+<varlistentry>
+<term><guilabel>Area, which triggers circular scrolling</guilabel>
+</term>
+<listitem>
+<para>Configure the area, which triggers circular scrolling.  Each item
+represents a corner or an edge on the touchpad</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Angle by which to move the finger to scroll a single
+line</guilabel></term>
+<listitem>
+<para>Configure the angle, the finger needs to move on the touchpad in
+circular scrolling mode to scroll a single line.  The higher this value, the
+slower is circular scrolling.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+
+<sect2 id="commands-tapping-configuration">
+<title><guilabel>Tapping</guilabel></title>
+<screenshot>
+<mediaobject>
+<imageobject>
+<imagedata fileref="tapping.png" format="PNG"/>
+</imageobject>
+<textobject>
+<phrase>Screenshot of the tapping configuration page</phrase>
+</textobject>
+</mediaobject>
+</screenshot>
+<variablelist>
+<varlistentry>
+<term><guilabel>General tapping settings</guilabel></term>
+<listitem>
+<variablelist>
+<varlistentry>
+<term><guilabel>Make single taps faster and double taps slower (fast
+taps)</guilabel></term>
+<listitem><para>Enable or disable fast taps.  If fast taps are enabled, the
+driver will react faster on single taps, but slower on double clicks caused
+by double taps.</para></listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Mouse clicks triggered by tapping</guilabel></term>
+<listitem>
+<variablelist>
+<varlistentry>
+<term><guilabel>Top left corner</guilabel></term>
+<listitem>
+<para>Configures the mouse button, which is triggered by tapping the top
+left corner of the touchpad</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Top right corner</guilabel></term>
+<listitem>
+<para>Configures the mouse button, which is triggered by tapping the top
+right corner of the touchpad</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Bottom left corner</guilabel></term>
+<listitem>
+<para>Configures the mouse button, which is triggered by tapping the bottom
+left corner of the touchpad</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Bottom right corner</guilabel></term>
+<listitem>
+<para>Configures the mouse button, which is triggered by tapping the bottom
+right corner of the touchpad</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Tapping with one finger</guilabel></term>
+<listitem>
+<para>Configures the mouse button, which is triggered by tapping the
+touchpad with one finger</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Tapping with two fingers</guilabel></term>
+<listitem>
+<para>Configures the mouse button, which is triggered by tapping the
+touchpad with two fingers simultaneously.  Disabled, if the touchpad does
+not support two-finger taps or an emulation thereof</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Tapping with three fingers</guilabel></term>
+<listitem>
+<para>Configures the mouse button, which is triggered by tapping the
+touchpad with three fingers simultaneously.  Disabled, if the touchpad does
+not support three-finger taps</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Drag items by tapping the touchpad and then immediately
+touching it again</guilabel></term>
+<listitem>
+<para>Enable or disable the tap-and-drag gesture, which enables dragging by
+tapping the touchpad and then immediately touching it again.</para>
+<variablelist>
+<varlistentry>
+<term><guilabel>Continue dragging when releasing the finger until the
+touchpad is touched again</guilabel></term>
+<listitem>
+<para>Continue a drag operation, if the finger is released from the
+touchpad, until the touchpad is tapped again.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Timeout to automatically stop dragging</guilabel></term>
+<listitem>
+<para>Timeout, after which a drop operation automatically stops, after the
+finger was lifted from the touchpad.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+
+</sect1>
+
+<sect1 id="commands-management">
+<title>Touchpad management</title>
+
+<para>The touchpad management tool is available in the &kde; menu under
+<menuchoice><guimenuitem>Applications</guimenuitem>
+<guimenuitem>Utilities</guimenuitem> <guimenuitem>Touchpad
+management</guimenuitem></menuchoice>.</para>
+
+<sect2 id="commands-tray-icon">
+<title>The tray icon</title>
+<screenshot>
+<mediaobject>
+<imageobject><imagedata fileref="traymenu.png" format="PNG"/></imageobject>
+<textobject><phrase>Screenshot of the &synaptiks; tray application and its
+menu.</phrase></textobject>
+</mediaobject>
+</screenshot>
+<para>When clicking the tray icon with the &LMB;, the configuration dialog is
+shown (see <xref linkend="commands-management-configuration"/>).  When clicking
+the tray icon with the &RMB; the context menu shown above pops up.</para>
+<variablelist>
+<varlistentry>
+<term><guilabel>Touchpad on</guilabel></term>
+<listitem><para>Switch the touchpad on or off.  If checked, the touchpad is on,
+otherwise it is off.  This action has the global hotkey <keycombo
+action="simul">&Ctrl;&Alt;<keycap>T</keycap></keycombo>.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Configure Shortcuts</guilabel></term>
+<listitem><para>Show a dialog to configure the global shortcuts of
+&synaptiks;</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Configure synaptiks</guilabel></term>
+<listitem><para>Show the configuration dialog of the tray application (see
+<xref linkend="commands-management-configuration"/>)</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Help</guilabel></term>
+<listitem><para>Show the standard &kde; help menu</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Quit</guilabel></term>
+<listitem><para>Quit the tray application.</para></listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+
+<sect2 id="commands-management-configuration">
+<title>The configuration dialog</title>
+<screenshot>
+<mediaobject>
+<imageobject><imagedata fileref="management.png" format="PNG"/></imageobject>
+<textobject><phrase>Screenshot of the configuration dialog of the tray
+application</phrase></textobject>
+</mediaobject>
+</screenshot>
+<sect3 id="commands-touchpad-management">
+<title><guilabel>Touchpad management</guilabel></title>
+<variablelist>
+<varlistentry>
+<term><guilabel>Automatically start at logon</guilabel></term>
+<listitem><para>If checked, automatically start the tray application at
+logon.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Automatically switch off touchpad, if a mouse is
+plugged</guilabel></term>
+<listitem>
+<para>If checked, switch off the touchpad automatically, when a
+mouse is plugged</para>
+<variablelist>
+<varlistentry>
+<term><guilabel>Ignore the following mouse devices</guilabel></term>
+<listitem><para>Mouses, checked in this list, are ignored.  If such a mouse
+is plugged or unplugged, the touchpad will <emphasis>not</emphasis> be
+switched.</para></listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Automatically switch off touchpad on keyboard
+activity</guilabel></term>
+<listitem>
+<para>If checked, switch off the touchpad automatically, while the
+keyboard is active</para>
+<variablelist>
+<varlistentry>
+<term><guilabel>Ignore these keys</guilabel></term>
+<listitem>
+<para>The selected kind of keys will be ignored when monitoring
+the touchpad</para>
+<variablelist>
+<varlistentry>
+<term><guilabel>No keys</guilabel></term>
+<listitem><para>No keys are ignored</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Modifier keys</guilabel></term>
+<listitem><para>Modifier keys (commonly &Ctrl;, &Shift; and &Alt;) are
+ignored</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Modifier combinations</guilabel></term>
+<listitem><para>Modifiers in combination with standard keys are
+ignored</para></listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Time to wait before switching the keyboard on
+again</guilabel></term>
+<listitem><para>The delay between the keyboard becoming inactive and
+switching the touchpad on again (in seconds)</para></listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect3>
+<sect3>
+<title><guilabel>Touchpad configuration</guilabel></title>
+<para>The touchpad configuration dialog, see <xref linkend="commands-touchpad-configuration"/></para>
+</sect3>
+</sect2>
+
+</sect1>
+
 </chapter>
 
 <chapter id="credits">
