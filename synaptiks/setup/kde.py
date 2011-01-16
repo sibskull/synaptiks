@@ -251,7 +251,10 @@ class InstallHandbook(KDEBaseCmd):
             return (dest, True)
         if os.path.isdir(dest):
             dest = os.path.join(dest, os.path.basename(source))
-        os.symlink(source, dest)
+        # for now, simply ignore existing symlinks, not really the way to go,
+        # see below
+        if not os.path.islink(dest):
+            os.symlink(source, dest)
         # do *not* add symlink dest to outputs here due to a bug in pip 0.8.2
         # (and possibly other versions):  "pip install" removes the whole
         # directory pointed to and leaves the symlink, instead of leaving the
