@@ -444,7 +444,7 @@ After you stopped typing, and before switching the touchpad on again,
 &synaptiks; will wait a short moment (two seconds by default), just in case,
 you did not stop typing, but just typed a bit slower.  If you type fast, the
 standard delay will be way to long, so decrease the <guilabel>Time to wait
-before switching the keyboard on again</guilabel>.
+before switching the touchpad on again</guilabel>.
 </para>
 </sect3>
 </sect2>
@@ -919,7 +919,7 @@ ignored</para></listitem>
 </listitem>
 </varlistentry>
 <varlistentry>
-<term><guilabel>Time to wait before switching the keyboard on
+<term><guilabel>Time to wait before switching the touchpad on
 again</guilabel></term>
 <listitem><para>The delay between the keyboard becoming inactive and
 switching the touchpad on again (in seconds)</para></listitem>

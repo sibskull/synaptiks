@@ -7,7 +7,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>411</width>
+    <width>413</width>
     <height>381</height>
    </rect>
   </property>
@@ -129,7 +129,7 @@
       <item>
        <widget class="KDoubleNumInput" name="management_idle_time">
         <property name="label">
-         <string comment="@label:spinbox">Time to wait before switching the keyboard on again</string>
+         <string comment="@label:spinbox">Time to wait before switching the touchpad on again</string>
         </property>
         <property name="maximum">
          <double>10.000000000000000</double>
