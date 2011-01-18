@@ -38,6 +38,13 @@
     the touchpad driver.  This API is wrapped in a pythonic interface by the
     :mod:`~synaptiks.xinput` module.
 
+    Event monitoring
+    ----------------
+
+    The :mod:`~synaptiks.monitors` module provides monitor classes, which
+    listen for external events.  These monitors are used by **synaptiks** to do
+    automatic touchpad management.  Currently it includes classes for mouse
+    device and keyboard monitoring.
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """

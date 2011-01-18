@@ -14,3 +14,4 @@ Package contents
    bindings/index
    xinput
    touchpad
+   monitors

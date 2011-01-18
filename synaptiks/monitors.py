@@ -57,13 +57,13 @@ def _is_mouse(device):
 
 class MouseDevice(namedtuple('_MouseDevice', ['serial', 'name'])):
     """
-    A :class:`~collections.namedtuple` representing a mouse device.
+    A :func:`~collections.namedtuple()` representing a mouse device.
 
-    Currently a mouse device is represented by two attributes (the order
-    corresponds to their tuple indexes):
+    A mouse device currently has two attributes, the order corresponds to the
+    tuple index:
 
-    - ``serial``:  The serial number
-    - ``name``:  The product name
+    - :attr:`serial`
+    - :attr:`name`
     """
 
     @classmethod
@@ -83,11 +83,13 @@ class MouseDevicesMonitor(QObject):
     Watch for plugged or unplugged mouse devices.
     """
 
-    #: emitted, when a mouse is plugged.  The slot gets a single argument of
-    #: :class:`MouseDevice`, which represent the plugged mouse device
+    #: Qt signal, which is emitted, when a mouse is plugged.  The slot gets a
+    #: single argument of :class:`MouseDevice`, which represents the plugged
+    #: mouse device
     mousePlugged = pyqtSignal(MouseDevice)
-    #: emitted, when a mouse is unplugged.  The slot gets a single argument of
-    #: :class:`MouseDevice`, which represent the unplugged mouse device
+    #: Qt signal, which is emitted, when a mouse is unplugged.  The slot gets a
+    #: single argument of type :class:`MouseDevice`, which represents the
+    #: unplugged mouse device
     mouseUnplugged = pyqtSignal(MouseDevice)
 
     def __init__(self, parent=None):
@@ -142,9 +144,9 @@ class PollingKeyboardMonitor(QObject):
     #: Ignore combinations of modifiers and standard keys
     IGNORE_MODIFIER_COMBOS = 2
 
-    #: emitted if typing is started.  Takes no arguments
+    #: Qt signal, emitted if typing is started.  Has no arguments.
     typingStarted = pyqtSignal()
-    #: emitted if typing is stopped.  Takes no arguments
+    #: Qt signal, emitted if typing is stopped.  Has no arguments.
     typingStopped = pyqtSignal()
 
     def __init__(self, parent=None):
@@ -205,7 +207,7 @@ class PollingKeyboardMonitor(QObject):
         The keys to ignore while observing the keyboard.
 
         If such a key is pressed, the keyboard will not be considered active,
-        the signal :attr:`typingStarted()` will consequently not be emitted.
+        the signal :attr:`typingStarted` will consequently not be emitted.
 
         Raise :exc:`~exceptions.ValueError` upon assignment, if the given value
         is not one of :attr:`IGNORE_NO_KEYS`, :attr:`IGNORE_MODIFIER_KEYS` or
