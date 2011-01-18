@@ -11,5 +11,6 @@ Package contents
 
 .. toctree::
 
+   bindings/index
    xinput
    touchpad

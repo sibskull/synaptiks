@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (C) 2010, 2011 Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,16 @@
     synaptiks._bindings
     ===================
 
-    Bindings to native libraries used throughout synaptiks
+    This package contains :mod:`ctypes`-based bindings to native libraries used
+    by **synaptiks**.
+
+    .. warning::
+
+       All contents of this package are internal, and should not be used by 3rd
+       parties.  Even inside the **synaptiks** sources, these bindings should
+       only be used directly when necessary, in most cases, the higher level
+       API provided by :mod:`synaptiks.xinput` and :mod:`synaptiks.touchpad` is
+       the right choice.
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """

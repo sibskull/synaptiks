@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (C) 2010, 2011 Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@
     synaptiks._bindings.xlib
     ========================
 
-    ctypes-based xlib binding
+    Incomplete binding to libX11 atop of :mod:`ctypes`.
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
@@ -70,12 +70,12 @@ class XModifierKeymap(Structure):
 
 XModifierKeymap_p = POINTER(XModifierKeymap)
 
-
-# X11 definitions as python constants
+# Some constants from the libX11 headers
+#: :class:`Status` value indicating a successful operation
 SUCCESS = 0
-# 0 atom
+#: A non-existing :class:`Atom`
 NONE = 0
-# integer type
+#: :class:`Atom` for an Integer type
 INTEGER = 19
 
 
@@ -127,19 +127,20 @@ close_display = libX11.XCloseDisplay
 @contextmanager
 def display(name=None):
     """
-    Create a X11 display.
+    Connect to a X11 display.
 
-    The created display connection is wrapped in a context manager, which
-    closes the display automatically, once the context is left::
+    The connection is wrapped in a context manager, which closes the display
+    automatically, once the context is left::
 
        with xlib.display() as display:
            # work with the display here
 
     If no ``name`` is given, the display name is read from ``$DISPLAY``.
 
-    ``name`` is a string containing the display name or ``None``.
+    ``name`` is a byte string containing the display name or ``None``.
 
-    Return a ctypes pointer to a :class:`Display` object.
+    Return a :class:`Display_p` object with the new connection to the X11
+    display.
     """
     display = open_display(name)
     yield display

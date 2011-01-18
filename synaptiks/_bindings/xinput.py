@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (C) 2010, 2011 Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -72,6 +72,7 @@ class XIDeviceInfo(Structure):
 XIDeviceInfo_p = POINTER(XIDeviceInfo)
 
 # XInput defines as python constants
+#: a "magic" device id, identifying all devices in :func:`query_device`
 ALL_DEVICES = 0
 ANY_PROPERTY_TYPE = 0
 PROP_MODE_REPLACE = 0
@@ -99,9 +100,9 @@ def query_version(display, expected_version):
     """
     Query the server-side XInput version.
 
-    ``display`` is a :class:`Display_p` providing the server connection,
-    ``expected_version`` a tuple ``(major, minor)`` with the expected
-    version.  Both components are integers.
+    ``display`` is a :class:`~synaptiks._bindings.xlib.Display_p` providing the
+    server connection, ``expected_version`` a tuple ``(major, minor)`` with the
+    expected version.  Both components are integers.
 
     Return a tuple ``(matched, actual_version)``.  ``matched`` is ``True``,
     if the server-side version is at least the ``expected_version``,
@@ -117,9 +118,9 @@ def query_device(display, deviceid):
     """
     Query the device with the given ``deviceid``.
 
-    ``display`` is a :class:`Display_p` providing the server connection.
-    ``deviceid`` is an integer with a device id, or :data:`ALL_DEVICES` to
-    query all devices.
+    ``display`` is a :class:`~synaptiks._bindings.xlib.Display_p` providing the
+    server connection.  ``deviceid`` is an integer with a device id, or
+    :data:`ALL_DEVICES` to query all devices.
 
     Return a tuple ``(number_of_devices, devices)``.  ``number_of_devices``
     is an integer with the number of devices, ``devices`` is a
@@ -127,7 +128,7 @@ def query_device(display, deviceid):
     This array is to be freed using :func:`free_device_info`.
 
     It is recommended, that you wrap the ``devices`` pointer into
-    :func:`~synaptiks._bindings.util.scoped_pointer` and use a ``with``
+    :func:`~synaptiks._bindings.util.scoped_pointer()` and use a ``with``
     block to make sure, that the allocated memory is freed.
     """
     number_of_devices = c_int(0)
@@ -147,8 +148,8 @@ def list_properties(display, deviceid):
     :func:`~synaptiks._bindings.xlib.get_atom_name` to retrieve the name of
     these properties.
 
-   ``display`` is a :class:`Display_p` providing the server connection.
-    ``deviceid`` is an integer with a device id.
+    ``display`` is a :class:`~synaptiks._bindings.xlib.Display_p` providing the
+    server connection.  ``deviceid`` is an integer with a device id.
 
     Return a tuple ``(number_of_properties, property_atoms)``.
     ``number_of_properties`` is an integer with the number of properties.
@@ -157,7 +158,7 @@ def list_properties(display, deviceid):
     to be freed using :func:`synaptiks._bindings.xlib.free`.
 
     It is recommended, that you wrap the ``property_atoms`` pointer into
-    :func:`~synaptiks._bindings.util.scoped_pointer` and use a ``with``
+    :func:`~synaptiks._bindings.util.scoped_pointer()` and use a ``with``
     block to make sure, that the allocated memory is freed.
     """
     number_of_properties = c_int(0)
@@ -170,10 +171,10 @@ def get_property(display, deviceid, property):
     """
     Get the given ``property`` from the device with the given id.
 
-    ``display`` is a :class:`Display_p` providing the server connection,
-    ``deviceid`` is an integer with a device id.  ``property`` is a
-    :class:`~synaptiks._bindings.xlib.Atom` with the X11 atom of the
-    property to get.
+    ``display`` is a :class:`~synaptiks._bindings.xlib.Display_p` providing the
+    server connection, ``deviceid`` is an integer with a device id.
+    ``property`` is a :class:`~synaptiks._bindings.xlib.Atom` with the X11 atom
+    of the property to get.
 
     Return a tuple ``(type, format, data)``.  ``type`` and ``format`` are
     integers, ``data`` is a byte string.  If the property exists on the
@@ -220,16 +221,16 @@ def change_property(display, deviceid, property, type, format, data):
     Properties store binary ``data``.  For the X server to correctly interpret
     the data correctly, it must be assigned a matching ``type`` and ``format``.
 
-    ``display`` is a :class:`Display_p` providing the server connection,
-    ``deviceid`` is an integer with a device id.  ``property`` is a
-    :class:`~synaptiks._bindings.xlib.Atom` with the X11 atom of the
-    property to change.  ``type`` is the
-    :class:`~synaptiks._bindings.xlib.Atom` describing the type of the property
-    (mostly either :data:`~synaptiks._bindings.xlib.Integer` or the atom for
-    ``'FLOAT'`` (use :class:`~synaptiks._bindings.xlib.intern_atom` to create
-    atoms).  ``format`` is an integer describing the format, must either 8, 16
-    or 32.  The format directly corresponds to the number of bytes per item in
-    the property.
+    ``display`` is a :class:`~synaptiks._bindings.xlib.Display_p` providing the
+    server connection, ``deviceid`` is an integer with a device id.
+    ``property`` is a :class:`~synaptiks._bindings.xlib.Atom` with the X11 atom
+    of the property to change.  ``type`` is the
+    :class:`~synaptiks._bindings.xlib.Atom` describing the type of the
+    property, mostly either :data:`~synaptiks._bindings.xlib.INTEGER` or the
+    atom for ``'FLOAT'`` (use :class:`~synaptiks._bindings.xlib.intern_atom` to
+    create get this atom).  ``format`` is an integer describing the format,
+    must either 8, 16 or 32.  The format directly corresponds to the number of
+    bytes per item in the property.
 
     Raise :exc:`~exceptions.ValueError`, if ``format`` is anything else than 8,
     16 or 32.
