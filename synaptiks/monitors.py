@@ -165,7 +165,7 @@ class PollingKeyboardMonitor(QObject):
         self._idle_time = self.DEFAULT_IDLETIME
 
     @property
-    def is_active(self):
+    def is_running(self):
         """
         ``True``, if the keyboard monitor is currently running, ``False``
         otherwise.

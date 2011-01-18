@@ -279,7 +279,7 @@ class TouchpadManager(QStateMachine):
         ``True``, if the touchpad is temporarily disabled on keyboard activity,
         ``False`` otherwise.
         """
-        return self.keyboard_monitor.is_active
+        return self.keyboard_monitor.is_running
 
     @monitor_keyboard.setter
     def monitor_keyboard(self, enabled):
