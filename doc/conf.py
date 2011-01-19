@@ -36,7 +36,7 @@ import synaptiks
 needs_sphinx = '1.0'
 
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx',
-              'handbook']
+              'sphinx.ext.graphviz', 'handbook']
 
 master_doc = 'index'
 exclude_patterns = ['_build/*']

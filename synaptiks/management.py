@@ -28,7 +28,8 @@
     synaptiks.management
     ====================
 
-    The state machine for touchpad management and related classes.
+    This module implements the touchpad management layer of **synaptiks**, the
+    central class is :class:`TouchpadManager`.
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
@@ -54,9 +55,13 @@ class MouseDevicesManager(MouseDevicesMonitor):
     mouse is unplugged, :attr:`lastMouseUnplugged` is emitted.
     """
 
-    #: emitted if the first mouse is plugged
+    #: Qt signal, which is emitted if the first mouse is plugged.  The slot :
+    #: gets a single argument, which is the plugged
+    #: :class:`~synaptiks.monitors.MouseDevice`.
     firstMousePlugged = pyqtSignal(MouseDevice)
-    #: emitted if the last mouse is unplugged
+    #: Qt signal, which is emitted if the last mouse is unplugged.  The slot :
+    #: gets a single argument, which is the plugged
+    #: :class:`~synaptiks.monitors.MouseDevice`.
     lastMouseUnplugged = pyqtSignal(MouseDevice)
 
     def __init__(self, parent=None):
@@ -175,8 +180,28 @@ class TouchpadManager(QStateMachine):
     """
     Manage the touchpad state state.
 
-    Based upon :class:`~PyQt4.QtCore.QStateMachine` this class manages four
-    different states of the touchpad.
+    Based upon :class:`~PyQt4.QtCore.QStateMachine` this class manages three
+    different states according to the following state chart:
+
+    .. digraph:: touchpad_states
+
+       rankdir=LR
+       node[fontname="Helvetica",fontsize=14]
+       edge[fontname="Helvetica",fontsize=10]
+       on
+       temporarily_off
+       off
+       on -> temporarily_off [label="typingStarted"]
+       temporarily_off -> on [label="typingStopped"]
+       on -> off [label="firstMousePlugged"]
+       temporarily_off -> off [label="firstMousePlugged"]
+       off -> on [label="lastMouseUnplugged"]
+       on -> off [label="triggered"]
+       temporarily_off -> off [label="triggered"]
+       off -> on [label="triggered"]
+
+    The states shown in these diagram have the following effects on the
+    touchpad:
 
     - ``on``: The touchpad is currently on.  This is the initial state.
     - ``temporarily_off``: The touchpad is automatically switched off
@@ -184,17 +209,9 @@ class TouchpadManager(QStateMachine):
     - ``off``: The touchpad is permanently off (e.g. by user interaction, or by
       a plugged mouse device)
 
-    The :attr:`states` mapping represents the states.  It the names of these
-    states to :class:`~PyQt4.QtCore.QState` objects, which represent these
-    states.  You may freely access these objects, and for instance connect to
-    their ``entered()`` signals to display notifications or something like
-    this.  The state names are also the object names of the state objects.
-
-    The :attr:`transitions` mapping represents the transitions between these
-    states.  It maps pairs of state names in the form ``(source, destination)``
-    to a list of :class:`~PyQt4.QtCore.QAbstractTransition`-derived objects,
-    each of which represents a single transition from the ``source`` state to
-    the ``destination`` state.
+    Access to these states is provided by the :attr:`states` mapping, the
+    transitions between states are available in the :attr:`transitions`
+    mapping.
     """
 
     _STATE_NAMES = dict(on=False, temporarily_off=True, off=True)
@@ -206,7 +223,7 @@ class TouchpadManager(QStateMachine):
         # setup monitoring objects
         self.mouse_manager = MouseDevicesManager(self)
         self.keyboard_monitor = PollingKeyboardMonitor(self)
-        # setup the states
+        # setup the states:
         self.states = {}
         for name, touchpad_off in self._STATE_NAMES.iteritems():
             state = QState(self)

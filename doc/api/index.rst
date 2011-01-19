@@ -15,3 +15,4 @@ Package contents
    xinput
    touchpad
    monitors
+   management

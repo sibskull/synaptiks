@@ -46,6 +46,15 @@
     automatic touchpad management.  Currently it includes classes for mouse
     device and keyboard monitoring.
 
+    Touchpad management
+    -------------------
+
+    Atop of :mod:`~synaptiks.touchpad` and :mod:`~synaptiks.monitors` the
+    :mod:`~synaptiks.management` module implements a sophisticated automatic
+    touchpad management, which enables and disables the touchpad based on
+    external events like keyboard activity and plugged mouse devices, which is
+    a core feature of **synaptiks**.
+
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
 
