@@ -1,5 +1,5 @@
-API documentation
-=================
+API documentation for :mod:`synaptiks` package
+==============================================
 
 .. automodule:: synaptiks
    :platform: Linux

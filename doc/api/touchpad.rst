@@ -1,5 +1,5 @@
-:mod:`touchpad` – Touchpad access
-=================================
+:mod:`synaptiks.touchpad` – Touchpad access
+===========================================
 
 .. automodule:: synaptiks.touchpad
    :synopsis: Touchpad access

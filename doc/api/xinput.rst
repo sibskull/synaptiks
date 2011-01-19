@@ -1,5 +1,5 @@
-:mod:`xinput` – XInput device management
-========================================
+:mod:`synaptiks.xinput` – XInput device management
+==================================================
 
 .. automodule:: synaptiks.xinput
    :synopsis: Input device access

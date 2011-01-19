@@ -1,5 +1,5 @@
-:mod:`~synaptiks._bindings.xinput` – Binding to libXi
-=====================================================
+:mod:`synaptiks._bindings.xinput` – Binding to libXi
+====================================================
 
 .. automodule:: synaptiks._bindings.xinput
    :synopsis: Binding to libXI

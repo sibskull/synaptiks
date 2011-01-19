@@ -1,5 +1,5 @@
-:mod:`~synaptiks._bindings.xlib` – Binding to libX11
-====================================================
+:mod:`synaptiks._bindings.xlib` – Binding to libX11
+===================================================
 
 .. automodule:: synaptiks._bindings.xlib
    :synopsis: Binding to libX11

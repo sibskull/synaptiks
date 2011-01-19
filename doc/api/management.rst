@@ -1,5 +1,5 @@
-:mod:`~synaptiks.management` – Touchpad management
-==================================================
+:mod:`synaptiks.management` – Touchpad management
+=================================================
 
 .. automodule:: synaptiks.management
    :synopsis: Touchpad management

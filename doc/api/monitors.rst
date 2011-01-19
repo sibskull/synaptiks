@@ -1,5 +1,5 @@
-:mod:`~synaptiks.monitors` – Event monitoring
-=============================================
+:mod:`synaptiks.monitors` – Event monitoring
+============================================
 
 .. automodule:: synaptiks.monitors
    :synopsis: event monitoring
