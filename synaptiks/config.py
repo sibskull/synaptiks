@@ -195,7 +195,7 @@ class TouchpadConfiguration(MutableMapping):
         save_json(filename, dict(self))
 
 
-class ManagementConfiguration(MutableMapping):
+class ManagerConfiguration(MutableMapping):
     """
     A mutable mapping class representing the configuration of a
     :class:`~synaptiks.management.TouchpadManager`.
@@ -229,7 +229,7 @@ class ManagementConfiguration(MutableMapping):
         :class:`~synaptiks.management.TouchpadManager` object.  ``filename`` is
         either ``None`` or a string containing the path to a file.
 
-        Return a :class:`ManagementConfiguration` object.  Raise
+        Return a :class:`ManagerConfiguration` object.  Raise
         :exc:`~exceptions.EnvironmentError`, if the file could not be loaded,
         but *not* in case of a non-existing file.
         """
@@ -293,7 +293,7 @@ class ManagementConfiguration(MutableMapping):
         else:
             self.touchpad_manager.monitor_mouses = False
             self.mouse_manager.ignored_mouses = ignored_mouses
-        super(ManagementConfiguration, self).update(other)
+        super(ManagerConfiguration, self).update(other)
 
     def save(self, filename=None):
         """

@@ -51,7 +51,7 @@ from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem,
 from synaptiks.qx11 import QX11Display
 from synaptiks.touchpad import Touchpad
 from synaptiks.management import TouchpadManager
-from synaptiks.config import TouchpadConfiguration, ManagementConfiguration
+from synaptiks.config import TouchpadConfiguration, ManagerConfiguration
 from synaptiks.kde import make_about_data
 from synaptiks.kde.widgets.touchpad import TouchpadConfigurationWidget
 from synaptiks.kde.widgets.management import TouchpadManagementWidget
@@ -67,7 +67,7 @@ class SynaptiksConfigDialog(KConfigDialog):
     def __init__(self, touchpad, touchpad_manager, tray_config, parent=None):
         KConfigDialog.__init__(self, parent, self.DIALOG_NAME, tray_config)
         self.touchpad_config = TouchpadConfiguration(touchpad)
-        self.management_config = ManagementConfiguration(touchpad_manager)
+        self.management_config = ManagerConfiguration(touchpad_manager)
 
         self.setFaceType(self.List)
 
@@ -156,7 +156,7 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
             self.activateRequested.connect(self.show_configuration_dialog)
             # setup the touchpad state machine
             self.touchpad_manager = TouchpadManager(self.touchpad, self)
-            ManagementConfiguration.load(self.touchpad_manager)
+            ManagerConfiguration.load(self.touchpad_manager)
             # transition upon touchpad_on_action
             self.touchpad_manager.add_touchpad_switch_action(
                 self.touchpad_on_action)
