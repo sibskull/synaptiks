@@ -28,9 +28,62 @@
     synaptiks.config
     ================
 
-    General configuration handling for synaptiks.
+    Configuration classes
+    ---------------------
 
-    If executed as script, the touchpad configuration is loaded and applied.
+    This module provides the configuration classes for the touchpad and the
+    touchpad manager.  These configuration classes are simply mappings, which
+    expose the *current* state of the associated objects (and *not* the state
+    of the configuration on disk).  This allows the user to configure the live
+    state of these objects, which is especially important for touchpad
+    configuration, which can be changed from outside of **synaptiks** using
+    utilities like :program:`xinput`.
+
+    To save the configuration permanently, these mappings, and consequently the
+    current configuration state of the associated objects, is simply dumped in
+    JSON format to the configuration directory (see
+    :func:`get_configuration_directory()`).
+
+    To apply a dumped configuration, it is loaded as standard dict from the
+    JSON dump, and then the corresponding configuration mapping is updated with
+    this dict.  All configuration mappings provide a convenient
+    :meth:`~TouchpadConfiguration.load()` method to create a new configuration
+    mapping updated with the dumped configuration.
+
+    Handling of default values
+    --------------------------
+
+    The touchpad manager configuration (see :class:`ManagerConfiguration`)
+    provides explicit defaults.  The touchpad configuration (see
+    :class:`TouchpadConfiguration`) however uses defaults provided by the
+    touchpad driver.
+
+    As the touchpad driver doesn't expose special access to the default values,
+    **synaptiks** simply creates a :class:`TouchpadConfiguration` after session
+    startup, but *before* loading the actual configuration from disk.  At this
+    point, the touchpad still uses the driver default setting, which are now
+    dumped to a special file in JSON format (see
+    :func:`get_touchpad_defaults_file_path()`).  They can later be loaded using
+    :func:`get_touchpad_defaults()`.
+
+    Script usage
+    ------------
+
+    .. program:: synaptikscfg
+
+    This module is usable as script, available also as :program:`synaptikscfg`
+    in the ``$PATH``.  It provides three different, of which ``load`` and
+    ``save`` are really self-explanatory. ``init`` however deserves some
+    detailled explanation.
+
+    The `init` action is supposed to run automatically as script during session
+    startup.  To do this, the installation script installs an autostart entry
+    to execute ``synaptikscfg init`` at KDE startup.  This action first dumps
+    the default settings from the touchpad driver as described above, and then
+    loads and applies the actual touchpad configuration stored on disk.
+
+    The command line parsing of the script is implemented with :mod:`argparse`,
+    so you can expected standard semantics, and an extensive ``--help`` option.
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
@@ -201,7 +254,7 @@ class ManagerConfiguration(MutableMapping):
     :class:`~synaptiks.management.TouchpadManager`.
     """
 
-    #: the default values
+    #: A mapping with the default values for all configuration keys
     DEFAULTS = {'monitor_mouses': False, 'ignored_mouses': [],
                 'monitor_keyboard': False, 'idle_time': 2.0,
                 'keys_to_ignore': 2}

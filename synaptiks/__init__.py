@@ -55,6 +55,15 @@
     external events like keyboard activity and plugged mouse devices, which is
     a core feature of **synaptiks**.
 
+    Configuration
+    -------------
+
+    **synaptiks** allows to configure both the touchpad and the touchpad
+    manager.  The corresponding configuration classes
+    :class:`~synaptiks.config.TouchpadConfiguration` and
+    :class:`~synaptiks.config.ManagerConfiguration` as well as some
+    configuration utilities are provided by :mod:`~synaptiks.config`.
+
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
 

@@ -18,3 +18,4 @@ Package contents
    touchpad
    monitors
    management
+   config
