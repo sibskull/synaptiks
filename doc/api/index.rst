@@ -14,6 +14,7 @@ Package contents
    bindings/index
    util
    xinput
+   qx11
    touchpad
    monitors
    management
