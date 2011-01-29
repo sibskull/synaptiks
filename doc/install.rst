@@ -135,6 +135,9 @@ Optionally remove the installation-only requirements again::
 
    sudo pacman -R python-pip gettext docbook-xsl
 
+Alternatively you can use the `synaptiks PKGBUILD`_ from the `Arch User
+Repository`_, which is however not supported by the **synaptiks** developers.
+
 
 .. _python: http://www.python.org
 .. _PyQt4: http://riverbankcomputing.co.uk/software/pyqt/intro
@@ -145,3 +148,5 @@ Optionally remove the installation-only requirements again::
 .. _pip: http://pip.openplans.org/
 .. _docbook xsl stylesheets: http://docbook.sourceforge.net/
 .. _Downloads: http://pypi.python.org/pypi/synaptiks
+.. _synaptiks PKGBUILD: http://aur.archlinux.org/packages.php?ID=32204
+.. _Arch User Repository: http://aur.archlinux.org/
