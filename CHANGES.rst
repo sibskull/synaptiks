@@ -1,8 +1,8 @@
 Changelog
 #########
 
-0.5 (in development)
-====================
+0.5 (Jan 29, 2011)
+==================
 
 - Complete rewrite in Python instead of C++
 - Removed daemon
