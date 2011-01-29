@@ -1,6 +1,32 @@
 Installation instructions
 =========================
 
+Previous versions of **synaptiks**
+----------------------------------
+
+Please remove any previously installed version of **synaptiks** 0.4 or earlier.
+Files from earlier versions of **synaptiks** conflict with those from the
+current version, and will cause confusion and errors.
+
+If you installed **synaptiks** through the package manager of your
+distribution, simply uninstall the corresponding package.  Please beware, that
+some distributions use a different name for the package, for instance in Debian
+and Ubuntu it is called ``kde-config-touchpad`` instead of ``synaptiks``.
+
+If you compiled **synaptiks** from source, change to the build directory and
+execute the following command with root privileges::
+
+   rm -r $(< install_manifest.txt)
+
+Alternatively you can remove all files listed in :file:`install_manifest`
+manually.
+
+To re-create this file, if you have already removed the build directory, simply
+re-install the older **synaptiks** version with *excately* the same build
+configuration.  Refer to the installation instructions the release you have
+installed, if you do not remember the installation procedure.
+
+
 .. _requirements:
 
 Requirements
