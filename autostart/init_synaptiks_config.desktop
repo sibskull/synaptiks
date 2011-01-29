@@ -1,7 +1,0 @@
-[Desktop Entry]
-Type=Application
-Exec=synaptikscfg init
-Name=Initialize touchpad configuration
-OnlyShowIn=KDE;
-
-X-KDE-autostart-phase=1

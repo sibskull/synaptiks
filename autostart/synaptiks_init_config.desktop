@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Exec=synaptikscfg init
+Name=Synaptiks touchpad configuration
+Comment=Initialize touchpad configuration
+Terminal=False

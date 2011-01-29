@@ -88,8 +88,8 @@ setup(
         'xdgdata-apps': ['synaptiks.desktop'],
         'services': ['services/kcm_synaptiks.desktop'],
         'appdata': ['services/kcm_synaptiks.py', 'synaptiks.notifyrc'],
-        'autostart': ['autostart/init_synaptiks_config.desktop',
-                      'autostart/synaptiks_autostart.desktop']},
+        'xdgconf-autostart': ['autostart/synaptiks_init_config.desktop'],
+        'autostart': ['autostart/synaptiks_autostart.desktop']},
     kde_icons=[
         kde.ThemeIcon('hicolor', 'scalable', 'apps', 'pics/synaptiks.svgz'),
         kde.StandAloneIcon('pics/off-overlay.svgz')]
