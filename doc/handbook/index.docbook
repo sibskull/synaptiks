@@ -221,9 +221,10 @@ page.
 In the upper half of the dialog you can configure <guilabel>Horizontal
 scrolling</guilabel> and <guilabel>Vertical scrolling</guilabel>.  Scrolling
 with two fingers is only possible, if your touchpad can detect two fingers
-separately or at least emulate this feature (see <xref
-linkend="hardware-configuration"/>).  In the screenshot above, this is not the
-case, and therefore the corresponding items are disabled.
+separately or at least emulate this feature (see <link
+linkend="hardware-configuration">Hardware configuration</link>).  In the
+screenshot above, this is not the case, and therefore the corresponding items
+are disabled.
 </para>
 <para>
 The setting <guilabel>Move distance to scroll a single line</guilabel> defines,
@@ -303,10 +304,10 @@ To configure, which mouse clicks are actually triggered by tapping, refer to
 the group <guilabel>Mouse clicks triggered by tapping</guilabel>.  In the
 center of this group, multi-finger tapping is configured.  If your touchpad
 doesn't support multi-finger taps or at least an emulation of two-finger taps
-(see <xref linkend="hardware-configuration"/>), the corresponding items are
-greyed out.  In the screenshot above, taps with two and three fingers are
-obviously not supported by the touchpad, and tapping with one finger is
-equivalent to the &LMB;.
+(see <link linkend="hardware-configuration">Hardware configuration</link>), the
+corresponding items are greyed out.  In the screenshot above, taps with two and
+three fingers are obviously not supported by the touchpad, and tapping with one
+finger is equivalent to the &LMB;.
 </para>
 <para>
 The four boxes in the corner configure taps in the touchpad corners.  In the
@@ -825,8 +826,9 @@ menu.</phrase></textobject>
 </mediaobject>
 </screenshot>
 <para>When clicking the tray icon with the &LMB;, the configuration dialog is
-shown (see <xref linkend="commands-management-configuration"/>).  When clicking
-the tray icon with the &RMB; the context menu shown above pops up.</para>
+shown (see <link linkend="commands-management-configuration">Configuration
+dialog</link>).  When clicking the tray icon with the &RMB; the context menu
+shown above pops up.</para>
 <variablelist>
 <varlistentry>
 <term><guilabel>Touchpad on</guilabel></term>
@@ -842,7 +844,8 @@ action="simul">&Ctrl;&Alt;<keycap>T</keycap></keycombo>.</para></listitem>
 <varlistentry>
 <term><guilabel>Configure synaptiks</guilabel></term>
 <listitem><para>Show the configuration dialog of the tray application (see
-<xref linkend="commands-management-configuration"/>)</para></listitem>
+<link linkend="commands-management-configuration">Configuration
+dialog</link>)</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Help</guilabel></term>
@@ -931,7 +934,8 @@ switching the touchpad on again (in seconds)</para></listitem>
 </sect3>
 <sect3>
 <title><guilabel>Touchpad configuration</guilabel></title>
-<para>The touchpad configuration dialog, see <xref linkend="commands-touchpad-configuration"/></para>
+<para>The touchpad configuration dialog, see <link
+linkend="commands-touchpad-configuration">Touchpad configuration</link></para>
 </sect3>
 </sect2>
 
