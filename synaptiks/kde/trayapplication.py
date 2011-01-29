@@ -38,7 +38,6 @@ from __future__ import (print_function, division, unicode_literals,
 
 import sys
 from functools import partial
-from itertools import chain
 
 from PyKDE4.kdecore import KCmdLineArgs, ki18nc, i18nc
 from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem,
