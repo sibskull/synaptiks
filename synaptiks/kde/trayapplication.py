@@ -153,31 +153,8 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
             self._config.writeConfig()
         else:
             self.activateRequested.connect(self.show_configuration_dialog)
-            # setup the touchpad state machine
-            self.touchpad_manager = TouchpadManager(self.touchpad, self)
-            ManagerConfiguration.load(self.touchpad_manager)
-            # transition upon touchpad_on_action
-            self.touchpad_manager.add_touchpad_switch_action(
-                self.touchpad_on_action)
-            # update checked state of touchpad_on_action
-            self.touchpad_manager.states['on'].assignProperty(
-                self.touchpad_on_action, 'checked', True)
-            self.touchpad_manager.states['off'].assignProperty(
-                self.touchpad_on_action, 'checked', False)
-            # update the overlay icon
-            self.touchpad_manager.states['on'].entered.connect(
-                partial(self.setOverlayIconByName, 'touchpad-off'))
-            self.touchpad_manager.states['on'].exited.connect(
-                partial(self.setOverlayIconByName, ''))
-            # display notifications on all but transitions between on and
-            # temporarily_off.  No user wants to be nagged by a notification
-            # everytime she is typing :)
-            self.touchpad_manager.states['off'].entered.connect(
-                partial(self.notify_touchpad_state, True))
-            self.touchpad_manager.states['off'].exited.connect(
-                partial(self.notify_touchpad_state, False))
-            # and eventually start managing the touchpad
-            self.touchpad_manager.start()
+            # setup the touchpad manager
+            self.setup_manager(self.touchpad)
 
     def setup_actions(self):
         self.touchpad_on_action = KToggleAction(
@@ -203,6 +180,31 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
 
         help_menu = KHelpMenu(self.contextMenu(), KCmdLineArgs.aboutData())
         self.contextMenu().addMenu(help_menu.menu())
+
+    def setup_manager(self, touchpad):
+        self.touchpad_manager = TouchpadManager(touchpad, self)
+        ManagerConfiguration.load(self.touchpad_manager)
+        # transition upon touchpad_on_action
+        self.touchpad_manager.add_touchpad_switch_action(
+            self.touchpad_on_action)
+        # update checked state of touchpad_on_action
+        self.touchpad_manager.states['on'].assignProperty(
+            self.touchpad_on_action, 'checked', True)
+        self.touchpad_manager.states['off'].assignProperty(
+            self.touchpad_on_action, 'checked', False)
+        # update the overlay icon
+        self.touchpad_manager.states['on'].entered.connect(
+            partial(self.setOverlayIconByName, 'touchpad-off'))
+        self.touchpad_manager.states['on'].exited.connect(
+            partial(self.setOverlayIconByName, ''))
+        # only show notification if the touchpad is permanently switched
+        # off
+        self.touchpad_manager.states['off'].entered.connect(
+            partial(self.notify_touchpad_state, True))
+        self.touchpad_manager.states['off'].exited.connect(
+            partial(self.notify_touchpad_state, False))
+        # and eventually start managing the touchpad
+        self.touchpad_manager.start()
 
     def notify_touchpad_state(self, is_off=None):
         if is_off is None:
