@@ -4,7 +4,7 @@ Installation instructions
 .. _requirements:
 
 Requirements
-============
+------------
 
 **synaptiks** is implemented in Python_ atop of PyQt4_ and PyKDE4_ and requires
 the following native libraries and tools:
@@ -36,7 +36,7 @@ a generic mouse device driver like xf86-input-evdev.
 
 
 Installation
-============
+------------
 
 If all dependencies are installed, you can proceed to the installation of
 **synaptiks** itself.  There are two different ways of installing
@@ -45,7 +45,7 @@ distribution.
 
 
 The modern way
---------------
+^^^^^^^^^^^^^^
 
 If the modern python installer tool pip_ is available on your distribution,
 just run::
@@ -67,7 +67,7 @@ download **synaptiks** again.
 
 
 The legacy way
---------------
+^^^^^^^^^^^^^^
 
 If your distribution is still stuck with the old and legacy ``easy_install``
 tool, installation is slightly more complicated.
