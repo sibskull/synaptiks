@@ -62,7 +62,7 @@ setup(
     platforms='X11',
     license='BSD',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: X11 Applications :: KDE',
         'Intended Audience :: End Users/Desktop',
         'License :: OSI Approved :: BSD License',
