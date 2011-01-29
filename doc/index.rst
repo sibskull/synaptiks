@@ -36,11 +36,8 @@ It does not only provide a global hotkey to conveniently switch the touchpad on
 or off, it can also do this automatically while you are typing, or if you plug
 in an external mouse.
 
-The current release is **synaptiks** |release|:
-
-- :doc:`list of important changes <changes>`
-- `complete changelog`_
-- :doc:`installation instructions <install>`
+The current release is **synaptiks** |release|.  Please read the :doc:`list of
+important changes <changes>` and the :doc:`installation instructions <install>`.
 
 
 Documentation

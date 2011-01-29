@@ -5,10 +5,10 @@ Changelog
 ====================
 
 - Complete rewrite in Python instead of C++
-- The KDED module is gone, touchpad management is now done by a little system
-  tray application
-- The System Settings module contains only touchpad configuration, but not the
-  touchpad management settings anymore.
+- Removed daemon
+- Removed touchpad management from System Settings module
+- Added a separate system tray application for touchpad management, which is
+  *not* started automatically
 
 Miscellaneous changes
 ---------------------
