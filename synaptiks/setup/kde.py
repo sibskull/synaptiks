@@ -87,11 +87,15 @@ class KDEBaseCmd(BaseCommand):
         else:
             tail_path = None
 
+        # manually handle KDE and XDG autostart resources, because kde4-config
+        # doesn't provide the install path for this resource type
         if resource_type == 'autostart':
-            # manually handle autostart type, because kde4-config doesn't
-            # provide the install path for this resource type
             install_directory = os.path.join(
                 self.kde4_prefix, 'share', 'autostart')
+        elif resource_type == 'xdgconf-autostart':
+            # the system-wide autostart directory is given by the XDG autostart
+            # spec
+            install_directory = '/etc/xdg/autostart'
         else:
             install_directory = get_output(
                 [self.kde4_config_exe, '--install', resource_type])
