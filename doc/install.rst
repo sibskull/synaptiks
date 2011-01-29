@@ -136,23 +136,6 @@ Optionally remove the installation-only requirements again::
    sudo pacman -R python-pip gettext docbook-xsl
 
 
-Ubuntu 10.10 Maverick Meerkat
------------------------------
-
-Install the dependencies::
-
-   sudo aptitude install python-qt4 python-kde4 \
-      python-argparse python-pip gettext
-
-Install **synaptiks**::
-
-   sudo pip install synaptiks
-
-Optionally remove the installation-only requirements again::
-
-   sudo aptitude purge python-pip gettext
-
-
 .. _python: http://www.python.org
 .. _PyQt4: http://riverbankcomputing.co.uk/software/pyqt/intro
 .. _PyKDE4: http://techbase.kde.org/Development/Languages/Python
