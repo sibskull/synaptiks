@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -51,8 +51,11 @@ def get_output(command):
 def change_prefix(path, old_prefix, new_prefix):
     old_prefix = os.path.normpath(old_prefix)
     path = os.path.normpath(path)
-    unprefixed_path = path[len(old_prefix)+1:]
-    return os.path.normpath(os.path.join(new_prefix, unprefixed_path))
+    if path.startswith(old_prefix):
+        unprefixed_path = path[len(old_prefix)+1:]
+        return os.path.normpath(os.path.join(new_prefix, unprefixed_path))
+    else:
+        return path
 
 
 class BaseCommand(Command):
