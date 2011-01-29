@@ -15,6 +15,8 @@ the following native libraries and tools:
 - libXi (at least 1.4, earlier releases are untested)
 - gettext_ (only required during installation to compile the translations, can
   be removed after successful installation)
+- `Docbook XSL stylesheets`_ (only required during installation to compile the
+  handbook, can be removed after successful installation)
 
 These libraries and tools *must* be installed through the package manager of
 your distribution before installing **synaptiks**.
@@ -97,7 +99,7 @@ Arch linux
 
 Install the dependencies::
 
-   sudo pacman -S pyqt kdebindings-python python-pip gettext
+   sudo pacman -S pyqt kdebindings-python python-pip gettext docbook-xsl
 
 Install **synaptiks**::
 
@@ -105,7 +107,7 @@ Install **synaptiks**::
 
 Optionally remove the installation-only requirements again::
 
-   sudo pacman -R python-pip gettext
+   sudo pacman -R python-pip gettext docbook-xsl
 
 
 Ubuntu 10.10 Maverick Meerkat
@@ -132,4 +134,5 @@ Optionally remove the installation-only requirements again::
 .. _argparse: http://code.google.com/p/argparse/
 .. _gettext: http://www.gnu.org/software/gettext/
 .. _pip: http://pip.openplans.org/
+.. _docbook xsl stylesheets: http://docbook.sourceforge.net/
 .. _Downloads: http://pypi.python.org/pypi/synaptiks
