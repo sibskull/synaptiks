@@ -29,6 +29,8 @@ following native libraries and tools:
 - libXi (at least 1.4, earlier releases are untested)
 - gettext_ (only required during installation to compile the translations, can
   be removed after successful installation)
+- `Docbook XSL stylesheets`_ (only required during installation to compile the
+  handbook, can be removed after successful installation)
 
 These libraries and tools must be installed through the package manager of your
 distribution before installing synaptiks.
@@ -45,6 +47,9 @@ installation script will automatically install any missing Python module.
 Additionally xf86-input-synaptics 1.3 or newer must be installed and configured
 as touchpad driver.  synaptiks will not work, if the touchpad is managed by a
 generic mouse device driver like xf86-input-evdev.
+
+Please make sure, that any previous release of synaptiks is completely removed
+before this release of synaptiks.
 
 
 Installation
@@ -105,6 +110,7 @@ also send patches through the issue tracker or through email.
 .. _argparse: http://code.google.com/p/argparse/
 .. _gettext: http://www.gnu.org/software/gettext/
 .. _pip: http://pip.openplans.org/
+.. _docbook xsl stylesheets: http://docbook.sourceforge.net/
 .. _issue tracker: https://github.com/lunaryorn/synaptiks/issues
 .. _GitHub: https://github.com/lunaryorn/synaptiks
 .. _git: http://git-scm.com/
