@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (C) 2010, 2011 Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -27,23 +27,25 @@ import re
 
 import pytest
 
-from synaptiks import qxinput
+from synaptiks import xinput
 
 
 def pytest_funcarg__test_keyboard(request):
     """
-    The virtual testing keyboard as :class:`synaptiks.qxinput.InputDevice`.
+    The virtual testing keyboard as :class:`synaptiks.xinput.InputDevice`.
     """
-    return next(qxinput.InputDevice.find_devices_by_name(
-        'Virtual core XTEST keyboard'))
+    display = request.getfuncargvalue('qxdisplay')
+    return next(xinput.InputDevice.find_devices_by_name(
+        display, 'Virtual core XTEST keyboard'))
 
 
 def pytest_funcarg__test_pointer(request):
     """
-    The virtual testing pointer as :class:`synaptiks.qxinput.InputDevice`.
+    The virtual testing pointer as :class:`synaptiks.xinput.InputDevice`.
     """
-    return next(qxinput.InputDevice.find_devices_by_name(
-        'Virtual core XTEST pointer'))
+    display = request.getfuncargvalue('qxdisplay')
+    return next(xinput.InputDevice.find_devices_by_name(
+        display, 'Virtual core XTEST pointer'))
 
 
 def pytest_funcarg__test_device_properties(request):
@@ -56,30 +58,31 @@ def pytest_funcarg__test_device_properties(request):
 
 def pytest_funcarg__touchpad(request):
     """
-    The touchpad as :class:`synaptiks.qxinput.InputDevice`.
+    The touchpad as :class:`synaptiks.xinput.InputDevice`.
     """
-    return next(qxinput.InputDevice.find_devices_with_property(
-        'Synaptics Off'))
+    display = request.getfuncargvalue('qxdisplay')
+    return next(xinput.InputDevice.find_devices_with_property(
+        display, 'Synaptics Off'))
 
 
-def test_assert_xinput_version():
+def test_assert_xinput_version(qxdisplay):
     # just check, that no unexpected exception is raised
     try:
-        qxinput.assert_xinput_version()
-    except qxinput.XInputVersionError:
+        xinput.assert_xinput_version(qxdisplay)
+    except xinput.XInputVersionError:
         # this is an expected exception
         pass
 
 
-def test_is_property_defined_existing_property():
-    assert qxinput.is_property_defined('Device Enabled')
-    assert qxinput.is_property_defined(u'Device Enabled')
+def test_is_property_defined_existing_property(qxdisplay):
+    assert xinput.is_property_defined(qxdisplay, 'Device Enabled')
+    assert xinput.is_property_defined(qxdisplay, u'Device Enabled')
 
 
-def test_inputdevice_all_devices():
-    devices = list(qxinput.InputDevice.all_devices())
+def test_inputdevice_all_devices(qxdisplay):
+    devices = list(xinput.InputDevice.all_devices(qxdisplay))
     assert devices
-    assert all(isinstance(d, qxinput.InputDevice) for d in devices)
+    assert all(isinstance(d, xinput.InputDevice) for d in devices)
     assert all(d.id for d in devices)
     assert all(d.name for d in devices)
     # assert self-identity
@@ -87,22 +90,22 @@ def test_inputdevice_all_devices():
     assert all(not (d != d) for d in devices)
 
 
-def test_inputdevice_find_devices_by_name_existing_devices():
+def test_inputdevice_find_devices_by_name_existing_devices(qxdisplay):
     name = 'Virtual core XTEST keyboard'
-    devices = list(qxinput.InputDevice.find_devices_by_name(name))
+    devices = list(xinput.InputDevice.find_devices_by_name(qxdisplay, name))
     assert len(devices) == 1
     assert devices[0].name == name
 
 
-def test_inputdevice_find_devices_by_name_non_existing():
+def test_inputdevice_find_devices_by_name_non_existing(qxdisplay):
     name = 'a non-existing device'
-    devices = list(qxinput.InputDevice.find_devices_by_name(name))
+    devices = list(xinput.InputDevice.find_devices_by_name(qxdisplay, name))
     assert not devices
 
 
-def test_inputdevice_find_devices_by_name_existing_devices_regex():
+def test_inputdevice_find_devices_by_name_existing_devices_regex(qxdisplay):
     pattern = re.compile('.*XTEST.*')
-    devices = list(qxinput.InputDevice.find_devices_by_name(pattern))
+    devices = list(xinput.InputDevice.find_devices_by_name(qxdisplay, pattern))
     assert devices
     assert all('XTEST' in d.name for d in devices)
 
@@ -136,7 +139,7 @@ def test_inputdevice_getitem(test_keyboard):
 
 
 def test_inputdevice_getitem_non_defined_property(test_keyboard):
-    with pytest.raises(qxinput.UndefinedPropertyError) as excinfo:
+    with pytest.raises(xinput.UndefinedPropertyError) as excinfo:
         test_keyboard['a undefined property']
     assert excinfo.value.name == 'a undefined property'
 
@@ -144,11 +147,11 @@ def test_inputdevice_getitem_non_defined_property(test_keyboard):
 def test_inputdevice_getitem_non_existing_property(test_keyboard):
     with pytest.raises(KeyError) as excinfo:
         test_keyboard['Button Labels']
-    assert not isinstance(excinfo.value, qxinput.UndefinedPropertyError)
+    assert not isinstance(excinfo.value, xinput.UndefinedPropertyError)
 
 
 def test_input_device_set_bool_alias():
-    assert qxinput.InputDevice.set_bool == qxinput.InputDevice.set_byte
+    assert xinput.InputDevice.set_bool == xinput.InputDevice.set_byte
 
 
 def test_input_device_set_byte(test_keyboard):
@@ -167,34 +170,3 @@ def test_input_device_set_float(touchpad):
     assert touchpad[property] == [1.0]
     touchpad.set_float(property, orig_value)
     assert touchpad[property] == orig_value
-
-
-def test_input_device_set_item_no_typescheme(test_keyboard):
-    with pytest.raises(ValueError) as excinfo:
-        test_keyboard['Device Enabled'] = (True,)
-    assert str(excinfo.value) == 'No type scheme provided'
-
-
-def test_input_device_set_item_no_property_typescheme(test_keyboard):
-    test_keyboard.typescheme = dict(foobar=('int', 1))
-    with pytest.raises(ValueError) as excinfo:
-        test_keyboard['Device Enabled'] = (True,)
-    assert str(excinfo.value) == \
-           "No type scheme provided for 'Device Enabled'"
-
-
-def test_input_device_set_item_unexpected_number_of_items(test_keyboard):
-    test_keyboard.typescheme = {'Device Enabled': ('bool', 10)}
-    with pytest.raises(ValueError) as excinfo:
-        test_keyboard['Device Enabled'] = (True,)
-    assert str(excinfo.value) == \
-           ("Unexpected number of items for property 'Device Enabled': "
-            "1 (expected 10)")
-
-
-def test_input_device_set_item(test_keyboard):
-    test_keyboard.typescheme = {'Device Enabled': ('bool', 1)}
-    test_keyboard['Device Enabled'] = [False]
-    assert test_keyboard['Device Enabled'] == [False]
-    test_keyboard['Device Enabled'] = [True]
-    assert test_keyboard['Device Enabled'] == [True]

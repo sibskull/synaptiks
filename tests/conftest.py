@@ -23,8 +23,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import (print_function, division, unicode_literals,
+                        absolute_import)
 
 from PyQt4.QtGui import QApplication
+
+from synaptiks.qx11 import QX11Display
 
 
 def pytest_configure(config):
@@ -39,3 +43,10 @@ def pytest_funcarg__qtapp(request):
     tests.
     """
     return request.config.qt_application
+
+
+def pytest_funcarg__qxdisplay(request):
+    """
+    Qt X11 display wrapper.
+    """
+    return QX11Display()
