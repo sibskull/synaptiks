@@ -12,5 +12,5 @@
 
 .. autofunction:: save_json
 
-.. autofunction:: load_json_with_default
+.. autofunction:: load_json
 

@@ -104,7 +104,7 @@ def save_json(filename, obj):
         json.dump(obj, stream, indent=2)
 
 
-def load_json_with_default(filename, default=None):
+def load_json(filename, default=None):
     """
     Load the given JSON file.
 

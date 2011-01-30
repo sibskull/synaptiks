@@ -94,7 +94,7 @@ from __future__ import (print_function, division, unicode_literals,
 import os
 from collections import MutableMapping
 
-from synaptiks.util import ensure_directory, save_json, load_json_with_default
+from synaptiks.util import ensure_directory, save_json, load_json
 
 
 PACKAGE_DIRECTORY = os.path.dirname(__file__)
@@ -144,7 +144,7 @@ def get_touchpad_defaults(filename=None):
     """
     if not filename:
         filename = get_touchpad_defaults_file_path()
-    return load_json_with_default(filename, {})
+    return load_json(filename, default={})
 
 
 class TouchpadConfiguration(MutableMapping):
@@ -191,7 +191,7 @@ class TouchpadConfiguration(MutableMapping):
         if not filename:
             filename = get_touchpad_config_file_path()
         config = cls(touchpad)
-        config.update(load_json_with_default(filename, {}))
+        config.update(load_json(filename, default={}))
         return config
 
     def __init__(self, touchpad):
@@ -291,7 +291,7 @@ class ManagerConfiguration(MutableMapping):
         config = cls(touchpad_manager)
         # use defaults for all non-existing settings
         loaded_config = dict(cls.DEFAULTS)
-        loaded_config.update(load_json_with_default(filename, {}))
+        loaded_config.update(load_json(filename, default={}))
         config.update(loaded_config)
         return config
 
