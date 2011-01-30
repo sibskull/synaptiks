@@ -57,7 +57,7 @@ def make_about_data(description):
         str(synaptiks.__version__), description, KAboutData.License_BSD,
         ki18nc('About data copyright',
                # KLocalizedString doesn't deal well with unicode
-               b'Copyright © 2009, 2010 Sebastian Wiesner'))
+               b'Copyright © 2009, 2010, 2011 Sebastian Wiesner'))
     about.setCustomAuthorText(
         ki18nc('custom author text plain text',
                'Please report bugs to the issue tracker at %1').subs(
