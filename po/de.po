@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: synaptiks 0.5.0\n"
 "Report-Msgid-Bugs-To: lunaryorn@googlemail.com\n"
-"POT-Creation-Date: 2011-01-16 18:07+0100\n"
-"PO-Revision-Date: 2011-01-16 18:20+0100\n"
+"POT-Creation-Date: 2011-01-30 12:30+0100\n"
+"PO-Revision-Date: 2011-01-30 12:32+0100\n"
 "Last-Translator: Sebastian Wiesner <lunaryorn@googlemail.com>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -65,27 +65,27 @@ msgstr ""
 "ist aufgetreten: <message>%2</message></para><para>Bitte melden Sie diesen "
 "Fehler in der <link url=\"%1\">Fehlerverwaltung</link>.</para>"
 
-#: synaptiks/kde/trayapplication.py:185
+#: synaptiks/kde/trayapplication.py:161
 msgctxt "@action:inmenu"
 msgid "Touchpad on"
 msgstr "Touchpad eingeschaltet"
 
-#: synaptiks/kde/trayapplication.py:189
+#: synaptiks/kde/trayapplication.py:165
 msgctxt "Touchpad toggle shortcut"
 msgid "Ctrl+Alt+T"
 msgstr "Ctrl+Alt+T"
 
-#: synaptiks/kde/trayapplication.py:215
+#: synaptiks/kde/trayapplication.py:216
 msgctxt "touchpad switched notification"
 msgid "Touchpad switched off"
 msgstr "Touchpad ausgeschaltet"
 
-#: synaptiks/kde/trayapplication.py:219
+#: synaptiks/kde/trayapplication.py:220
 msgctxt "touchpad switched notification"
 msgid "Touchpad switched on"
 msgstr "Touchpad eingeschaltet"
 
-#: synaptiks/kde/trayapplication.py:265
+#: synaptiks/kde/trayapplication.py:266
 msgctxt "tray application description"
 msgid "touchpad management application"
 msgstr "Anwendung zur Touchpad-Verwaltung"
@@ -97,8 +97,8 @@ msgstr "synaptiks"
 
 #: synaptiks/kde/__init__.py:60
 msgctxt "About data copyright"
-msgid "Copyright © 2009, 2010 Sebastian Wiesner"
-msgstr "Copyright © 2009, 2010 Sebastian Wiesner"
+msgid "Copyright © 2009, 2010, 2011 Sebastian Wiesner"
+msgstr "Copyright © 2009, 2010, 2011 Sebastian Wiesner"
 
 #: synaptiks/kde/__init__.py:63
 msgctxt "custom author text plain text"
@@ -377,12 +377,21 @@ msgid ""
 "uppercase letters are ignored with this setting.</item>\n"
 "</list>"
 msgstr ""
-"<para>Folgende Tasten werden bei der Überwachung der Tastatur ignoriert:</para>\n"
+"<para>Folgende Tasten werden bei der Überwachung der Tastatur ignoriert:</"
+"para>\n"
 "<para>\n"
 "<list>\n"
-"<item><interface>Keine Tasten</interface>:  Es werden keine Tasten ignoriert.  Bei jedem Tastendruck wird das Touchpad ausgeschaltet.</item>\n"
-"<item><interface>Modifizierer-Tasten</interface>: Modifizierer-Tasten (z.B. Umschalt, Strg) werden ignoriert.   Bei jedem anderen Tastendruck wird das Touchpad ausgeschaltet, selbst wenn die Taste in Kombination mit einem Modifizierer gedrückt wird (z.B. Strg+S).</item>\n"
-"<item><interface>Modifizierer-Kombinationen</interface>: Modifizierer-Tasten und normale Tasten in Kombination mit Modifizierer-Tasten werden ignoriert.  Bei jedem anderen Tastendruck wird das Touchpad ausgeschaltet.  Beachten Sie, dass auch Kombinationen mit der Umschalt-Taste für Großbuchstaben bei dieser Einstellung ignoriert werden.</item>\n"
+"<item><interface>Keine Tasten</interface>:  Es werden keine Tasten "
+"ignoriert.  Bei jedem Tastendruck wird das Touchpad ausgeschaltet.</item>\n"
+"<item><interface>Modifizierer-Tasten</interface>: Modifizierer-Tasten (z.B. "
+"Umschalt, Strg) werden ignoriert.   Bei jedem anderen Tastendruck wird das "
+"Touchpad ausgeschaltet, selbst wenn die Taste in Kombination mit einem "
+"Modifizierer gedrückt wird (z.B. Strg+S).</item>\n"
+"<item><interface>Modifizierer-Kombinationen</interface>: Modifizierer-Tasten "
+"und normale Tasten in Kombination mit Modifizierer-Tasten werden ignoriert.  "
+"Bei jedem anderen Tastendruck wird das Touchpad ausgeschaltet.  Beachten Sie, "
+"dass auch Kombinationen mit der Umschalt-Taste für Großbuchstaben bei dieser "
+"Einstellung ignoriert werden.</item>\n"
 "</list>"
 
 #. i18n: file: synaptiks/kde/widgets/ui/touchpadmanagementwidget.ui:105
@@ -404,12 +413,21 @@ msgid ""
 "uppercase letters are ignored with this setting.</item>\n"
 "</list>"
 msgstr ""
-"<para>Folgende Tasten werden bei der Überwachung der Tastatur ignoriert:</para>\n"
+"<para>Folgende Tasten werden bei der Überwachung der Tastatur ignoriert:</"
+"para>\n"
 "<para>\n"
 "<list>\n"
-"<item><interface>Keine Tasten</interface>:  Es werden keine Tasten ignoriert.  Bei jedem Tastendruck wird das Touchpad ausgeschaltet.</item>\n"
-"<item><interface>Modifizierer-Tasten</interface>: Modifizierer-Tasten (z.B. Umschalt, Strg) werden ignoriert.   Bei jedem anderen Tastendruck wird das Touchpad ausgeschaltet, selbst wenn die Taste in Kombination mit einem Modifizierer gedrückt wird (z.B. Strg+S).</item>\n"
-"<item><interface>Modifizierer-Kombinationen</interface>: Modifizierer-Tasten und normale Tasten in Kombination mit Modifizierer-Tasten werden ignoriert.  Bei jedem anderen Tastendruck wird das Touchpad ausgeschaltet.  Beachten Sie, dass auch Kombinationen mit der Umschalt-Taste für Großbuchstaben bei dieser Einstellung ignoriert werden.</item>\n"
+"<item><interface>Keine Tasten</interface>:  Es werden keine Tasten "
+"ignoriert.  Bei jedem Tastendruck wird das Touchpad ausgeschaltet.</item>\n"
+"<item><interface>Modifizierer-Tasten</interface>: Modifizierer-Tasten (z.B. "
+"Umschalt, Strg) werden ignoriert.   Bei jedem anderen Tastendruck wird das "
+"Touchpad ausgeschaltet, selbst wenn die Taste in Kombination mit einem "
+"Modifizierer gedrückt wird (z.B. Strg+S).</item>\n"
+"<item><interface>Modifizierer-Kombinationen</interface>: Modifizierer-Tasten "
+"und normale Tasten in Kombination mit Modifizierer-Tasten werden ignoriert.  "
+"Bei jedem anderen Tastendruck wird das Touchpad ausgeschaltet.  Beachten Sie, "
+"dass auch Kombinationen mit der Umschalt-Taste für Großbuchstaben bei dieser "
+"Einstellung ignoriert werden.</item>\n"
 "</list>"
 
 #. i18n: file: synaptiks/kde/widgets/ui/touchpadmanagementwidget.ui:112
