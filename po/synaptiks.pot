@@ -5,9 +5,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: synaptiks 0.5.0\n"
+"Project-Id-Version: synaptiks 0.6.0\n"
 "Report-Msgid-Bugs-To: lunaryorn@googlemail.com\n"
-"POT-Creation-Date: 2011-01-16 18:14+0100\n"
+"POT-Creation-Date: 2011-01-30 12:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,27 +48,27 @@ msgid ""
 "\"%1\">issue tracker</link>.</para>"
 msgstr ""
 
-#: synaptiks/kde/trayapplication.py:185
+#: synaptiks/kde/trayapplication.py:161
 msgctxt "@action:inmenu"
 msgid "Touchpad on"
 msgstr ""
 
-#: synaptiks/kde/trayapplication.py:189
+#: synaptiks/kde/trayapplication.py:165
 msgctxt "Touchpad toggle shortcut"
 msgid "Ctrl+Alt+T"
 msgstr ""
 
-#: synaptiks/kde/trayapplication.py:215
+#: synaptiks/kde/trayapplication.py:216
 msgctxt "touchpad switched notification"
 msgid "Touchpad switched off"
 msgstr ""
 
-#: synaptiks/kde/trayapplication.py:219
+#: synaptiks/kde/trayapplication.py:220
 msgctxt "touchpad switched notification"
 msgid "Touchpad switched on"
 msgstr ""
 
-#: synaptiks/kde/trayapplication.py:265
+#: synaptiks/kde/trayapplication.py:266
 msgctxt "tray application description"
 msgid "touchpad management application"
 msgstr ""
@@ -80,7 +80,7 @@ msgstr ""
 
 #: synaptiks/kde/__init__.py:60
 msgctxt "About data copyright"
-msgid "Copyright © 2009, 2010 Sebastian Wiesner"
+msgid "Copyright © 2009, 2010, 2011 Sebastian Wiesner"
 msgstr ""
 
 #: synaptiks/kde/__init__.py:63
