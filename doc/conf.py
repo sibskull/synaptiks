@@ -43,7 +43,7 @@ exclude_patterns = ['_build/*']
 source_suffix = '.rst'
 
 project = u'synaptiks'
-copyright = u'2010, Sebastian Wiesner'
+copyright = u'2010, 2011 Sebastian Wiesner'
 version = '.'.join(synaptiks.__version__.split('.')[:2])
 release = synaptiks.__version__
 
