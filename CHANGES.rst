@@ -1,6 +1,3 @@
-Changelog
-#########
-
 0.6 (in development)
 ====================
 
