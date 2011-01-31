@@ -4,6 +4,8 @@ Changelog
 0.5.1 (in development)
 ======================
 
+- Fixed source distribution to include the handbook
+
 
 0.5 (Jan 29, 2011)
 ==================
