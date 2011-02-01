@@ -50,3 +50,13 @@ def pytest_funcarg__qxdisplay(request):
     Qt X11 display wrapper.
     """
     return QX11Display()
+
+
+def pytest_funcarg__display(request):
+    """
+    A direct X11 display connection.
+    """
+    from synaptiks._bindings import xlib
+    return request.cached_setup(
+        lambda: xlib.open_display(None),
+        xlib.close_display)

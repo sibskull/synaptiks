@@ -34,7 +34,7 @@ def pytest_funcarg__test_keyboard(request):
     """
     The virtual testing keyboard as :class:`synaptiks.xinput.InputDevice`.
     """
-    display = request.getfuncargvalue('qxdisplay')
+    display = request.getfuncargvalue('display')
     return next(xinput.InputDevice.find_devices_by_name(
         display, 'Virtual core XTEST keyboard'))
 
@@ -43,7 +43,7 @@ def pytest_funcarg__test_pointer(request):
     """
     The virtual testing pointer as :class:`synaptiks.xinput.InputDevice`.
     """
-    display = request.getfuncargvalue('qxdisplay')
+    display = request.getfuncargvalue('display')
     return next(xinput.InputDevice.find_devices_by_name(
         display, 'Virtual core XTEST pointer'))
 
@@ -60,27 +60,27 @@ def pytest_funcarg__touchpad(request):
     """
     The touchpad as :class:`synaptiks.xinput.InputDevice`.
     """
-    display = request.getfuncargvalue('qxdisplay')
+    display = request.getfuncargvalue('display')
     return next(xinput.InputDevice.find_devices_with_property(
         display, 'Synaptics Off'))
 
 
-def test_assert_xinput_version(qxdisplay):
+def test_assert_xinput_version(display):
     # just check, that no unexpected exception is raised
     try:
-        xinput.assert_xinput_version(qxdisplay)
+        xinput.assert_xinput_version(display)
     except xinput.XInputVersionError:
         # this is an expected exception
         pass
 
 
-def test_is_property_defined_existing_property(qxdisplay):
-    assert xinput.is_property_defined(qxdisplay, 'Device Enabled')
-    assert xinput.is_property_defined(qxdisplay, u'Device Enabled')
+def test_is_property_defined_existing_property(display):
+    assert xinput.is_property_defined(display, 'Device Enabled')
+    assert xinput.is_property_defined(display, u'Device Enabled')
 
 
-def test_inputdevice_all_devices(qxdisplay):
-    devices = list(xinput.InputDevice.all_devices(qxdisplay))
+def test_inputdevice_all_devices(display):
+    devices = list(xinput.InputDevice.all_devices(display))
     assert devices
     assert all(isinstance(d, xinput.InputDevice) for d in devices)
     assert all(d.id for d in devices)
@@ -90,22 +90,22 @@ def test_inputdevice_all_devices(qxdisplay):
     assert all(not (d != d) for d in devices)
 
 
-def test_inputdevice_find_devices_by_name_existing_devices(qxdisplay):
+def test_inputdevice_find_devices_by_name_existing_devices(display):
     name = 'Virtual core XTEST keyboard'
-    devices = list(xinput.InputDevice.find_devices_by_name(qxdisplay, name))
+    devices = list(xinput.InputDevice.find_devices_by_name(display, name))
     assert len(devices) == 1
     assert devices[0].name == name
 
 
-def test_inputdevice_find_devices_by_name_non_existing(qxdisplay):
+def test_inputdevice_find_devices_by_name_non_existing(display):
     name = 'a non-existing device'
-    devices = list(xinput.InputDevice.find_devices_by_name(qxdisplay, name))
+    devices = list(xinput.InputDevice.find_devices_by_name(display, name))
     assert not devices
 
 
-def test_inputdevice_find_devices_by_name_existing_devices_regex(qxdisplay):
+def test_inputdevice_find_devices_by_name_existing_devices_regex(display):
     pattern = re.compile('.*XTEST.*')
-    devices = list(xinput.InputDevice.find_devices_by_name(qxdisplay, pattern))
+    devices = list(xinput.InputDevice.find_devices_by_name(display, pattern))
     assert devices
     assert all('XTEST' in d.name for d in devices)
 
