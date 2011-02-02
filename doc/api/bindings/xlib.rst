@@ -25,6 +25,10 @@ Data types
 
    Return type of libX11 functions to indicate error codes or success.
 
+.. class:: XPointer
+
+   Pointer to arbitrary data.
+
 .. class:: KeyCode
 
    Represents the internal code of a single key.

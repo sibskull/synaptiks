@@ -54,6 +54,7 @@ Bool = c_int
 Status = c_int
 KeyCode = c_ubyte
 KeyCode_p = c_ubyte_p
+XPointer = c_char_p
 
 
 class Display(Structure):
