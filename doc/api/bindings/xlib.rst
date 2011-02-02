@@ -83,6 +83,13 @@ Constants
 
 .. autodata:: INTEGER
 
+Event type constants
+^^^^^^^^^^^^^^^^^^^^
+
+.. autodata:: KEY_PRESS
+
+.. autodata:: KEY_RELEASE
+
 
 Functions
 ---------

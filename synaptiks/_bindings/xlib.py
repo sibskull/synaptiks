@@ -80,6 +80,12 @@ ATOM = 4
 #: :class:`Atom` for an Integer type
 INTEGER = 19
 
+# event constants
+#: type code for key press event
+KEY_PRESS = 2
+#: type code for key release event
+KEY_RELEASE = 3
+
 
 def _convert_x11_char_p(c_string, function, args):
     """
