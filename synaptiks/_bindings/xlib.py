@@ -55,6 +55,7 @@ Status = c_int
 KeyCode = c_ubyte
 KeyCode_p = c_ubyte_p
 XPointer = c_char_p
+XID = c_uint32
 
 
 class Display(Structure):

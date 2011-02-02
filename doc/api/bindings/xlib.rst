@@ -8,6 +8,10 @@
 Data types
 ----------
 
+.. class:: XID
+
+   Type for unique identifiers in X.
+
 .. class:: Atom
 
    The type of xlib *Atoms*.  An atom is a special handle to efficiently identify
