@@ -39,7 +39,8 @@ from __future__ import (print_function, division, unicode_literals,
 from collections import namedtuple
 from itertools import islice, izip
 from ctypes import (CDLL, Structure, POINTER, string_at, create_string_buffer,
-                    c_uint32, c_int, c_void_p, c_char_p, c_char, c_ubyte)
+                    c_uint32, c_int, c_void_p, c_char_p, c_char, c_ubyte,
+                    c_ulong)
 from ctypes.util import find_library
 from contextlib import contextmanager
 
@@ -52,6 +53,7 @@ Atom = c_uint32
 Atom_p = POINTER(Atom)
 Bool = c_int
 Status = c_int
+Time = c_ulong
 KeyCode = c_ubyte
 KeyCode_p = c_ubyte_p
 XPointer = c_char_p

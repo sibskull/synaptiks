@@ -29,6 +29,10 @@ Data types
 
    Return type of libX11 functions to indicate error codes or success.
 
+.. class:: Time
+
+   Integral type for times using in X.
+
 .. class:: XPointer
 
    Pointer to arbitrary data.
