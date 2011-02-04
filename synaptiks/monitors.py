@@ -43,10 +43,16 @@ from array import array
 
 import pyudev
 from pyudev.pyqt4 import QUDevMonitorObserver
-from PyQt4.QtCore import QObject, QTimer, QTime, pyqtSignal
+from PyQt4.QtCore import QObject, QTimer, QThread, QTime, pyqtSignal
 
 from synaptiks.qx11 import QX11Display
 from synaptiks._bindings import xlib
+try:
+    from synaptiks._bindings import xrecord
+    HAVE_XRECORD = True
+except ImportError:
+    HAVE_XRECORD = False
+from synaptiks._bindings.util import scoped_pointer
 
 
 def _is_mouse(device):
@@ -125,17 +131,61 @@ class MouseDevicesMonitor(QObject):
             signal.emit(MouseDevice.from_udev(device))
 
 
-class PollingKeyboardMonitor(QObject):
+def create_keyboard_monitor(parent=None):
     """
-    Monitor the keyboard for state changes by constantly polling the keyboard.
+    Create a new keyboard monitor:
+
+    >>> monitor = create_keyboard_monitor(parent)
+    >>> monitor.idle_time = 0.5
+    >>> monitor.keys_to_ignore = monitor.IGNORE_MODIFIER_COMBOS
+    >>> monitor.typingStarted.connect(lambda: print('typing started'))
+    >>> monitor.typingStopped.connect(lambda: print('typing stopped'))
+    >>> monitor.start()
+
+    This function automatically chooses the "best" available implementation.
+    Currently this means, that a :class:`RecordingKeyboardMonitor` is created,
+    if the XRecord extension is available.  Otherwise this functions falls back
+    to :class:`PollingKeyboardMonitor`.
+
+    ``parent`` is the parent :class:`~PyQt4.QtCore.QObject`.
+
+    Return an implementation of :class:`AbstractKeyboardMonitor`.
+    """
+    if HAVE_XRECORD:
+        success, _ = xrecord.query_version(QX11Display())
+        if success:
+            return RecordingKeyboardMonitor(parent)
+    return PollingKeyboardMonitor(parent)
+
+
+class AbstractKeyboardMonitor(QObject):
+    """
+    Abstract base class for keyboard monitors.
+
+    This class defines the interface for keyboard monitoring classes.
+    Currently there are two base classes:
+
+    - :class:`RecordingKeyboardMonitor`
+    - :class:`PollingKeyboardMonitor`
+
+    Use :func:`create_keyboard_monitor` to create an instance of the "best"
+    monitoring class.
+
+    Keyboard monitoring means to emit signals, whenever the user starts or
+    stops typing.  Whenever a keyboard event occurs, the keyboard is considered
+    active and :attr:`typingStarted` is emitted.  After the last keyboard
+    event, this class waits a configurable timespan (see :attr:`idle_time`)
+    before considering the keyboard inactive and emitting
+    :attr:`typingStopped`.  This is done to make sure, that the user really
+    stopped typing and didn't just type a bit slower.
+
+    Modifier keys can be ignored (see :attr:`keys_to_ignore`) as this kind of
+    keys is mostly involved in hotkeys and shortcuts and doesn't really
+    indicate keyboard activity.
     """
 
-    #: default polling interval
-    DEFAULT_POLLDELAY = 200
     #: default time span before considering the keyboard inactive again
     DEFAULT_IDLETIME = 2000
-    #: size of the X11 keymap array
-    _KEYMAP_SIZE = 32
 
     #: Ignore no keys
     IGNORE_NO_KEYS = 0
@@ -149,36 +199,11 @@ class PollingKeyboardMonitor(QObject):
     #: Qt signal, emitted if typing is stopped.  Has no arguments.
     typingStopped = pyqtSignal()
 
-    def __init__(self, parent=None):
-        """
-        Create a new monitor.
-
-        ``parent`` is the parent :class:`~PyQt4.QtCore.QObject`.
-        """
-        QObject.__init__(self, parent)
-        self._keyboard_was_active = False
-        self._old_keymap = array(b'B', b'\0'*32)
-        self._keyboard_timer = QTimer(self)
-        self._keyboard_timer.timeout.connect(self._check_keyboard_activity)
-        self._keyboard_timer.setInterval(self.DEFAULT_POLLDELAY)
-        self._activity = QTime()
-        self._keys_to_ignore = self.IGNORE_NO_KEYS
-        self._keymap_mask = self._setup_mask()
-        self._idle_time = self.DEFAULT_IDLETIME
-
-    @property
-    def is_running(self):
-        """
-        ``True``, if the keyboard monitor is currently running, ``False``
-        otherwise.
-        """
-        return self._keyboard_timer.isActive()
-
-    def start(self):
+    def start():
         """
         Start monitoring the keyboard.
         """
-        self._keyboard_timer.start()
+        raise NotImplementedError()
 
     def stop(self):
         """
@@ -187,7 +212,14 @@ class PollingKeyboardMonitor(QObject):
         # since we are not monitoring the keyboard anymore, we assume, that
         # there is no keyboard activity anymore.
         self.typingStopped.emit()
-        self._keyboard_timer.stop()
+
+    @property
+    def is_running(self):
+        """
+        ``True``, if the keyboard monitor is currently running, ``False``
+        otherwise.
+        """
+        raise NotImplementedError()
 
     @property
     def idle_time(self):
@@ -195,11 +227,11 @@ class PollingKeyboardMonitor(QObject):
         The time to wait before assuming, that the typing has stopped, in
         seconds as float.
         """
-        return self._idle_time / 1000
+        raise NotImplementedError()
 
     @idle_time.setter
     def idle_time(self, value):
-        self._idle_time = int(value*1000)
+        raise NotImplementedError()
 
     @property
     def keys_to_ignore(self):
@@ -213,6 +245,155 @@ class PollingKeyboardMonitor(QObject):
         is not one of :attr:`IGNORE_NO_KEYS`, :attr:`IGNORE_MODIFIER_KEYS` or
         :attr:`IGNORE_MODIFIER_COMBOS`.
         """
+        raise NotImplementedError()
+
+    @keys_to_ignore.setter
+    def keys_to_ignore(self, value):
+        raise NotImplementedError()
+
+    @property
+    def keyboard_active(self):
+        """
+        Is the keyboard currently active (with respect to
+        :attr:`keys_to_ignore`)?
+
+        ``True``, if the keyboard is currently active, ``False`` otherwise.
+        """
+        raise NotImplementedError()
+
+
+class EventRecorder(QThread):
+    """
+    A thread to record keyboard events.
+
+    Once started, this thread connects to the X11 display, and records all
+    keyboard events.  On every keyboard event, the :attr:`keyboardEvent` signal
+    is emitted.
+
+    Use :meth:`stop()` to stop recording.
+    """
+
+    #: Qt signal emitted whenever a keyboard event occurred.  Has no arguments
+    keyboardEvent = pyqtSignal()
+
+    def __init__(self, parent=None):
+        QThread.__init__(self, parent)
+        # XXX: dirty hack: ctypes insists on a per-instance reference to the
+        # event handling callback, otherwise "self" is garbage in the event
+        # handler, and access to "self" causes a segfault.  Reason is unknown
+        # to me.
+        self._callback = self._handle_event
+
+    def run(self):
+        # create a special display connection for recording
+        with xlib.display() as recording_display:
+            with xrecord.record_range() as record_range:
+                # record all key presses and releases, as these events indicate
+                # keyboard activity
+                record_range.contents.device_events.first = xlib.KEY_PRESS
+                record_range.contents.device_events.last = xlib.KEY_RELEASE
+                with xrecord.context(recording_display, 0, xrecord.ALL_CLIENTS,
+                                     record_range) as context:
+                    self._context = context
+                    # create the recording context and enable it.  This
+                    # function does not return until disable_context is called,
+                    # which happens in stop.
+                    xrecord.enable_context(recording_display, context,
+                                           self._callback, None)
+
+    def stop(self):
+        """
+        Stop this recorder.
+        """
+        xrecord.disable_context(QX11Display(), self._context)
+
+    def _handle_event(self, _, data):
+        with scoped_pointer(data, xrecord.free_data):
+            if data.contents.category != xrecord.FROM_SERVER:
+                # ignore client side events (e.g. START_OF_DATA)
+                return
+            # everything else is a keyboard event due to the record range
+            # defined in run()
+            self.keyboardEvent.emit()
+
+
+class RecordingKeyboardMonitor(AbstractKeyboardMonitor):
+    """
+    Monitor the keyboard by recording X11 protocol data.
+    """
+
+    def __init__(self, parent=None):
+        AbstractKeyboardMonitor.__init__(self, parent)
+        # this timer is started on every keyboard event, its timeout signals,
+        # that the keyboard is to be considered inactive again
+        self._idle_timer = QTimer(self)
+        self._idle_timer.setInterval(self.DEFAULT_IDLETIME)
+        self._idle_timer.timeout.connect(self.typingStopped)
+        self._idle_timer.setSingleShot(True)
+        # this object records events
+        self._recorder = EventRecorder(self)
+        self._recorder.keyboardEvent.connect(self._idle_timer.start)
+        self._recorder.keyboardEvent.connect(self.typingStarted)
+
+    @property
+    def is_running(self):
+        return self._recorder.isRunning()
+
+    def start(self):
+        self._recorder.start()
+
+    def stop(self):
+        AbstractKeyboardMonitor.stop(self)
+        self._recorder.stop()
+
+    @property
+    def idle_time(self):
+        return self._idle_timer.interval() / 1000
+
+    @idle_time.setter
+    def idle_time(self, value):
+        self._idle_timer.setInterval(int(value*1000))
+
+    @property
+    def keyboard_active(self):
+        return self._idle_timer.isActive()
+
+
+class PollingKeyboardMonitor(AbstractKeyboardMonitor):
+    """
+    Monitor the keyboard for state changes by constantly polling the keyboard.
+    """
+
+    #: default polling interval
+    DEFAULT_POLLDELAY = 200
+    #: size of the X11 keymap array
+    _KEYMAP_SIZE = 32
+
+    def __init__(self, parent=None):
+        AbstractKeyboardMonitor.__init__(self, parent)
+        self._keyboard_was_active = False
+        self._old_keymap = array(b'B', b'\0'*32)
+        self._keyboard_timer = QTimer(self)
+        self._keyboard_timer.timeout.connect(self._check_keyboard_activity)
+        self._keyboard_timer.setInterval(self.DEFAULT_POLLDELAY)
+        self._activity = QTime()
+        self._keys_to_ignore = self.IGNORE_NO_KEYS
+        self._keymap_mask = self._setup_mask()
+        self._idle_time = self.DEFAULT_IDLETIME
+
+    @property
+    def is_running(self):
+        return self._keyboard_timer.isActive()
+
+    def start(self):
+        self._keyboard_timer.start()
+
+    def stop(self):
+        AbstractKeyboardMonitor.stop(self)
+        self._keyboard_timer.stop()
+
+    @property
+    def keys_to_ignore(self):
         return self._keys_to_ignore
 
     @keys_to_ignore.setter
@@ -221,6 +402,14 @@ class PollingKeyboardMonitor(QObject):
             raise ValueError('unknown constant for keys_to_ignore')
         self._keys_to_ignore = value
         self._keymap_mask = self._setup_mask()
+
+    @property
+    def idle_time(self):
+        return self._idle_time / 1000
+
+    @idle_time.setter
+    def idle_time(self, value):
+        self._idle_time = int(value*1000)
 
     def _setup_mask(self):
         mask = array(b'B', b'\xff'*32)
@@ -233,12 +422,6 @@ class PollingKeyboardMonitor(QObject):
 
     @property
     def keyboard_active(self):
-        """
-        Is the keyboard currently active (with respect to
-        :attr:`keys_to_ignore`)?
-
-        ``True``, if the keyboard is currently active, ``False`` otherwise.
-        """
         is_active = False
 
         _, raw_keymap = xlib.query_keymap(QX11Display())

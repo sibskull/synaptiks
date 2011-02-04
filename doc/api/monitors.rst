@@ -33,11 +33,11 @@ Mouse device monitoring
 Keyboard monitoring
 -------------------
 
-.. autoclass:: PollingKeyboardMonitor
+.. autofunction:: create_keyboard_monitor
+
+.. autoclass:: AbstractKeyboardMonitor
 
    .. rubric:: Class-level constants
-
-   .. autoattribute:: DEFAULT_POLLDELAY
 
    .. autoattribute:: DEFAULT_IDLETIME
 
@@ -68,3 +68,9 @@ Keyboard monitoring
    .. autoattribute:: keys_to_ignore
 
    .. autoattribute:: keyboard_active
+
+.. rubric:: Available implementations
+
+.. autoclass:: PollingKeyboardMonitor()
+
+.. autoclass:: RecordingKeyboardMonitor()

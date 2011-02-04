@@ -32,7 +32,7 @@ from functools import partial
 from PyQt4.QtGui import (QApplication, QMainWindow, QWidget, QLabel,
                          QVBoxLayout, QComboBox)
 
-from synaptiks.monitors import PollingKeyboardMonitor
+from synaptiks.monitors import AbstractKeyboardMonitor, create_keyboard_monitor
 
 
 def main():
@@ -43,14 +43,17 @@ def main():
 
     central_layout = QVBoxLayout(central_widget)
 
+    monitor_name = QLabel(central_widget)
+    central_layout.addWidget(monitor_name)
+
     state_label = QLabel(central_widget)
     central_layout.addWidget(state_label)
 
     combo_box = QComboBox(central_widget)
     items = [
-        ('No keys', PollingKeyboardMonitor.IGNORE_NO_KEYS),
-        ('Modifiers', PollingKeyboardMonitor.IGNORE_MODIFIER_KEYS),
-        ('Modifier combos', PollingKeyboardMonitor.IGNORE_MODIFIER_COMBOS)]
+        ('No keys', AbstractKeyboardMonitor.IGNORE_NO_KEYS),
+        ('Modifiers', AbstractKeyboardMonitor.IGNORE_MODIFIER_KEYS),
+        ('Modifier combos', AbstractKeyboardMonitor.IGNORE_MODIFIER_COMBOS)]
     for label, userdata in items:
         combo_box.addItem(label, userdata)
 
@@ -63,15 +66,15 @@ def main():
     central_widget.setLayout(central_layout)
     window.setCentralWidget(central_widget)
 
-    monitor = PollingKeyboardMonitor(window)
+    monitor = create_keyboard_monitor(window)
+    monitor_name.setText('Using monitor class {0}'.format(
+        monitor.__class__.__name__))
     monitor.typingStarted.connect(partial(state_label.setText, 'typing'))
     monitor.typingStopped.connect(partial(state_label.setText, 'not typing'))
     monitor.start()
-
     window.show()
     app.exec_()
 
 
 if __name__ == '__main__':
     main()
-
