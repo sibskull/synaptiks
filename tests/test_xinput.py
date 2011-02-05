@@ -53,9 +53,6 @@ def pytest_generate_tests(metafunc):
                 metafunc.addcall(param=device.id, id=test_id)
 
 
-def pytest_funcarg__device_database(request):
-    return request.config.xinput_device_database
-
 def pytest_funcarg__device_id(request):
     return request.param
 

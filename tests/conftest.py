@@ -87,6 +87,19 @@ def pytest_configure(config):
     # connection exists
     config.qt_application = QApplication([])
     config.xinput_device_database = _read_device_database()
+    for device in config.xinput_device_database.itervalues():
+        if 'Synaptics Off' in device.properties:
+            config.xinput_has_touchpad = True
+            break
+    else:
+        config.xinput_has_touchpad = False
+
+
+def pytest_funcarg__device_database(request):
+    """
+    The device database as returned by the "xinput" utility.
+    """
+    return request.config.xinput_device_database
 
 
 def pytest_funcarg__qtapp(request):
