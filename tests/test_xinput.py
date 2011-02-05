@@ -27,10 +27,58 @@ from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
 import re
+from itertools import product
+from functools import partial
 
 import pytest
 
 from synaptiks import xinput
+
+
+def pytest_generate_tests(metafunc):
+    if any(n in metafunc.funcargnames for n in
+           ('device_id', 'device_name', 'device_properties', 'device')):
+        devices = metafunc.config.xinput_device_database
+        for device in sorted(devices.itervalues()):
+            if 'device_property' in metafunc.funcargnames:
+                # single test for each property defined on a device
+                for property in device.properties:
+                    test_id = '{0},id={1},property={2}'.format(
+                        device.name, device.id, property)
+                    funcargs=dict(device_property=property)
+                    metafunc.addcall(param=device.id, funcargs=funcargs,
+                                     id=test_id)
+            else:
+                test_id = '{0},id={1}'.format(device.name, device.id)
+                metafunc.addcall(param=device.id, id=test_id)
+
+
+def pytest_funcarg__device_database(request):
+    return request.config.xinput_device_database
+
+def pytest_funcarg__device_id(request):
+    return request.param
+
+def pytest_funcarg__device_name(request):
+    device_id = request.getfuncargvalue('device_id')
+    devices = request.getfuncargvalue('device_database')
+    return devices[device_id].name
+
+def pytest_funcarg__device_properties(request):
+    device_id = request.getfuncargvalue('device_id')
+    devices = request.getfuncargvalue('device_database')
+    return devices[device_id].properties
+
+def pytest_funcarg__device_property_value(request):
+    device_id = request.getfuncargvalue('device_id')
+    devices = request.getfuncargvalue('device_database')
+    device_property = request.getfuncargvalue('device_property')
+    return devices[device_id].properties[device_property]
+
+def pytest_funcarg__device(request):
+    display = request.getfuncargvalue('display')
+    device_id = request.getfuncargvalue('device_id')
+    return xinput.InputDevice(display, device_id)
 
 
 def pytest_funcarg__test_keyboard(request):
@@ -41,7 +89,6 @@ def pytest_funcarg__test_keyboard(request):
     return next(xinput.InputDevice.find_devices_by_name(
         display, 'Virtual core XTEST keyboard'))
 
-
 def pytest_funcarg__test_pointer(request):
     """
     The virtual testing pointer as :class:`synaptiks.xinput.InputDevice`.
@@ -49,23 +96,6 @@ def pytest_funcarg__test_pointer(request):
     display = request.getfuncargvalue('display')
     return next(xinput.InputDevice.find_devices_by_name(
         display, 'Virtual core XTEST pointer'))
-
-
-def pytest_funcarg__test_device_properties(request):
-    """
-    A list of all properties defined on XTEST devices.
-    """
-    return ['Device Enabled', 'Coordinate Transformation Matrix',
-            'XTEST Device']
-
-
-def pytest_funcarg__touchpad(request):
-    """
-    The touchpad as :class:`synaptiks.xinput.InputDevice`.
-    """
-    display = request.getfuncargvalue('display')
-    return next(xinput.InputDevice.find_devices_with_property(
-        display, 'Synaptics Off'))
 
 
 def test_assert_xinput_version(display):
@@ -82,22 +112,21 @@ def test_is_property_defined_existing_property(display):
     assert xinput.is_property_defined(display, u'Device Enabled')
 
 
-def test_inputdevice_all_devices(display):
+def test_inputdevice_all_devices(display, device_database):
     devices = list(xinput.InputDevice.all_devices(display))
-    assert devices
+    assert set(d.id for d in devices) == set(device_database)
+    assert set(d.name for d in devices) == \
+           set(d.name for d in device_database.itervalues())
+    # assert type
     assert all(isinstance(d, xinput.InputDevice) for d in devices)
-    assert all(d.id for d in devices)
-    assert all(d.name for d in devices)
-    # assert self-identity
-    assert all(d == d for d in devices)
-    assert all(not (d != d) for d in devices)
 
 
-def test_inputdevice_find_devices_by_name_existing_devices(display):
-    name = 'Virtual core XTEST keyboard'
-    devices = list(xinput.InputDevice.find_devices_by_name(display, name))
-    assert len(devices) == 1
-    assert devices[0].name == name
+def test_input_device_find_devices_by_name(display, device_name, device_id):
+    devices = list(xinput.InputDevice.find_devices_by_name(
+        display, device_name))
+    assert devices
+    assert any(d.name == device_name for d in devices)
+    assert any(d.id == device_id for d in devices)
 
 
 def test_inputdevice_find_devices_by_name_non_existing(display):
@@ -113,44 +142,49 @@ def test_inputdevice_find_devices_by_name_existing_devices_regex(display):
     assert all('XTEST' in d.name for d in devices)
 
 
-def test_inputdevice_eq_ne(test_keyboard, test_pointer):
-    assert test_keyboard == test_keyboard
-    assert test_keyboard != test_pointer
+def test_input_device_self_identity(device):
+    assert device == device
+    assert not (device != device)
 
 
-def test_inputdevice_iter(test_keyboard, test_device_properties):
-    assert set(test_keyboard) == set(test_device_properties)
+def test_inputdevice_eq_ne(display, device_database):
+    device_combinations = product(device_database, device_database)
+    device = partial(xinput.InputDevice, display)
+    for left_id, right_id in device_combinations:
+        if left_id == right_id:
+            assert device(left_id) == device(right_id)
+        else:
+            assert device(left_id) != device(right_id)
 
 
-def test_inputdevice_len(test_keyboard, test_device_properties):
-    assert len(test_keyboard) == len(test_device_properties)
+def test_inputdevice_iter(device, device_properties):
+    assert set(device) == set(device_properties)
 
 
-def test_inputdevice_contains(test_keyboard, test_device_properties):
-    assert all(p in test_keyboard for p in test_device_properties)
+def test_inputdevice_len(device, device_properties):
+    assert len(device) == len(device_properties)
 
 
-def test_inputdevice_contains_undefined_property(test_keyboard):
-    assert not 'a undefined property' in test_keyboard
+def test_inputdevice_contains(device, device_properties):
+    assert all(p in device for p in device_properties)
 
 
-def test_inputdevice_getitem(test_keyboard):
-    assert test_keyboard['Device Enabled'] == [1]
-    assert test_keyboard['XTEST Device'] == [1]
-    assert test_keyboard['Coordinate Transformation Matrix'] == \
-           [1., 0., 0., 0., 1., 0., 0., 0., 1.]
+def test_inputdevice_contains_undefined_property(device):
+    assert not 'a undefined property' in device
 
 
-def test_inputdevice_getitem_non_defined_property(test_keyboard):
+def test_inputdevice_getitem(device, device_property, device_property_value):
+    if isinstance(device_property_value[0], float):
+        values = [round(v, 6) for v in device[device_property]]
+    else:
+        values = device[device_property]
+    assert values == device_property_value
+
+
+def test_inputdevice_getitem_non_defined_property(device):
     with pytest.raises(xinput.UndefinedPropertyError) as excinfo:
-        test_keyboard['a undefined property']
+        device['a undefined property']
     assert excinfo.value.name == 'a undefined property'
-
-
-def test_inputdevice_getitem_non_existing_property(test_keyboard):
-    with pytest.raises(KeyError) as excinfo:
-        test_keyboard['Button Labels']
-    assert not isinstance(excinfo.value, xinput.UndefinedPropertyError)
 
 
 def test_input_device_set_bool_alias():
@@ -166,10 +200,9 @@ def test_input_device_set_byte(test_keyboard):
     assert test_keyboard[property] == [1]
 
 
-def test_input_device_set_float(touchpad):
-    property = 'Synaptics Circular Scrolling Distance'
-    orig_value = touchpad[property]
-    touchpad.set_float(property, [1.0])
-    assert touchpad[property] == [1.0]
-    touchpad.set_float(property, orig_value)
-    assert touchpad[property] == orig_value
+def test_input_device_set_int():
+    raise NotImplementedError()
+
+
+def test_input_device_set_float():
+    raise NotImplementedError()

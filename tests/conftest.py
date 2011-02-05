@@ -26,15 +26,67 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
+import sys
+import re
+from collections import namedtuple
+from subprocess import Popen, PIPE
+
 from PyQt4.QtGui import QApplication
 
 from synaptiks.qx11 import QX11Display
+
+
+DEVICE_PATTERN = re.compile(
+    r'(\W|\s)*(?P<name>.+?)\s+id=(?P<id>\d+)\s\[[^]]+\]', re.UNICODE)
+PROPERTY_PATTERN = re.compile(
+    r'(?P<name>[^(]+) \((?P<id>\d+)\):\s+(?P<values>.*)', re.UNICODE)
+ATOM_PATTERN = re.compile(
+    r'\((?P<value>\d+)\)', re.UNICODE)
+
+Device = namedtuple('Device', 'id name properties')
+
+
+def _read_device_properties(device_id):
+    proc = Popen(['xinput', 'list-props', str(device_id)], stdout=PIPE)
+    output = proc.communicate()[0].decode(sys.getfilesystemencoding())
+    properties = {}
+    for line in output.splitlines()[1:]:
+        line = line.strip()
+        match = PROPERTY_PATTERN.match(line)
+        value_strings = match.group('values').strip().split(',')
+        values = []
+        for value_string in value_strings:
+            value_string = value_string.strip()
+            if '.' in value_string:
+                value = float(value_string)
+            elif '(' in value_string:
+                value = int(ATOM_PATTERN.search(value_string).group('value'))
+            else:
+                value = int(value_string)
+            values.append(value)
+        properties[match.group('name')] = values
+    return properties
+
+
+def _read_device_database():
+    proc = Popen(['xinput', 'list'], stdout=PIPE)
+    output = proc.communicate()[0].decode(sys.getfilesystemencoding())
+    devices = {}
+    for line in output.splitlines():
+        line = line.strip()
+        match = DEVICE_PATTERN.match(line)
+        device_id = int(match.group('id'))
+        device = Device(device_id, match.group('name'),
+                        _read_device_properties(device_id))
+        devices[device_id] = device
+    return devices
 
 
 def pytest_configure(config):
     # make sure, that an application and consequently an X11 Display
     # connection exists
     config.qt_application = QApplication([])
+    config.xinput_device_database = _read_device_database()
 
 
 def pytest_funcarg__qtapp(request):
