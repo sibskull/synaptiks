@@ -245,7 +245,7 @@ Whether the touchpad is off or not.  Three valid values:
         1, '``True``, if horizontal edge scrolling is enabled, ``False`` '
         'otherwise')
     corner_coasting = _edge_scrolling_property(
-        0, '``True``, if corner coasting is enabled, ``False`` otherwise')
+        2, '``True``, if corner coasting is enabled, ``False`` otherwise')
 
     _scrolling_distance_property = partial(
         device_property, 'Synaptics Scrolling Distance', 'int')
