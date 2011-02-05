@@ -374,7 +374,7 @@ class InputDevice(Mapping):
         if type == xlib.NONE and format == 0:
             raise KeyError(name)
         number_of_items = (len(bytes) * 8) // format
-        if type == xlib.INTEGER:
+        if type in (xlib.INTEGER, xlib.ATOM):
             struct_format = _FORMAT_CODE_MAPPING[format] * number_of_items
         elif type == xlib.intern_atom(self.display, 'FLOAT', True):
             struct_format = b'f' * number_of_items

@@ -79,6 +79,8 @@ Constants
 
 .. autodata:: NONE
 
+.. autodata:: ATOM
+
 .. autodata:: INTEGER
 
 

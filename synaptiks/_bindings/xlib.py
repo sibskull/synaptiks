@@ -75,6 +75,8 @@ XModifierKeymap_p = POINTER(XModifierKeymap)
 SUCCESS = 0
 #: A non-existing :class:`Atom`
 NONE = 0
+#: :class:`Atom` for an Atom type
+ATOM = 4
 #: :class:`Atom` for an Integer type
 INTEGER = 19
 
