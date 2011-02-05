@@ -205,7 +205,7 @@ class PropertyTypeError(ValueError):
 
 
 #: maps property formats to :mod:`struct` format codes
-_FORMAT_CODE_MAPPING = {8: b'B', 16: b'S', 32: b'L'}
+_FORMAT_CODE_MAPPING = {8: b'B', 16: b'H', 32: b'L'}
 
 
 class InputDevice(Mapping):
