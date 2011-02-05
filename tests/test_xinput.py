@@ -112,97 +112,85 @@ def test_is_property_defined_existing_property(display):
     assert xinput.is_property_defined(display, u'Device Enabled')
 
 
-def test_inputdevice_all_devices(display, device_database):
-    devices = list(xinput.InputDevice.all_devices(display))
-    assert set(d.id for d in devices) == set(device_database)
-    assert set(d.name for d in devices) == \
-           set(d.name for d in device_database.itervalues())
-    # assert type
-    assert all(isinstance(d, xinput.InputDevice) for d in devices)
+class TestInputDevice(object):
 
+    def test_all_devices(self, display, device_database):
+        devices = list(xinput.InputDevice.all_devices(display))
+        assert set(d.id for d in devices) == set(device_database)
+        assert set(d.name for d in devices) == \
+               set(d.name for d in device_database.itervalues())
+        # assert type
+        assert all(isinstance(d, xinput.InputDevice) for d in devices)
 
-def test_input_device_find_devices_by_name(display, device_name, device_id):
-    devices = list(xinput.InputDevice.find_devices_by_name(
-        display, device_name))
-    assert devices
-    assert any(d.name == device_name for d in devices)
-    assert any(d.id == device_id for d in devices)
+    def test_find_devices_by_name(self, display, device_name, device_id):
+        devices = list(xinput.InputDevice.find_devices_by_name(
+            display, device_name))
+        assert devices
+        assert any(d.name == device_name for d in devices)
+        assert any(d.id == device_id for d in devices)
 
+    def test_find_devices_by_name_non_existing(self, display):
+        name = 'a non-existing device'
+        devices = list(xinput.InputDevice.find_devices_by_name(display, name))
+        assert not devices
 
-def test_inputdevice_find_devices_by_name_non_existing(display):
-    name = 'a non-existing device'
-    devices = list(xinput.InputDevice.find_devices_by_name(display, name))
-    assert not devices
+    def test_find_devices_by_name_existing_devices_regex(self, display):
+        pattern = re.compile('.*XTEST.*')
+        devices = list(xinput.InputDevice.find_devices_by_name(display,
+                                                               pattern))
+        assert devices
+        assert all('XTEST' in d.name for d in devices)
 
+    def test_self_identity(self, device):
+        assert device == device
+        assert not (device != device)
 
-def test_inputdevice_find_devices_by_name_existing_devices_regex(display):
-    pattern = re.compile('.*XTEST.*')
-    devices = list(xinput.InputDevice.find_devices_by_name(display, pattern))
-    assert devices
-    assert all('XTEST' in d.name for d in devices)
+    def test_eq_ne(self, display, device_database):
+        device_combinations = product(device_database, device_database)
+        device = partial(xinput.InputDevice, display)
+        for left_id, right_id in device_combinations:
+            if left_id == right_id:
+                assert device(left_id) == device(right_id)
+            else:
+                assert device(left_id) != device(right_id)
 
+    def test_iter(self, device, device_properties):
+        assert set(device) == set(device_properties)
 
-def test_input_device_self_identity(device):
-    assert device == device
-    assert not (device != device)
+    def test_len(self, device, device_properties):
+        assert len(device) == len(device_properties)
 
+    def test_contains(self, device, device_properties):
+        assert all(p in device for p in device_properties)
 
-def test_inputdevice_eq_ne(display, device_database):
-    device_combinations = product(device_database, device_database)
-    device = partial(xinput.InputDevice, display)
-    for left_id, right_id in device_combinations:
-        if left_id == right_id:
-            assert device(left_id) == device(right_id)
+    def test_contains_undefined_property(self, device):
+        assert not 'a undefined property' in device
+
+    def test_getitem(self, device, device_property, device_property_value):
+        if isinstance(device_property_value[0], float):
+            values = [round(v, 6) for v in device[device_property]]
         else:
-            assert device(left_id) != device(right_id)
+            values = device[device_property]
+        assert values == device_property_value
 
+    def test_getitem_non_defined_property(self, device):
+        with pytest.raises(xinput.UndefinedPropertyError) as excinfo:
+            device['a undefined property']
+        assert excinfo.value.name == 'a undefined property'
 
-def test_inputdevice_iter(device, device_properties):
-    assert set(device) == set(device_properties)
+    def test_set_bool_alias(self):
+        assert xinput.InputDevice.set_bool == xinput.InputDevice.set_byte
 
+    def test_set_byte(self, test_keyboard):
+        property = 'Device Enabled'
+        assert test_keyboard[property] == [1]
+        test_keyboard.set_byte(property, [0])
+        assert test_keyboard[property] == [0]
+        test_keyboard.set_byte(property, [1])
+        assert test_keyboard[property] == [1]
 
-def test_inputdevice_len(device, device_properties):
-    assert len(device) == len(device_properties)
+    def test_set_int(self):
+        raise NotImplementedError()
 
-
-def test_inputdevice_contains(device, device_properties):
-    assert all(p in device for p in device_properties)
-
-
-def test_inputdevice_contains_undefined_property(device):
-    assert not 'a undefined property' in device
-
-
-def test_inputdevice_getitem(device, device_property, device_property_value):
-    if isinstance(device_property_value[0], float):
-        values = [round(v, 6) for v in device[device_property]]
-    else:
-        values = device[device_property]
-    assert values == device_property_value
-
-
-def test_inputdevice_getitem_non_defined_property(device):
-    with pytest.raises(xinput.UndefinedPropertyError) as excinfo:
-        device['a undefined property']
-    assert excinfo.value.name == 'a undefined property'
-
-
-def test_input_device_set_bool_alias():
-    assert xinput.InputDevice.set_bool == xinput.InputDevice.set_byte
-
-
-def test_input_device_set_byte(test_keyboard):
-    property = 'Device Enabled'
-    assert test_keyboard[property] == [1]
-    test_keyboard.set_byte(property, [0])
-    assert test_keyboard[property] == [0]
-    test_keyboard.set_byte(property, [1])
-    assert test_keyboard[property] == [1]
-
-
-def test_input_device_set_int():
-    raise NotImplementedError()
-
-
-def test_input_device_set_float():
-    raise NotImplementedError()
+    def test_set_float(self):
+        raise NotImplementedError()
