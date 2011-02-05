@@ -71,7 +71,7 @@ from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
 
-__version__ = '0.5.1'
+__version__ = '0.5.2'
 
 WEBSITE_URL = 'http://synaptiks.lunaryorn.de'
 ISSUE_TRACKER_URL = 'https://github.com/lunaryorn/synaptiks/issues'
