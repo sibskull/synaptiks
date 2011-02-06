@@ -35,6 +35,7 @@ import pytest
 import py.path
 
 from synaptiks import config
+from synaptiks.touchpad import Touchpad, device_property
 
 
 @contextmanager
@@ -137,6 +138,11 @@ def test_get_touchpad_defaults_existing_without_filename(tmpdir):
 
 
 class TestTouchpadConfiguration(object):
+
+    def test_complete(self):
+        assert all(attr in config.TouchpadConfiguration.CONFIG_KEYS
+                   for attr, obj in vars(Touchpad).iteritems()
+                   if isinstance(obj, device_property) and attr != 'off')
 
     def test_load_without_filename_non_existing(self, tmpdir):
         with config_home(tmpdir):
