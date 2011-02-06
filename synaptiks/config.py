@@ -338,16 +338,6 @@ class ManagerConfiguration(MutableMapping):
     def __delitem__(self, key):
         raise NotImplementedError
 
-    def update(self, other):
-        ignored_mouses = other.pop('ignored_mouses')
-        if other.pop('monitor_mouses'):
-            self.mouse_manager.ignored_mouses = ignored_mouses
-            self.touchpad_manager.monitor_mouses = True
-        else:
-            self.touchpad_manager.monitor_mouses = False
-            self.mouse_manager.ignored_mouses = ignored_mouses
-        super(ManagerConfiguration, self).update(other)
-
     def save(self, filename=None):
         """
         Save the configuration.
