@@ -375,11 +375,16 @@ class InputDevice(Mapping):
             raise KeyError(name)
         number_of_items = (len(bytes) * 8) // format
         if type == xlib.INTEGER:
-            struct_format = _FORMAT_CODE_MAPPING[format] * number_of_items
+            format_code = _FORMAT_CODE_MAPPING[format]
         elif type == xlib.intern_atom(self.display, 'FLOAT', True):
-            struct_format = b'f' * number_of_items
+            format_code = b'f'
         else:
             raise PropertyTypeError(type)
+        # property data has always a fixed length, independent of architecture,
+        # so force "struct" to use standard sizes for data types.  However,
+        # still use native endianess, because the X server does byte swapping
+        # as necessary
+        struct_format = b'={0}{1}'.format(number_of_items, format_code)
         assert struct.calcsize(struct_format) == len(bytes)
         return list(struct.unpack(struct_format, bytes))
 
@@ -410,7 +415,7 @@ class InputDevice(Mapping):
         Raise :exc:`UndefinedPropertyError`, if the given property is not
         defined on the server.
         """
-        data = struct.pack(b'L' * len(values), *values)
+        data = struct.pack(b'={0}L'.format(len(values)), *values)
         self._set_raw(property, xlib.INTEGER, 32, data)
 
     def set_byte(self, property, values):
@@ -424,7 +429,7 @@ class InputDevice(Mapping):
         Raise :exc:`UndefinedPropertyError`, if the given property is not
         defined on the server.
         """
-        data = struct.pack(b'B' * len(values), *values)
+        data = struct.pack(b'={0}B'.format(len(values)), *values)
         self._set_raw(property, xlib.INTEGER, 8, data)
 
     set_bool = set_byte
@@ -440,6 +445,6 @@ class InputDevice(Mapping):
         Raise :exc:`UndefinedPropertyError`, if the given property is not
         defined on the server
         """
-        data = struct.pack(b'f' * len(values), *values)
+        data = struct.pack(b'={0}f'.format(len(values)), *values)
         type = xlib.intern_atom(self.display, 'FLOAT', True)
         self._set_raw(property, type, 32, data)

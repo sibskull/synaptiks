@@ -3,6 +3,7 @@
 
 - Fixed corner coasting configuration to actually reflect the corner coasting
   setting from the touchpad driver
+- #3: Fixed property data extraction on 64 bit architectures
 
 
 0.5.1 (Jan 31, 2011)
