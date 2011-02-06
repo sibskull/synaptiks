@@ -42,18 +42,18 @@ def pytest_funcarg__json_obj(request):
     return {'foo': 'bar', 'spam': 10, 'eggs': 5.0}
 
 
-def test_assert_byte_string():
-    assert isinstance(util.assert_byte_string('foo'), bytes)
-    assert util.assert_byte_string('foo') == b'foo'
+def test_ensure_byte_string():
+    assert isinstance(util.ensure_byte_string('foo'), bytes)
+    assert util.ensure_byte_string('foo') == b'foo'
     s = b'foo'
-    assert util.assert_byte_string(s) is s
+    assert util.ensure_byte_string(s) is s
 
 
-def test_assert_unicode_string():
-    assert isinstance(util.assert_unicode_string(b'foo'), unicode)
-    assert util.assert_unicode_string(b'foo') == 'foo'
+def test_ensure_unicode_string():
+    assert isinstance(util.ensure_unicode_string(b'foo'), unicode)
+    assert util.ensure_unicode_string(b'foo') == 'foo'
     s = 'foo'
-    assert util.assert_unicode_string(s) is s
+    assert util.ensure_unicode_string(s) is s
 
 
 def test_ensure_directory(tmpdir):

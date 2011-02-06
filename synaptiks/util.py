@@ -42,7 +42,7 @@ import errno
 import json
 
 
-def assert_byte_string(s):
+def ensure_byte_string(s):
     """
     Convert ``s`` to a byte string.
 
@@ -55,7 +55,7 @@ def assert_byte_string(s):
     return s
 
 
-def assert_unicode_string(s):
+def ensure_unicode_string(s):
     """
     Convert ``s`` to a unicode string.
 

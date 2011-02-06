@@ -75,7 +75,7 @@ from operator import eq
 
 from synaptiks._bindings import xlib, xinput
 from synaptiks._bindings.util import scoped_pointer
-from synaptiks.util import assert_byte_string, assert_unicode_string
+from synaptiks.util import ensure_byte_string, ensure_unicode_string
 
 
 class XInputVersionError(Exception):
@@ -132,7 +132,7 @@ def is_property_defined(display, name):
 
     Return ``True``, if the property is defined, ``False`` otherwise.
     """
-    atom = xlib.intern_atom(display, assert_byte_string(name), True)
+    atom = xlib.intern_atom(display, ensure_byte_string(name), True)
     return atom != xlib.NONE
 
 
@@ -165,7 +165,7 @@ def _get_property_atom(display, name):
     Raise :exc:`UndefinedPropertyError`, if there is no atom for the given
     property.
     """
-    atom = xlib.intern_atom(display, assert_byte_string(name), True)
+    atom = xlib.intern_atom(display, ensure_byte_string(name), True)
     if atom == xlib.NONE:
         raise UndefinedPropertyError(name)
     return atom
@@ -299,7 +299,7 @@ class InputDevice(Mapping):
         with scoped_pointer(device, xinput.free_device_info) as device:
             if not device:
                 raise InputDeviceNotFoundError(self.id)
-            return assert_unicode_string(device.contents.name)
+            return ensure_unicode_string(device.contents.name)
 
     def __eq__(self, other):
         return self.id == other.id
@@ -330,7 +330,7 @@ class InputDevice(Mapping):
         Return a generator yielding the names of all properties of this
         device as unicode strings
         """
-        return (assert_unicode_string(xlib.get_atom_name(self.display, a))
+        return (ensure_unicode_string(xlib.get_atom_name(self.display, a))
                 for a in self._iter_property_atoms())
 
     def __contains__(self, name):
@@ -343,7 +343,7 @@ class InputDevice(Mapping):
         ``False`` otherwise.
         """
         atom = xlib.intern_atom(
-            self.display, assert_byte_string(name), True)
+            self.display, ensure_byte_string(name), True)
         if atom == xlib.NONE:
             return False
         return any(a == atom for a in self._iter_property_atoms())
