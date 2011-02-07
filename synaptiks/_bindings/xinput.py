@@ -94,6 +94,7 @@ SIGNATURES = dict(
 
 libXi = add_foreign_signatures(CDLL(find_library('Xi')), SIGNATURES)
 
+
 # add libXi functions under pythonic names and with pythonic api to
 # top-level namespace
 def query_version(display, expected_version):
@@ -184,7 +185,6 @@ def get_property(display, deviceid, property):
     :data:`~synaptiks._bindings.xlib.NONE` and ``format`` is ``0``.
     ``data`` contains an empty string.
     """
-
     length = 1
     while True:
         type_return = xlib.Atom(0)
