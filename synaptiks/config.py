@@ -97,9 +97,6 @@ from collections import MutableMapping
 from synaptiks.util import ensure_directory, save_json, load_json
 
 
-PACKAGE_DIRECTORY = os.path.dirname(__file__)
-
-
 def get_configuration_directory():
     """
     Get the configuration directory of synaptiks according to the `XDG base
