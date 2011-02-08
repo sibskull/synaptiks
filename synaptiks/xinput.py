@@ -205,7 +205,7 @@ class PropertyTypeError(ValueError):
 
 
 #: maps property formats to :mod:`struct` format codes
-_FORMAT_CODE_MAPPING = {8: 'B', 16: 'S', 32: 'L'}
+_FORMAT_CODE_MAPPING = {8: 'B', 16: 'H', 32: 'L'}
 
 
 def _make_struct_format(type_code, number_of_items):
