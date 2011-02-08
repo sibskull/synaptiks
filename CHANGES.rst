@@ -1,5 +1,5 @@
-0.5.2 (in development)
-======================
+0.5.2 (Feb 8, 2011)
+===================
 
 - Fixed corner coasting configuration to actually reflect the corner coasting
   setting from the touchpad driver
