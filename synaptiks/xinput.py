@@ -205,7 +205,64 @@ class PropertyTypeError(ValueError):
 
 
 #: maps property formats to :mod:`struct` format codes
-_FORMAT_CODE_MAPPING = {8: b'B', 16: b'S', 32: b'L'}
+_FORMAT_CODE_MAPPING = {8: 'B', 16: 'S', 32: 'L'}
+
+
+def _make_struct_format(type_code, number_of_items):
+    """
+    Make a :mod:`struct` format for the given number of items of the given
+    type.
+
+    ``type_code`` is a one-character string with a :mod:`struct` type code.
+    ``number_of_items`` is the number of items, which the returned format
+    should parse.
+
+    Return a byte string with a struct format suitable to parse the given
+    number of items of the given type.
+
+    .. note::
+
+       The returned format parses types with *standard* byte length, not with
+       *native* byte length.
+    """
+    # property data has always a fixed length, independent of architecture, so
+    # force "struct" to use standard sizes for data types.  However, still use
+    # native endianess, because the X server does byte swapping as necessary
+    if len(type_code) != 1:
+        raise ValueError('invalid type code')
+    return b'={0}{1}'.format(number_of_items, type_code)
+
+
+def _pack_property_data(type_code, values):
+    """
+    Pack the given list of property ``values`` of the given type into a byte
+    string.
+
+    ``type_code`` is a one-character string containing a :mod:`struct` type
+    code corresponding of the indented type in the binary data.  ``values`` is
+    a list of values to pack.
+
+    Return a byte string encoding ``values`` in the given ``type_code``.
+    """
+    struct_format = _make_struct_format(type_code, len(values))
+    return struct.pack(struct_format, *values)
+
+
+def _unpack_property_data(type_code, number_of_items, data):
+    """
+    Unpack property values from the given binary ``data``.
+
+    ``type_code`` is the type of the items in ``data``, as one-character string
+    containing a :mod:`struct` type code.  ``number_of_items`` is the number of
+    items, ``data`` is expected to contain. ``data`` is a byte string
+    containing the packed property data.
+
+    Return a list containing the unpacked property values.  The items in this
+    list have a type corresponding to the given ``type_code``.
+    """
+    struct_format = _make_struct_format(type_code, number_of_items)
+    assert struct.calcsize(struct_format) == len(data)
+    return list(struct.unpack(struct_format, data))
 
 
 class InputDevice(Mapping):
@@ -369,24 +426,17 @@ class InputDevice(Mapping):
         an unsupported type.
         """
         atom = _get_property_atom(self.display, name)
-        type, format, bytes = xinput.get_property(self.display,
-                                                  self.id, atom)
+        type, format, data = xinput.get_property(self.display, self.id, atom)
         if type == xlib.NONE and format == 0:
             raise KeyError(name)
-        number_of_items = (len(bytes) * 8) // format
+        number_of_items = (len(data) * 8) // format
         if type == xlib.INTEGER:
-            format_code = _FORMAT_CODE_MAPPING[format]
+            type_code = _FORMAT_CODE_MAPPING[format]
         elif type == xlib.intern_atom(self.display, 'FLOAT', True):
-            format_code = b'f'
+            type_code = 'f'
         else:
             raise PropertyTypeError(type)
-        # property data has always a fixed length, independent of architecture,
-        # so force "struct" to use standard sizes for data types.  However,
-        # still use native endianess, because the X server does byte swapping
-        # as necessary
-        struct_format = b'={0}{1}'.format(number_of_items, format_code)
-        assert struct.calcsize(struct_format) == len(bytes)
-        return list(struct.unpack(struct_format, bytes))
+        return _unpack_property_data(type_code, number_of_items, data)
 
     def __gt__(self, other):
         raise TypeError('InputDevice not orderable')
@@ -415,7 +465,7 @@ class InputDevice(Mapping):
         Raise :exc:`UndefinedPropertyError`, if the given property is not
         defined on the server.
         """
-        data = struct.pack(b'={0}L'.format(len(values)), *values)
+        data = _pack_property_data('L', values)
         self._set_raw(property, xlib.INTEGER, 32, data)
 
     def set_byte(self, property, values):
@@ -429,7 +479,7 @@ class InputDevice(Mapping):
         Raise :exc:`UndefinedPropertyError`, if the given property is not
         defined on the server.
         """
-        data = struct.pack(b'={0}B'.format(len(values)), *values)
+        data = _pack_property_data('B', values)
         self._set_raw(property, xlib.INTEGER, 8, data)
 
     set_bool = set_byte
@@ -445,6 +495,6 @@ class InputDevice(Mapping):
         Raise :exc:`UndefinedPropertyError`, if the given property is not
         defined on the server
         """
-        data = struct.pack(b'={0}f'.format(len(values)), *values)
+        data = _pack_property_data('f', values)
         type = xlib.intern_atom(self.display, 'FLOAT', True)
         self._set_raw(property, type, 32, data)
