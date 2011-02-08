@@ -51,6 +51,16 @@ def pytest_generate_tests(metafunc):
             else:
                 test_id = '{0},id={1}'.format(device.name, device.id)
                 metafunc.addcall(param=device.id, id=test_id)
+    if metafunc.function is test_pack_property_data:
+        type_codes = [('B', 1), ('H', 2), ('L', 4), ('f', 4)]
+        for type_code, item_size in type_codes:
+            funcargs = dict(type_code=type_code, item_size=item_size)
+            if type_code == 'f':
+                testid = 'float'
+            else:
+                bit_length = item_size*8
+                testid = 'uint{0}'.format(bit_length)
+            metafunc.addcall(funcargs=funcargs, id=testid)
 
 
 def pytest_funcarg__device_id(request):
@@ -107,6 +117,31 @@ def test_assert_xinput_version(display):
 def test_is_property_defined_existing_property(display):
     assert xinput.is_property_defined(display, 'Device Enabled')
     assert xinput.is_property_defined(display, u'Device Enabled')
+
+
+def test_make_struct_format():
+    data = xinput._make_struct_format('f', 1)
+    assert isinstance(data, str)
+    assert data == '=1f'
+    assert xinput._make_struct_format('B', 10) == '=10B'
+
+
+def test_pack_property_data(type_code, item_size):
+    data = xinput._pack_property_data(type_code, [10, 20, 30])
+    assert isinstance(data, bytes)
+    assert len(data) == 3*item_size
+
+
+def test_unpack_property_data():
+    # need some clever trick to implemented despite being dependent on native
+    # endianess
+    raise NotImplementedError()
+
+
+def test_make_struct_format_invalid_type_code():
+    with pytest.raises(ValueError) as exc_info:
+        xinput._make_struct_format('ff', 10)
+    assert str(exc_info.value) == 'invalid type code'
 
 
 class TestInputDevice(object):
