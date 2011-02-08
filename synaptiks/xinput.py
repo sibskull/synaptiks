@@ -205,7 +205,7 @@ class PropertyTypeError(ValueError):
 
 
 #: maps property formats to :mod:`struct` format codes
-_FORMAT_CODE_MAPPING = {8: 'B', 16: 'H', 32: 'L'}
+_TYPE_CODE_MAPPING = {8: 'B', 16: 'H', 32: 'L'}
 
 
 def _make_struct_format(type_code, number_of_items):
@@ -431,7 +431,7 @@ class InputDevice(Mapping):
             raise KeyError(name)
         number_of_items = (len(data) * 8) // format
         if type == xlib.INTEGER:
-            type_code = _FORMAT_CODE_MAPPING[format]
+            type_code = _TYPE_CODE_MAPPING[format]
         elif type == xlib.intern_atom(self.display, 'FLOAT', True):
             type_code = 'f'
         else:
