@@ -36,7 +36,7 @@ import synaptiks
 needs_sphinx = '1.0'
 
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx',
-              'sphinx.ext.graphviz', 'handbook']
+              'sphinx.ext.graphviz', 'sphinxcontrib.issuetracker', 'handbook']
 
 master_doc = 'index'
 exclude_patterns = ['_build/*']
@@ -57,6 +57,8 @@ html_logo = '_static/synaptiks.png'
 intersphinx_mapping = {'http://docs.python.org/': None}
 handbook_source_directory = 'handbook'
 
+issuetracker = 'github'
+issuetracker_user = 'lunaryorn'
 
 def setup(app):
     from sphinx.ext.autodoc import cut_lines
