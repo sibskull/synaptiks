@@ -85,6 +85,10 @@ Constants
 Functions
 ---------
 
+.. autofunction:: open_display
+
+.. autofunction:: close_display
+
 .. autofunction:: display(name=None)
 
 .. autofunction:: free
@@ -117,3 +121,9 @@ Functions
    :members:
 
 .. autofunction:: get_modifier_mapping
+
+
+Exceptions
+----------
+
+.. autoexception:: DisplayError
