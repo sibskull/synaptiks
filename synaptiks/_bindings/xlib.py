@@ -122,14 +122,42 @@ SIGNATURES = dict(
 
 libX11 = add_foreign_signatures(CDLL(find_library('X11')), SIGNATURES)
 
-open_display = libX11.XOpenDisplay
-close_display = libX11.XCloseDisplay
+
+class DisplayError(EnvironmentError):
+    """
+    Raised if a display could not be opened.
+    """
+    pass
+
+
+def open_display(name=None):
+    """
+    Open the display with the given ``name``.
+
+    ``name`` is a byte string with the display name, or ``None``, in which case
+    the display name is lookup up in the `$DISPLAY` environment variable.
+
+    Return a :class:`Display_p` pointer to the display.  Raise
+    :exc:`DisplayError`, if the display could not be opened.
+    """
+    display = libX11.XOpenDisplay(name)
+    if not display:
+        raise DisplayError()
+    return display
+
+
+def close_display(display):
+    """
+    Close the given ``display`` (a :class:`Display_p` object).
+    """
+    if display:
+        libX11.XCloseDisplay(display)
 
 
 @contextmanager
 def display(name=None):
     """
-    Connect to a X11 display.
+    Connect to a X11 display using :func:`open_display`.
 
     The connection is wrapped in a context manager, which closes the display
     automatically, once the context is left::
@@ -137,12 +165,10 @@ def display(name=None):
        with xlib.display() as display:
            # work with the display here
 
-    If no ``name`` is given, the display name is read from ``$DISPLAY``.
-
-    ``name`` is a byte string containing the display name or ``None``.
+    ``name`` is passed to :func:`open_display`.
 
     Return a :class:`Display_p` object with the new connection to the X11
-    display.
+    display.  Raise :exc:`DisplayError`, if the display could not be opened.
     """
     display = open_display(name)
     yield display

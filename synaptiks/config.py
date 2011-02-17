@@ -397,17 +397,20 @@ distributed under the terms of the BSD License""")
     # arguments (--help mainly) are handled
     args = parser.parse_args()
 
-    with xlib.display() as display:
-        touchpad = Touchpad.find_first(display)
+    try:
+        with xlib.display() as display:
+            touchpad = Touchpad.find_first(display)
 
-        if args.action == 'init':
-            driver_defaults = TouchpadConfiguration(touchpad)
-            driver_defaults.save(get_touchpad_defaults_file_path())
-        if args.action in ('init', 'load'):
-            TouchpadConfiguration.load(touchpad, filename=args.filename)
-        if args.action == 'save':
-            current_config = TouchpadConfiguration(touchpad)
-            current_config.save(filename=args.filename)
+            if args.action == 'init':
+                driver_defaults = TouchpadConfiguration(touchpad)
+                driver_defaults.save(get_touchpad_defaults_file_path())
+            if args.action in ('init', 'load'):
+                TouchpadConfiguration.load(touchpad, filename=args.filename)
+            if args.action == 'save':
+                current_config = TouchpadConfiguration(touchpad)
+                current_config.save(filename=args.filename)
+    except xlib.DisplayError:
+        parser.error('could not connect to X11 display')
 
 
 if __name__ == '__main__':
