@@ -123,5 +123,5 @@ def pytest_funcarg__display(request):
     """
     from synaptiks._bindings import xlib
     return request.cached_setup(
-        lambda: xlib.open_display(None),
+        lambda: xlib.open_display(),
         xlib.close_display)
