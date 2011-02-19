@@ -161,6 +161,17 @@ class TestInputDevice(object):
         assert any(d.name == device_name for d in devices)
         assert any(d.id == device_id for d in devices)
 
+    def test_find_devices_with_property(self, display, device,
+                                        device_property):
+        devices = set(xinput.InputDevice.find_devices_with_property(
+            display, device_property))
+        assert device in devices
+
+    def test_find_devices_with_property_non_defined(self, display):
+        devices = list(xinput.InputDevice.find_devices_with_property(
+            display, 'a undefined property'))
+        assert not devices
+
     def test_find_devices_by_name_non_existing(self, display):
         name = 'a non-existing device'
         devices = list(xinput.InputDevice.find_devices_by_name(display, name))
