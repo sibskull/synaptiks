@@ -206,8 +206,8 @@ class TestInputDevice(object):
     def test_len(self, device, device_properties):
         assert len(device) == len(device_properties)
 
-    def test_contains(self, device, device_properties):
-        assert all(p in device for p in device_properties)
+    def test_contains(self, device, device_property):
+        assert device_property in device
 
     def test_contains_undefined_property(self, device):
         assert not 'a undefined property' in device
