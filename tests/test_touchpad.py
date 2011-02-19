@@ -74,10 +74,12 @@ class TestTouchpad(object):
         touchpads = Touchpad.find_all(display)
         assert touchpads
         assert all(isinstance(t, Touchpad) for t in touchpads)
+        assert all('Synaptics Off' in t for t in touchpads)
 
     def test_find_first(self, display):
         touchpad = Touchpad.find_first(display)
         assert touchpad
+        assert 'Synaptics Off' in touchpad
         assert isinstance(touchpad, Touchpad)
 
     def test_off(self, touchpad, touchpad_properties):
