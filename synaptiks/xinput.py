@@ -364,6 +364,9 @@ class InputDevice(Mapping):
     def __ne__(self, other):
         return self.id != other.id
 
+    def __hash__(self):
+        return hash(self.id)
+
     def __len__(self):
         """
         Return the amount of all properties defined on this device.

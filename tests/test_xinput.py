@@ -186,6 +186,9 @@ class TestInputDevice(object):
             else:
                 assert device(left_id) != device(right_id)
 
+    def test_hash(self, device, device_id):
+        assert hash(device) == hash(device_id)
+
     def test_iter(self, device, device_properties):
         assert set(device) == set(device_properties)
 
