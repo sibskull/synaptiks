@@ -26,8 +26,9 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
+import sys
 import re
-from itertools import product
+from itertools import product, repeat
 from functools import partial
 
 import pytest
@@ -51,7 +52,8 @@ def pytest_generate_tests(metafunc):
             else:
                 test_id = '{0},id={1}'.format(device.name, device.id)
                 metafunc.addcall(param=device.id, id=test_id)
-    if metafunc.function is test_pack_property_data:
+    if metafunc.function.__name__ in ('test_pack_property_data',
+                                      'test_unpack_property_data'):
         type_codes = [('B', 1), ('H', 2), ('L', 4), ('f', 4)]
         for type_code, item_size in type_codes:
             funcargs = dict(type_code=type_code, item_size=item_size)
@@ -132,10 +134,23 @@ def test_pack_property_data(type_code, item_size):
     assert len(data) == 3*item_size
 
 
-def test_unpack_property_data():
-    # need some clever trick to implemented despite being dependent on native
-    # endianess
-    raise NotImplementedError()
+def test_unpack_property_data(type_code, item_size):
+    if type_code == 'f':
+        # need some test for floating point packing too
+        raise NotImplementedError()
+
+    pad_bytes = [b for b in repeat('\x00', item_size-1)]
+    value_byte = '\x01'
+
+    if sys.byteorder == 'little':
+        bytes = [value_byte] + pad_bytes
+    elif sys.byteorder == 'big':
+        bytes = pad_bytes + [value_byte]
+    else:
+        raise ValueError('Unexpected byte order: {0!r}'.format(sys.byteorder))
+
+    data = ''.join(bytes)
+    assert xinput._unpack_property_data(type_code, 1, data) == [1]
 
 
 def test_make_struct_format_invalid_type_code():
