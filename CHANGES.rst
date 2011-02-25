@@ -2,6 +2,14 @@
 ====================
 
 
+0.5.3 (in development)
+======================
+
+- Fixed segfault on failed connection to X11 display in ``synaptikscfg``
+- #7: Show a clean error message instead of a traceback, when no touchpad is
+  found by ``synaptikscfg``
+
+
 0.5.2 (Feb 8, 2011)
 ===================
 
