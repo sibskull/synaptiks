@@ -1,6 +1,8 @@
 0.5.3 (in development)
 ======================
 
+- Fixed segfault on failed connection to X11 display in ``synaptikscfg``
+
 
 0.5.2 (Feb 8, 2011)
 ===================
