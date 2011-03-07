@@ -64,6 +64,8 @@ def disable_context_handler(context):
 
 def main():
     with xlib.display() as display:
+        _, xrecord_version = xrecord.query_version(display)
+        print('xrecord version:', '.'.join(map(str, xrecord_version)))
         key_events = (xlib.KEY_PRESS, xlib.KEY_RELEASE)
         with xrecord.context(display, xrecord.ALL_CLIENTS,
                              device_events=key_events) as context:
