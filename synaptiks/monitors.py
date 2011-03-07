@@ -277,8 +277,12 @@ class EventRecorder(QThread):
     Use :meth:`stop()` to stop recording.
     """
 
-    #: Qt signal emitted whenever a keyboard event occurred.  Has no arguments
-    keyboardEvent = pyqtSignal()
+    #: Qt signal emitted whenever a key was pressed.  Has a single argument,
+    #: which is the key code of the pressed key
+    keyPressed = pyqtSignal(int)
+    #: Qt signal emitted whenever a key was released.  Has a single argument,
+    #: which is the key code of the pressed key
+    keyReleased = pyqtSignal(int)
 
     def __init__(self, parent=None):
         QThread.__init__(self, parent)
@@ -287,6 +291,10 @@ class EventRecorder(QThread):
         # handler, and access to "self" causes a segfault.  Reason is unknown
         # to me.
         self._callback = self._handle_event
+        # maps event types to signals
+        self._event_signal_map = {xlib.KEY_PRESS: self.keyPressed,
+                                  xlib.KEY_RELEASE: self.keyReleased}
+
 
     def run(self):
         # create a special display connection for recording
@@ -316,9 +324,9 @@ class EventRecorder(QThread):
             if data.contents.category != xrecord.FROM_SERVER:
                 # ignore client side events (e.g. START_OF_DATA)
                 return
-            # everything else is a keyboard event due to the record range
-            # defined in run()
-            self.keyboardEvent.emit()
+            event_type, keycode = data.contents.event
+            signal = self._event_signal_map[event_type]
+            signal.emit(keycode)
 
 
 class RecordingKeyboardMonitor(AbstractKeyboardMonitor):
@@ -336,10 +344,59 @@ class RecordingKeyboardMonitor(AbstractKeyboardMonitor):
         self._idle_timer.setSingleShot(True)
         # this object records events
         self._recorder = EventRecorder(self)
-        self._recorder.keyboardEvent.connect(self._idle_timer.start)
-        self._recorder.keyboardEvent.connect(self.typingStarted)
+        self._recorder.keyPressed.connect(self._key_pressed)
+        self._recorder.keyReleased.connect(self._key_released)
         self._recorder.started.connect(self.started)
         self._recorder.finished.connect(self.stopped)
+        # a set of all known modifier keycodes
+        modifier_mapping = xlib.get_modifier_mapping(QX11Display())
+        self._modifiers = frozenset(keycode for modifiers in modifier_mapping
+                                    for keycode in modifiers if keycode != 0)
+        # a set holding all pressed, but not yet released modifier keys
+        self._pressed_modifiers = set()
+        # the value of keys to ignore
+        self._keys_to_ignore = self.IGNORE_NO_KEYS
+
+    def _is_ignored_modifier(self, keycode):
+        """
+        Return ``True``, if ``keycode`` as a modifier key, which has to be
+        ignored, ``False`` otherwise.
+        """
+        return (self._keys_to_ignore >= self.IGNORE_MODIFIER_KEYS and
+                keycode in self._modifiers)
+
+    def _is_ignored_modifier_combo(self):
+        """
+        Return ``True``, if the current key event occurred in combination
+        with a modifier, which has to be ignored, ``False`` otherwise.
+        """
+        return (self._keys_to_ignore == self.IGNORE_MODIFIER_COMBOS and
+                self._pressed_modifiers)
+
+    def _is_ignored(self, keycode):
+        """
+        Return ``True``, if the given ``keycode`` has to be ignored,
+        ``False`` otherwise.
+        """
+        return (self._is_ignored_modifier(keycode) or
+                self._is_ignored_modifier_combo())
+
+    def _key_pressed(self, keycode):
+        if keycode in self._modifiers:
+            self._pressed_modifiers.add(keycode)
+        if not self._is_ignored(keycode):
+            if not self.keyboard_active:
+                self.typingStarted.emit()
+            # reset the idle timeout
+            self._idle_timer.start()
+
+    def _key_released(self, keycode):
+        self._pressed_modifiers.discard(keycode)
+        if not self._is_ignored(keycode):
+            if not self.keyboard_active:
+                self.typingStarted.emit()
+            # reset the idle timeout
+            self._idle_timer.start()
 
     @property
     def is_running(self):
@@ -351,6 +408,16 @@ class RecordingKeyboardMonitor(AbstractKeyboardMonitor):
     def stop(self):
         AbstractKeyboardMonitor.stop(self)
         self._recorder.stop()
+
+    @property
+    def keys_to_ignore(self):
+        return self._keys_to_ignore
+
+    @keys_to_ignore.setter
+    def keys_to_ignore(self, value):
+        if not (self.IGNORE_NO_KEYS <= value <= self.IGNORE_MODIFIER_COMBOS):
+            raise ValueError('unknown constant for keys_to_ignore')
+        self._keys_to_ignore = value
 
     @property
     def idle_time(self):
