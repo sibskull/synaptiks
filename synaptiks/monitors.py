@@ -302,15 +302,14 @@ class EventRecorder(QThread):
             # record all key presses and releases, as these events indicate
             # keyboard activity
             key_events = (xlib.KEY_PRESS, xlib.KEY_RELEASE)
-            with xrecord.record_range(device_events=key_events) as record_range:
-                with xrecord.context(recording_display, 0, xrecord.ALL_CLIENTS,
-                                     record_range) as context:
-                    self._context = context
-                    # create the recording context and enable it.  This
-                    # function does not return until disable_context is called,
-                    # which happens in stop.
-                    xrecord.enable_context(recording_display, context,
-                                           self._callback, None)
+            with xrecord.context(recording_display, xrecord.ALL_CLIENTS,
+                                 device_events=key_events) as context:
+                self._context = context
+                # create the recording context and enable it.  This function
+                # does not return until disable_context is called, which
+                # happens in stop.
+                xrecord.enable_context(recording_display, context,
+                                       self._callback, None)
 
     def stop(self):
         """

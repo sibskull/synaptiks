@@ -172,10 +172,11 @@ free_context = libXtst.XRecordFreeContext
 
 
 @contextmanager
-def context(display, flags, client_spec, range):
-    context = create_context(display, flags, client_spec, range)
-    yield context
-    free_context(display, context)
+def context(display, client_spec, device_events=None):
+    with record_range(device_events=device_events) as rr:
+        context = create_context(display, 0, client_spec, rr)
+        yield context
+        free_context(display, context)
 
 
 def enable_context(display, context, callback, closure_p):

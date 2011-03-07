@@ -62,13 +62,12 @@ def disable_context_handler(context):
 def main():
     with xlib.display() as display:
         key_events = (xlib.KEY_PRESS, xlib.KEY_RELEASE)
-        with xrecord.record_range(device_events=key_events) as record_range:
-            with xrecord.context(display, 0, xrecord.ALL_CLIENTS,
-                                 record_range) as context:
-                disable = disable_context_handler(context)
-                signal.signal(signal.SIGINT, disable)
-                signal.signal(signal.SIGTERM, disable)
-                xrecord.enable_context(display, context, handle_event, None)
+        with xrecord.context(display, xrecord.ALL_CLIENTS,
+                             device_events=key_events) as context:
+            disable = disable_context_handler(context)
+            signal.signal(signal.SIGINT, disable)
+            signal.signal(signal.SIGTERM, disable)
+            xrecord.enable_context(display, context, handle_event, None)
 
 
 if __name__ == '__main__':
