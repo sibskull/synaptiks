@@ -56,9 +56,16 @@ It is recommended, that you also install these modules with the package
 manager, if available.  However, this is not strictly required, because the
 installation script will automatically install any missing Python module.
 
-Additionally xf86-input-synaptics 1.3 or newer must be installed and configured
-as touchpad driver.  **synaptiks** will not work, if the touchpad is managed by
-a generic mouse device driver like xf86-input-evdev.
+Additionally **synaptiks** has some optional dependencies, which are not
+strictly required, but enable some additional features or improved components
+in **synaptiks**:
+
+- libXtst (client side of the XRecord extension, for improved keyboard
+  monitoring)
+
+Finally xf86-input-synaptics 1.3 or newer must be installed and configured as
+touchpad driver.  **synaptiks** will not work, if the touchpad is managed by a
+generic mouse device driver like xf86-input-evdev.
 
 
 Installation
