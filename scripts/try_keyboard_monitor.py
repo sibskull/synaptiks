@@ -30,7 +30,7 @@ import sys
 from functools import partial
 
 from PyQt4.QtGui import (QApplication, QMainWindow, QWidget, QLabel,
-                         QVBoxLayout, QComboBox)
+                         QVBoxLayout, QComboBox, QAction)
 
 from synaptiks.monitors import AbstractKeyboardMonitor, create_keyboard_monitor
 
@@ -40,6 +40,12 @@ def main():
 
     window = QMainWindow()
     central_widget = QWidget(window)
+
+    start_action = QAction('Start', window)
+    stop_action = QAction('Stop', window)
+    toolbar = window.addToolBar('Monitor')
+    toolbar.addAction(start_action)
+    toolbar.addAction(stop_action)
 
     central_layout = QVBoxLayout(central_widget)
 
@@ -71,7 +77,13 @@ def main():
         monitor.__class__.__name__))
     monitor.typingStarted.connect(partial(state_label.setText, 'typing'))
     monitor.typingStopped.connect(partial(state_label.setText, 'not typing'))
-    monitor.start()
+    start_action.triggered.connect(monitor.start)
+    stop_action.triggered.connect(monitor.stop)
+    stop_action.setEnabled(False)
+    monitor.started.connect(partial(start_action.setEnabled, False))
+    monitor.started.connect(partial(stop_action.setEnabled, True))
+    monitor.stopped.connect(partial(start_action.setEnabled, True))
+    monitor.stopped.connect(partial(stop_action.setEnabled, False))
     window.show()
     app.exec_()
 
