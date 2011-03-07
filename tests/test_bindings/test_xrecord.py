@@ -28,10 +28,8 @@ from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
 from functools import partial
-from contextlib import contextmanager
 
 from synaptiks._bindings import xlib, xrecord
-from synaptiks._bindings.util import scoped_pointer
 
 
 def pytest_funcarg__record_range(request):
