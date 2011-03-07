@@ -8,5 +8,6 @@
 .. toctree::
 
    xlib
+   xrecord
    xinput
    util

@@ -108,14 +108,25 @@ XRecordInterceptProc = CFUNCTYPE(None, xlib.XPointer, XRecordInterceptData_p)
 
 
 # Some constants from XRecord
+# client specs
+#: Record data from all current clients
 CURRENT_CLIENTS = 1
+#: Record data from all future clients
 FUTURE_CLIENTS = 2
+#: Record data from all clients
 ALL_CLIENTS = 3
+# event categories
+#: Event originating from server
 FROM_SERVER = 0
+#: Event originating from client
 FROM_CLIENT = 1
+#: A client was started
 CLIENT_STARTED = 2
+#: A client died
 CLIENT_DIED = 3
+#: Start of data (first event after call to :func:`enable_context`)
 START_OF_DATA = 4
+#: End of data (last event after call to :func:`disable_context`)
 END_OF_DATA = 5
 
 
@@ -139,6 +150,19 @@ libXtst = add_foreign_signatures(CDLL(find_library('Xtst')), SIGNATURES)
 
 
 def query_version(display):
+    """
+    Query the xrecord version available on the given ``display``.
+
+    ``display`` is an X11 display connection
+    (e.g. :class:`~synaptiks._bindings.xlib.Display_p` or
+    :class:`~synaptiks.qx11.QX11Display`).
+
+    Return a tuple ``(success, version)``.  ``success`` is a boolean flag
+    inidicating, whether XRecord is available on the given display.
+    ``version`` is a tuple ``(major, minor)``, where ``major`` and ``minor``
+    are integers holding the corresponding component of the XRecord version
+    number.
+    """
     major = c_int()
     minor = c_int()
     state = libXtst.XRecordQueryVersion(display, byref(major), byref(minor))
@@ -150,6 +174,16 @@ alloc_range = libXtst.XRecordAllocRange
 
 @contextmanager
 def record_range(device_events=None):
+    """
+    Create a recording range for the given ``device_events`` and wrap it
+    into a context manager.
+
+    ``device_events`` is a two-component tuple ``(first, last)``, where
+    ``first`` is the first event to be recorded, and ``last`` is the last
+    event.
+
+    Return a :class:`XRecordRange_p` object containing the record range.
+    """
     with scoped_pointer(alloc_range(), xlib.free) as record_range_p:
         record_range = record_range_p.contents
         if device_events:
@@ -173,6 +207,24 @@ free_context = libXtst.XRecordFreeContext
 
 @contextmanager
 def context(display, client_spec, device_events=None):
+    """
+    Create a XRecord context and wrap it into a context manager:
+
+    >>> with context(display, 0, ALL_CLIENTS, (KEY_PRESS, KEY_RELEASE)) as context:
+    ...     enable_context(display, context, callback, None)
+
+    ``display`` is an X11 display connection
+    (e.g. :class:`~synaptiks._bindings.xlib.Display_p` or
+    :class:`~synaptiks.qx11.QX11Display`).  ``client_spec`` is one of
+    :data:`CURRENT_CLIENTS`, :data:`FUTURE_CLIENTS` or :data:`ALL_CLIENTS`.
+    ``device_events`` is a two-component tuple ``(first, last)``, where
+    ``first`` is the first device event to be recorded, and ``last`` is the
+    last event.
+
+    Upon entry the context manager yields a :class:`XRecordContext` object,
+    which points to the allocated recording context.  The context is freed upon
+    exit.
+    """
     with record_range(device_events=device_events) as rr:
         context = create_context(display, 0, client_spec, rr)
         yield context
@@ -180,6 +232,26 @@ def context(display, client_spec, device_events=None):
 
 
 def enable_context(display, context, callback, closure_p):
+    """
+    Enable the given ``context`` on the given ``display``.
+
+    ``display`` is an X11 display connection
+    (e.g. :class:`~synaptiks._bindings.xlib.Display_p` or
+    :class:`~synaptiks.qx11.QX11Display`).  ``context`` is a
+    :class:`XRecordContext` object.  ``callback`` is a function, taking two
+    arguments:
+
+    - The unchanged ``closure_p`` as first
+    - The recorded protocol data as :class:`XRecordInterceptData_p` object.
+      This data must be freed using :func:`free_data`
+
+    `closure_p` is a :class:`~synaptiks._bindings.xlib.XPointer` object
+    pointing to an arbitrary memory location.  It is passed through to the
+    callback.
+
+    Raise :exc:`~exceptions.EnvironmentError`, if the context could not be
+    enabled.
+    """
     state = libXtst.XRecordEnableContext(
         display, context, XRecordInterceptProc(callback), closure_p)
     if state == 0:
