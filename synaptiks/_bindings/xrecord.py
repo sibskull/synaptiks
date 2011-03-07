@@ -35,8 +35,8 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
-from ctypes import (CDLL, POINTER, CFUNCTYPE, Structure, byref,
-                    c_int, c_ulong, c_ubyte, c_ushort)
+from ctypes import (CDLL, POINTER, CFUNCTYPE, Structure, byref, cast,
+                    c_int, c_ulong, c_ubyte, c_ushort, c_uint8, c_uint16)
 from ctypes.util import find_library
 from contextlib import contextmanager
 
@@ -86,7 +86,22 @@ class XRecordInterceptData(Structure):
         ('data', c_ubyte_p),
         ('data_len', c_ulong)]
 
+    @property
+    def event(self):
+        event = cast(self.data, XEvent_p)
+        return (event.contents.type, event.contents.detail)
+
+
 XRecordInterceptData_p = POINTER(XRecordInterceptData)
+
+
+class XEvent(Structure):
+    _fields_ = [('type', c_uint8), ('detail', c_uint8),
+                ('sequenceNumber', c_uint16, 16)]
+
+
+XEvent_p = POINTER(XEvent)
+
 
 XRecordInterceptProc = CFUNCTYPE(None, xlib.XPointer, XRecordInterceptData_p)
 
