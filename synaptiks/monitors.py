@@ -194,6 +194,10 @@ class AbstractKeyboardMonitor(QObject):
     #: Ignore combinations of modifiers and standard keys
     IGNORE_MODIFIER_COMBOS = 2
 
+    #: Qt signal, emitted once this monitor is started.  Has no arguments.
+    started = pyqtSignal()
+    #: Qt signal, emitted once this monitor is stopped.  Has no arguments.
+    stopped = pyqtSignal()
     #: Qt signal, emitted if typing is started.  Has no arguments.
     typingStarted = pyqtSignal()
     #: Qt signal, emitted if typing is stopped.  Has no arguments.
@@ -334,6 +338,8 @@ class RecordingKeyboardMonitor(AbstractKeyboardMonitor):
         self._recorder = EventRecorder(self)
         self._recorder.keyboardEvent.connect(self._idle_timer.start)
         self._recorder.keyboardEvent.connect(self.typingStarted)
+        self._recorder.started.connect(self.started)
+        self._recorder.finished.connect(self.stopped)
 
     @property
     def is_running(self):
@@ -387,10 +393,12 @@ class PollingKeyboardMonitor(AbstractKeyboardMonitor):
 
     def start(self):
         self._keyboard_timer.start()
+        self.started.emit()
 
     def stop(self):
         AbstractKeyboardMonitor.stop(self)
         self._keyboard_timer.stop()
+        self.stopped.emit()
 
     @property
     def keys_to_ignore(self):

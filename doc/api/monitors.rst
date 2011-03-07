@@ -51,6 +51,10 @@ Keyboard monitoring
 
    .. rubric:: Signals
 
+   .. autoattribute:: started
+
+   .. autoattribute:: stopped
+
    .. autoattribute:: typingStarted
 
    .. autoattribute:: typingStopped
