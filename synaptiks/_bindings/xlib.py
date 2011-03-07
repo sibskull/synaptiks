@@ -38,13 +38,12 @@ from __future__ import (print_function, division, unicode_literals,
 
 from collections import namedtuple
 from itertools import islice, izip
-from ctypes import (CDLL, Structure, POINTER, string_at, create_string_buffer,
+from ctypes import (Structure, POINTER, string_at, create_string_buffer,
                     c_uint32, c_int, c_void_p, c_char_p, c_char, c_ubyte,
                     c_ulong)
-from ctypes.util import find_library
 from contextlib import contextmanager
 
-from synaptiks._bindings.util import add_foreign_signatures, scoped_pointer
+from synaptiks._bindings.util import load_library, scoped_pointer
 
 c_ubyte_p = POINTER(c_ubyte)
 
@@ -130,7 +129,7 @@ SIGNATURES = dict(
     )
 
 
-libX11 = add_foreign_signatures(CDLL(find_library('X11')), SIGNATURES)
+libX11 = load_library('X11', SIGNATURES)
 
 
 class DisplayError(EnvironmentError):

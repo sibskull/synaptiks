@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (C) 2010, 2011 Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,30 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
+from ctypes import CDLL
+from ctypes.util import find_library
 from contextlib import contextmanager
+
+
+def load_library(name, signatures=None):
+    """
+    Load the C library with the given ``name``.
+
+    ``name`` is a string containing a generic library name (as for
+    :func:`ctypes.util.find_library`).  If ``signatures`` is given, it must be
+    a dictionary with signatures of functions of the library, see
+    :func:`add_foreign_signatures` for details.
+
+    Return a :class:`ctypes.CDLL` wrapping the library.  Raise
+    :exc:`~exceptions.ImportError`, if the library was not found.
+    """
+    library_name = find_library(name)
+    if not library_name:
+        raise ImportError('No library named {0}'.format(name))
+    library = CDLL(library_name)
+    if signatures:
+        library = add_foreign_signatures(library, signatures)
+    return library
 
 
 def add_foreign_signatures(library, signatures):

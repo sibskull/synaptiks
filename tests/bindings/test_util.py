@@ -26,9 +26,35 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
-from synaptiks._bindings import util
+from ctypes import CDLL, c_void_p, c_int
 
 import mock
+import pytest
+
+from synaptiks._bindings import util
+
+
+def test_load_library_no_signatures():
+    library = util.load_library('X11')
+    assert library
+    assert isinstance(library, CDLL)
+
+
+def test_library_with_signatures():
+    errcheck = mock.Mock(name='errcheck')
+    signatures = dict(XFree=([c_void_p], c_int, errcheck))
+    library = util.load_library('X11', signatures)
+    assert library
+    assert isinstance(library, CDLL)
+    assert library.XFree.argtypes == [c_void_p]
+    assert library.XFree.restype == c_int
+    assert library.XFree.errcheck is errcheck
+
+
+def test_load_library_not_existing():
+    with pytest.raises(ImportError) as exc_info:
+        util.load_library('doesNotExist')
+    assert str(exc_info.value) == 'No library named doesNotExist'
 
 
 def test_add_foreign_signatures():

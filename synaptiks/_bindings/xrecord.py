@@ -35,13 +35,12 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
-from ctypes import (CDLL, POINTER, CFUNCTYPE, Structure, byref, cast,
+from ctypes import (POINTER, CFUNCTYPE, Structure, byref, cast,
                     c_int, c_ulong, c_ubyte, c_ushort, c_uint8, c_uint16)
-from ctypes.util import find_library
 from contextlib import contextmanager
 
 from synaptiks._bindings import xlib
-from synaptiks._bindings.util import add_foreign_signatures, scoped_pointer
+from synaptiks._bindings.util import load_library, scoped_pointer
 
 
 c_int_p = POINTER(c_int)
@@ -146,7 +145,7 @@ SIGNATURES = dict(
     )
 
 
-libXtst = add_foreign_signatures(CDLL(find_library('Xtst')), SIGNATURES)
+libXtst = load_library('Xtst', SIGNATURES)
 
 
 def query_version(display):

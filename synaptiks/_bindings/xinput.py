@@ -36,12 +36,11 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
-from ctypes import (CDLL, POINTER, Structure, byref, string_at, cast,
+from ctypes import (POINTER, Structure, byref, string_at, cast,
                     c_int, c_char_p, c_long, c_ulong, c_byte)
-from ctypes.util import find_library
 
 from synaptiks._bindings import xlib
-from synaptiks._bindings.util import add_foreign_signatures, scoped_pointer
+from synaptiks._bindings.util import load_library, scoped_pointer
 
 
 c_int_p = POINTER(c_int)
@@ -92,7 +91,7 @@ SIGNATURES = dict(
     )
 
 
-libXi = add_foreign_signatures(CDLL(find_library('Xi')), SIGNATURES)
+libXi = load_library('Xi', SIGNATURES)
 
 
 # add libXi functions under pythonic names and with pythonic api to
