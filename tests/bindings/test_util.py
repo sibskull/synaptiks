@@ -57,25 +57,35 @@ def test_load_library_not_existing():
     assert str(exc_info.value) == 'No library named doesNotExist'
 
 
-def test_add_foreign_signatures():
-    SIGNATURES = {
-        'spam': (mock.sentinel.spam_argtypes, mock.sentinel.spam_restype,
-                 None),
-        'eggs': (mock.sentinel.eggs_argtypes, mock.sentinel.eggs_restype,
-                 mock.sentinel.eggs_errcheck)
-        }
+def test_add_foreign_signatures_errcheck_omitted():
+    signatures = dict(spam=(mock.sentinel.argtypes, mock.sentinel.restype))
     library = mock.Mock(name='library')
-    # errcheck must *not* bet set on spam
     library.spam = mock.Mock(name='spam', spec_set=['argtypes', 'restype'])
-    library.eggs = mock.Mock(name='eggs', spec_set=['argtypes', 'restype',
+    assert util.add_foreign_signatures(library, signatures) is library
+    assert library.spam.argtypes is mock.sentinel.argtypes
+    assert library.spam.restype is mock.sentinel.restype
+
+
+def test_add_foreign_signatures_errcheck_none():
+    signatures = dict(spam=(mock.sentinel.argtypes,
+                            mock.sentinel.restype, None))
+    library = mock.Mock(name='library')
+    library.spam = mock.Mock(name='spam', spec_set=['argtypes', 'restype'])
+    assert util.add_foreign_signatures(library, signatures) is library
+    assert library.spam.argtypes is mock.sentinel.argtypes
+    assert library.spam.restype is mock.sentinel.restype
+
+
+def test_add_foreign_signatures_errcheck_present():
+    signatures = dict(spam=(mock.sentinel.argtypes,
+                            mock.sentinel.restype, mock.sentinel.errcheck))
+    library = mock.Mock(name='library')
+    library.spam = mock.Mock(name='spam', spec_set=['argtypes', 'restype',
                                                     'errcheck'])
-    assert util.add_foreign_signatures(library, SIGNATURES) is library
-    assert library.spam.argtypes is mock.sentinel.spam_argtypes
-    assert library.spam.restype is mock.sentinel.spam_restype
-    # assert not hasattr(library.spam, 'errcheck')
-    assert library.eggs.argtypes is mock.sentinel.eggs_argtypes
-    assert library.eggs.restype is mock.sentinel.eggs_restype
-    assert library.eggs.errcheck is mock.sentinel.eggs_errcheck
+    assert util.add_foreign_signatures(library, signatures) is library
+    assert library.spam.argtypes is mock.sentinel.argtypes
+    assert library.spam.restype is mock.sentinel.restype
+    assert library.spam.errcheck is mock.sentinel.errcheck
 
 
 def test_scoped_pointer():

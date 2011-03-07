@@ -78,16 +78,15 @@ PROP_MODE_REPLACE = 0
 
 
 SIGNATURES = dict(
-    XIQueryVersion=([xlib.Display_p, c_int_p, c_int_p], xlib.Status, None),
-    XIQueryDevice=([xlib.Display_p, c_int, c_int_p], XIDeviceInfo_p, None),
-    XIFreeDeviceInfo=([XIDeviceInfo_p], None, None),
-    XIListProperties=([xlib.Display_p, c_int, c_int_p], xlib.Atom_p, None),
+    XIQueryVersion=([xlib.Display_p, c_int_p, c_int_p], xlib.Status),
+    XIQueryDevice=([xlib.Display_p, c_int, c_int_p], XIDeviceInfo_p),
+    XIFreeDeviceInfo=([XIDeviceInfo_p], None),
+    XIListProperties=([xlib.Display_p, c_int, c_int_p], xlib.Atom_p),
     XIGetProperty=([xlib.Display_p, c_int, xlib.Atom, c_long, c_long,
                     xlib.Bool, xlib.Atom, xlib.Atom_p, c_int_p,
-                    c_ulong_p, c_ulong_p, POINTER(c_byte_p)],
-                   xlib.Status, None),
+                    c_ulong_p, c_ulong_p, POINTER(c_byte_p)], xlib.Status),
     XIChangeProperty=([xlib.Display_p, c_int, xlib.Atom, xlib.Atom,
-                       c_int, c_int, c_byte_p, c_int], None, None),
+                       c_int, c_int, c_byte_p, c_int], None),
     )
 
 

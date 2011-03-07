@@ -64,25 +64,29 @@ def load_library(name, signatures=None):
 
 def add_foreign_signatures(library, signatures):
     """
-    Add ``signatures`` of a foreign ``library`` to the symbols defined in
-    this library.
+    Add ``signatures`` of a foreign ``library`` to the symbols defined in this
+    library.
 
-    ``library`` is a :class:`~ctypes.CDLL` object, wrapping a foreign
-    library.  ``signatures`` is a dictionary, which specifies signatures for
-    symbols defined in this library.  It maps the name of a function to a
-    three element tuple ``(argument_types, return_type, error_checker)``.
-    ``argument_types`` is a list of argument types (see
-    :attr:`~ctypes._FuncPtr.argtypes`), ``return_type`` is the return type
-    (see :attr:`~ctypes._FuncPtr.restype`) and ``error_checker`` is a
-    function used as error checker (see :attr:``~ctypes._FuncPtr.errcheck`).
-    ``error_checker`` may be ``None``, in which case no error checking
-    function is defined.
+    ``library`` is a :class:`~ctypes.CDLL` object, wrapping a foreign library.
+    ``signatures`` is a dictionary, which specifies signatures for symbols
+    defined in this library.  It maps the name of a function to a two or three
+    component tuple ``(argument_types, return_type, error_checker)``, where
+    ``error_checker`` is optional and can be omitted.  ``argument_types`` is a
+    list of argument types (see :attr:`~ctypes._FuncPtr.argtypes`),
+    ``return_type`` is the return type (see :attr:`~ctypes._FuncPtr.restype`)
+    and ``error_checker`` is a function used as error checker (see
+    :attr:``~ctypes._FuncPtr.errcheck`).  ``error_checker`` may be ``None``, in
+    which case no error checking function is defined.
 
     Return the ``library`` object again.
     """
     for name, signature in signatures.iteritems():
         function = getattr(library, name)
-        argument_types, return_type, error_checker = signature
+        if len(signature) == 2:
+            argument_types, return_type = signature
+            error_checker = None
+        else:
+            argument_types, return_type, error_checker = signature
         function.argtypes = argument_types
         function.restype = return_type
         if error_checker:

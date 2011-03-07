@@ -118,14 +118,14 @@ def _convert_x11_char_p(c_string, function, args):
 
 
 SIGNATURES = dict(
-    XFree=([c_void_p], c_int, None),
-    XOpenDisplay=([c_char_p], Display_p, None),
-    XCloseDisplay=([Display_p], c_int, None),
-    XInternAtom=([Display_p, c_char_p, Bool], Atom, None),
+    XFree=([c_void_p], c_int),
+    XOpenDisplay=([c_char_p], Display_p),
+    XCloseDisplay=([Display_p], c_int),
+    XInternAtom=([Display_p, c_char_p, Bool], Atom),
     XGetAtomName=([Display_p, Atom], c_void_p, _convert_x11_char_p),
-    XQueryKeymap=([Display_p, c_char*32], c_int, None),
-    XGetModifierMapping=([Display_p], XModifierKeymap_p, None),
-    XFreeModifiermap=([XModifierKeymap_p], c_int, None),
+    XQueryKeymap=([Display_p, c_char*32], c_int),
+    XGetModifierMapping=([Display_p], XModifierKeymap_p),
+    XFreeModifiermap=([XModifierKeymap_p], c_int),
     )
 
 

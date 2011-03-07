@@ -130,18 +130,15 @@ END_OF_DATA = 5
 
 
 SIGNATURES = dict(
-    XRecordQueryVersion=([xlib.Display_p, c_int_p, c_int_p],
-                         xlib.Status, None),
+    XRecordQueryVersion=([xlib.Display_p, c_int_p, c_int_p], xlib.Status),
     XRecordAllocRange=([], XRecordRange_p, None),
     XRecordCreateContext=([xlib.Display_p, c_int, XRecordClientSpec_p, c_int,
-                           POINTER(XRecordRange_p), c_int], XRecordContext,
-                          None),
-    XRecordFreeContext=([xlib.Display_p, XRecordContext], xlib.Status, None),
+                           POINTER(XRecordRange_p), c_int], XRecordContext),
+    XRecordFreeContext=([xlib.Display_p, XRecordContext], xlib.Status),
     XRecordEnableContext=([xlib.Display_p, XRecordContext,
-                           XRecordInterceptProc, xlib.XPointer], xlib.Status,
-                          None),
-    XRecordDisableContext=([xlib.Display_p, XRecordContext], xlib.Status, None),
-    XRecordFreeData=([XRecordInterceptData_p], None, None),
+                           XRecordInterceptProc, xlib.XPointer], xlib.Status),
+    XRecordDisableContext=([xlib.Display_p, XRecordContext], xlib.Status),
+    XRecordFreeData=([XRecordInterceptData_p], None),
     )
 
 
