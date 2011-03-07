@@ -40,11 +40,16 @@ from synaptiks._bindings import xlib, xrecord
 from synaptiks._bindings.util import scoped_pointer
 
 
+EVENT_NAMES = {xlib.KEY_PRESS: 'KeyPress', xlib.KEY_RELEASE: 'KeyRelease'}
+
+
 def handle_event(_, data):
     with scoped_pointer(data, xrecord.free_data):
         if data.contents.category != xrecord.FROM_SERVER:
             return
-        print('keyboard active')
+        event_type, keycode = data.contents.event
+        event_name = EVENT_NAMES[event_type]
+        print('{0}: {1}'.format(event_name, keycode))
 
 
 def disable_context_handler(context):
