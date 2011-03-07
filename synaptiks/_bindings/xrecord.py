@@ -61,6 +61,7 @@ class XRecordRange16(Structure):
 class XRecordExtRange(Structure):
     _fields_ = [('ext_major', XRecordRange8), ('ext_minor', XRecordRange16)]
 
+
 class XRecordRange(Structure):
     _fields_ = [
         ('core_requests', XRecordRange8),
@@ -147,8 +148,15 @@ def query_version(display):
 alloc_range = libXtst.XRecordAllocRange
 
 
-def record_range():
-    return scoped_pointer(alloc_range(), xlib.free)
+@contextmanager
+def record_range(device_events=None):
+    with scoped_pointer(alloc_range(), xlib.free) as record_range_p:
+        record_range = record_range_p.contents
+        if device_events:
+            first, last = device_events
+            record_range.device_events.first = first
+            record_range.device_events.last = last
+        yield record_range_p
 
 
 def create_context(display, flags, client_spec, range):

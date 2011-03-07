@@ -299,11 +299,10 @@ class EventRecorder(QThread):
     def run(self):
         # create a special display connection for recording
         with xlib.display() as recording_display:
-            with xrecord.record_range() as record_range:
-                # record all key presses and releases, as these events indicate
-                # keyboard activity
-                record_range.contents.device_events.first = xlib.KEY_PRESS
-                record_range.contents.device_events.last = xlib.KEY_RELEASE
+            # record all key presses and releases, as these events indicate
+            # keyboard activity
+            key_events = (xlib.KEY_PRESS, xlib.KEY_RELEASE)
+            with xrecord.record_range(device_events=key_events) as record_range:
                 with xrecord.context(recording_display, 0, xrecord.ALL_CLIENTS,
                                      record_range) as context:
                     self._context = context
