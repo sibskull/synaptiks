@@ -1,6 +1,8 @@
 0.6 (in development)
 ====================
 
+- #1: Use XRecord for keyboard management, if available
+
 
 0.5.3 (in development)
 ======================

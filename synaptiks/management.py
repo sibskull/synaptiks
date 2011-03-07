@@ -43,7 +43,7 @@ from PyQt4.QtCore import (pyqtSignal, pyqtProperty, QObject,
                           QStateMachine, QState)
 
 from synaptiks.monitors import (MouseDevicesMonitor, MouseDevice,
-                                PollingKeyboardMonitor)
+                                create_keyboard_monitor)
 
 
 class MouseDevicesManager(MouseDevicesMonitor):
@@ -222,7 +222,7 @@ class TouchpadManager(QStateMachine):
         self._touchpad_wrapper = TouchpadQtWrapper(self.touchpad, self)
         # setup monitoring objects
         self.mouse_manager = MouseDevicesManager(self)
-        self.keyboard_monitor = PollingKeyboardMonitor(self)
+        self.keyboard_monitor = create_keyboard_monitor(self)
         # setup the states:
         self.states = {}
         for name, touchpad_off in self._STATE_NAMES.iteritems():
