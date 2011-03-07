@@ -4,9 +4,9 @@
 .. module:: synaptiks.util
    :synopsis: Internal utilities
 
-.. autofunction:: assert_byte_string
+.. autofunction:: ensure_byte_string
 
-.. autofunction:: assert_unicode_string
+.. autofunction:: ensure_unicode_string
 
 .. autofunction:: ensure_directory
 
