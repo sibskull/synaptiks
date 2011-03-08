@@ -78,3 +78,17 @@ Keyboard monitoring
 .. autoclass:: PollingKeyboardMonitor()
 
 .. autoclass:: RecordingKeyboardMonitor()
+
+
+Resume monitoring
+-----------------
+
+.. autofunction:: create_resume_monitor
+
+.. autoclass:: AbstractResumeMonitor
+
+   .. autoattribute:: resuming
+
+.. rubric:: Available implementations
+
+.. autoclass:: UPowerResumeMonitor
