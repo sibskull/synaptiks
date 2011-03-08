@@ -62,6 +62,7 @@ in **synaptiks**:
 
 - libXtst (client side of the XRecord extension, for improved keyboard
   monitoring)
+- UPower_ (to handle mouse devices correctly across suspend and resume)
 
 Finally xf86-input-synaptics 1.3 or newer must be installed and configured as
 touchpad driver.  **synaptiks** will not work, if the touchpad is managed by a
@@ -154,6 +155,7 @@ Repository`_, which is however not supported by the **synaptiks** developers.
 .. _gettext: http://www.gnu.org/software/gettext/
 .. _pip: http://pip.openplans.org/
 .. _docbook xsl stylesheets: http://docbook.sourceforge.net/
+.. _UPower: http://upower.freedesktop.org
 .. _Downloads: http://pypi.python.org/pypi/synaptiks
 .. _synaptiks PKGBUILD: http://aur.archlinux.org/packages.php?ID=32204
 .. _Arch User Repository: http://aur.archlinux.org/
