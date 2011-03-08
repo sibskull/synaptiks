@@ -38,7 +38,7 @@ from __future__ import (print_function, division, unicode_literals,
 from PyQt4.QtCore import (pyqtProperty, pyqtSignal, Qt, QStringList,
                           QAbstractListModel, QModelIndex)
 
-from synaptiks.monitors import MouseDevicesMonitor
+from synaptiks.monitors import MouseDevicesMonitor, create_resume_monitor
 
 
 class MouseDevicesModel(QAbstractListModel):
@@ -63,8 +63,16 @@ class MouseDevicesModel(QAbstractListModel):
         self._monitor = MouseDevicesMonitor(self)
         self._monitor.mousePlugged.connect(self._mouse_plugged)
         self._monitor.mouseUnplugged.connect(self._mouse_unplugged)
+        self._resume_monitor = create_resume_monitor(self)
+        if self._resume_monitor:
+            self._resume_monitor.resuming.connect(self._reset_device_index)
         self._device_index = list(self._monitor.plugged_devices)
         self._checked_devices = set()
+
+    def _reset_device_index(self):
+        self.beginResetModel()
+        self._device_index = list(self._monitor.plugged_devices)
+        self.endResetModel()
 
     def _mouse_plugged(self, device):
         """
