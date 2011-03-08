@@ -43,7 +43,7 @@ from PyQt4.QtCore import (pyqtSignal, pyqtProperty, QObject,
                           QStateMachine, QState)
 
 from synaptiks.monitors import (MouseDevicesMonitor, MouseDevice,
-                                create_keyboard_monitor)
+                                create_keyboard_monitor, create_resume_monitor)
 
 
 class MouseDevicesManager(MouseDevicesMonitor):
@@ -71,6 +71,7 @@ class MouseDevicesManager(MouseDevicesMonitor):
         ``parent`` is the parent ``QObject``.
         """
         MouseDevicesMonitor.__init__(self, parent)
+        self._resume_monitor = create_resume_monitor(self)
         self._mouse_registry = set()
         self._ignored_mouses = frozenset()
         self.is_running = False
@@ -84,6 +85,8 @@ class MouseDevicesManager(MouseDevicesMonitor):
         if not self.is_running:
             self.mousePlugged.connect(self._register_mouse)
             self.mouseUnplugged.connect(self._unregister_mouse)
+            if self._resume_monitor:
+                self._resume_monitor.resuming.connect(self._reset_registry)
             self._reset_registry()
         self.is_running = True
 
@@ -96,6 +99,8 @@ class MouseDevicesManager(MouseDevicesMonitor):
         if self.is_running:
             self.mousePlugged.disconnect(self._register_mouse)
             self.mouseUnplugged.disconnect(self._unregister_mouse)
+            if self._resume_monitor:
+                self._resume_monitor.resuming.disconnect(self._reset_registry)
             self._clear_registry()
         self.is_running = False
 
