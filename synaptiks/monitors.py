@@ -49,9 +49,8 @@ from synaptiks.qx11 import QX11Display
 from synaptiks._bindings import xlib
 try:
     from synaptiks._bindings import xrecord
-    HAVE_XRECORD = True
 except ImportError:
-    HAVE_XRECORD = False
+    xrecord = None
 from synaptiks._bindings.util import scoped_pointer
 
 
@@ -151,7 +150,7 @@ def create_keyboard_monitor(parent=None):
 
     Return an implementation of :class:`AbstractKeyboardMonitor`.
     """
-    if HAVE_XRECORD:
+    if xrecord:
         success, _ = xrecord.query_version(QX11Display())
         if success:
             return RecordingKeyboardMonitor(parent)
