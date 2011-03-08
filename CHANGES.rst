@@ -2,6 +2,8 @@
 ====================
 
 - #1: Use XRecord for keyboard management, if available
+- #6: Reinitialize mouse monitoring and mouse display if the system is resuming
+  from suspend
 
 
 0.5.3 (in development)
