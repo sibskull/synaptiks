@@ -71,7 +71,7 @@ from __future__ import (print_function, division, unicode_literals,
 
 import struct
 from functools import partial
-from collections import Mapping
+from collections import Mapping, namedtuple
 from operator import eq
 
 from synaptiks._bindings import xlib, xinput
@@ -79,30 +79,51 @@ from synaptiks._bindings.util import scoped_pointer
 from synaptiks.util import ensure_byte_string, ensure_unicode_string
 
 
+class XInputVersion(namedtuple('_XInputVersion', 'major minor')):
+    """
+    A :func:`~collections.namedtuple` representing a XInput version.
+
+    This class has two attributes, :attr:`major` and :attr:`minor`, which
+    contain the corresponding parts of the version number as integers.
+    """
+
+    def __str__(self):
+        return '{0.major}.{0.minor}'.format(self)
+
+
 class XInputVersionError(Exception):
     """
     Raised on unexpected XInput versions.
     """
 
+    def __init__(self, expected_version, actual_version):
+        """
+        Create a new instance of this error.
+
+        ``expected_version`` is the expected version number as ``(major,
+        minor)`` tuple, ``actual_version`` the actual version number in the
+        same format.  ``major`` and ``minor`` are integers.
+        """
+        Exception.__init__(self, XInputVersion(*expected_version),
+                           XInputVersion(*actual_version))
+
     @property
     def expected_version(self):
         """
-        The expected XInput version as ``(major, minor)`` tuple.  Both
-        components are integers.
+        The expected XInput version as :class:`XInputVersion`.
         """
         return self.args[0]
 
     @property
     def actual_version(self):
         """
-        The actual XInput version as ``(major, minor)`` tuple.  Both
-        components are integers.
+        The actual XInput version as :class:`XInputVersion`.
         """
         return self.args[1]
 
     def __str__(self):
-        return ('XI Version Error:  Expected {0.expected_version}, '
-                'got {0.actual_version}')
+        return ('XInputVersionError: Expected {0.expected_version}, '
+                'got {0.actual_version}').format(self)
 
 
 def assert_xinput_version(display):

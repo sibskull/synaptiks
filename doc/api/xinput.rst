@@ -62,3 +62,13 @@ Miscellaneous stuff
 
 .. autoexception:: XInputVersionError
    :members:
+
+.. autoexception:: XInputVersion
+
+   .. attribute:: major
+
+      The ``major`` version number as integer
+
+   .. attribute:: minor
+
+      The ``minor`` version number as integer

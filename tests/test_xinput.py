@@ -159,6 +159,32 @@ def test_make_struct_format_invalid_type_code():
     assert str(exc_info.value) == 'invalid type code'
 
 
+class TestXInputVersion(object):
+
+    version = xinput.XInputVersion(2, 3)
+
+    def test_attributes(self):
+        assert self.version.major == 2
+        assert self.version.minor == 3
+
+    def test_str(self):
+        assert str(self.version) == '2.3'
+
+
+class TestXInputVersionError(object):
+
+    error = xinput.XInputVersionError((2, 3), (1, 0))
+
+    def test_attributes(self):
+        assert isinstance(self.error.expected_version, xinput.XInputVersion)
+        assert isinstance(self.error.actual_version, xinput.XInputVersion)
+        assert self.error.expected_version == (2, 3)
+        assert self.error.actual_version == (1, 0)
+
+    def test_str(self):
+        assert str(self.error) == 'XInputVersionError: Expected 2.3, got 1.0'
+
+
 class TestInputDevice(object):
 
     def test_all_devices(self, display, device_database):

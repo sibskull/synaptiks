@@ -98,8 +98,8 @@ def get_localized_error_message(error):
     if isinstance(error, NoTouchpadError):
         return NO_TOUCHPAD_ERROR_MESSAGE.toString()
     elif isinstance(error, XInputVersionError):
-        actual = '.'.join(error.actual_version)
-        expected = '.'.join(error.expected_version)
+        actual = str(error.actual_version)
+        expected = str(error.expected_version)
         return VERSION_ERROR_MESSAGE.subs(actual).subs(expected).toString()
     else:
         return UNEXPECTED_ERROR_MESSAGE.subs(unicode(error)).toString()
