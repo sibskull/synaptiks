@@ -206,7 +206,7 @@ def context(display, client_spec, device_events=None):
     """
     Create a XRecord context and wrap it into a context manager:
 
-    >>> with context(display, 0, ALL_CLIENTS, (KEY_PRESS, KEY_RELEASE)) as context:
+    >>> with context(display, ALL_CLIENTS, (KEY_PRESS, KEY_RELEASE)) as context:
     ...     enable_context(display, context, callback, None)
 
     ``display`` is an X11 display connection
