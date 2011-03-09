@@ -124,12 +124,14 @@ def get_touchpad_defaults_file_path():
     Get the path to the file which stores the default touchpad configuration as
     setup by the touchpad driver.
     """
-    return os.path.join(get_configuration_directory(), 'touchpad-defaults.json')
+    return os.path.join(get_configuration_directory(),
+                        'touchpad-defaults.json')
 
 
 def get_management_config_file_path():
     """
-    Get the path to the file which stores the touchpad management configuration.
+    Get the path to the file which stores the touchpad management
+    configuration.
     """
     return os.path.join(get_configuration_directory(), 'management.json')
 

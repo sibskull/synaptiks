@@ -123,7 +123,7 @@ SIGNATURES = dict(
     XCloseDisplay=([Display_p], c_int),
     XInternAtom=([Display_p, c_char_p, Bool], Atom),
     XGetAtomName=([Display_p, Atom], c_void_p, _convert_x11_char_p),
-    XQueryKeymap=([Display_p, c_char*32], c_int),
+    XQueryKeymap=([Display_p, c_char * 32], c_int),
     XGetModifierMapping=([Display_p], XModifierKeymap_p),
     XFreeModifiermap=([XModifierKeymap_p], c_int),
     )
@@ -234,7 +234,7 @@ def get_modifier_mapping(display):
     with scoped_pointer(modifier_map, libX11.XFreeModifiermap):
         keys_per_modifier = modifier_map.contents.max_keypermod
         keycodes = [modifier_map.contents.modifiermap[i]
-                    for i in xrange(8*keys_per_modifier)]
+                    for i in xrange(8 * keys_per_modifier)]
         modifier_keys = izip(*[islice(keycodes, i, None, keys_per_modifier)
                                for i in xrange(keys_per_modifier)])
         return ModifierMap(*modifier_keys)

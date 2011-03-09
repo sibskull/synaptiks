@@ -299,7 +299,6 @@ class EventRecorder(QThread):
         self._event_signal_map = {xlib.KEY_PRESS: self.keyPressed,
                                   xlib.KEY_RELEASE: self.keyReleased}
 
-
     def run(self):
         # create a special display connection for recording
         with xlib.display() as recording_display:
@@ -427,7 +426,7 @@ class RecordingKeyboardMonitor(AbstractKeyboardMonitor):
 
     @idle_time.setter
     def idle_time(self, value):
-        self._idle_timer.setInterval(int(value*1000))
+        self._idle_timer.setInterval(int(value * 1000))
 
     @property
     def keyboard_active(self):
@@ -447,7 +446,7 @@ class PollingKeyboardMonitor(AbstractKeyboardMonitor):
     def __init__(self, parent=None):
         AbstractKeyboardMonitor.__init__(self, parent)
         self._keyboard_was_active = False
-        self._old_keymap = array(b'B', b'\0'*32)
+        self._old_keymap = array(b'B', b'\0' * 32)
         self._keyboard_timer = QTimer(self)
         self._keyboard_timer.timeout.connect(self._check_keyboard_activity)
         self._keyboard_timer.setInterval(self.DEFAULT_POLLDELAY)
@@ -486,10 +485,10 @@ class PollingKeyboardMonitor(AbstractKeyboardMonitor):
 
     @idle_time.setter
     def idle_time(self, value):
-        self._idle_time = int(value*1000)
+        self._idle_time = int(value * 1000)
 
     def _setup_mask(self):
-        mask = array(b'B', b'\xff'*32)
+        mask = array(b'B', b'\xff' * 32)
         if self._keys_to_ignore >= self.IGNORE_MODIFIER_KEYS:
             modifier_mappings = xlib.get_modifier_mapping(QX11Display())
             for modifier_keys in modifier_mappings:

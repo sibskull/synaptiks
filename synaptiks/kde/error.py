@@ -47,8 +47,9 @@ NO_TOUCHPAD_ERROR_MESSAGE = ki18nc(
     '@info NoTouchpadError error message',
     '<title>No touchpad found</title>'
     '<para>No touchpad was found in this system.  If the system has a '
-    'touchpad, please make sure, that the <application>synaptics</application> '
-    'driver is properly installed and configured.</para>'
+    'touchpad, please make sure, that the '
+    '<application>synaptics</application> driver is properly installed and '
+    'configured.</para>'
     '<para>If your touchpad is not found, though the driver is installed and '
     'configured correctly, please compile detailed information about your '
     'touchpad hardware and report this issue to the '
@@ -62,10 +63,10 @@ VERSION_ERROR_MESSAGE = ki18nc(
     'too old.  Version %1 was found, but at least version %2 is required.'
     '</para>'
     '<para>If you want to be able to configure your touchpad, you have to '
-    'upgrade your system to a recent release of the Xorg display server.  This '
-    'may likely involve a complete upgrade of your system.  Please excuse this '
-    'inconvenience, but there is no way to make touchpad configuration work on '
-    'systems as old as yours.</para>')
+    'upgrade your system to a recent release of the Xorg display server.  '
+    'This may likely involve a complete upgrade of your system.  Please '
+    'excuse this inconvenience, but there is no way to make touchpad '
+    'configuration work on systems as old as yours.</para>')
 
 
 UNEXPECTED_ERROR_MESSAGE = ki18nc(

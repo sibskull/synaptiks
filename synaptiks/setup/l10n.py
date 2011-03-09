@@ -50,11 +50,14 @@ KEYWORDS = [
 def _check_ext(filename, ext):
     return os.path.splitext(filename)[1] == ext
 
+
 def is_python_file(filename):
     return _check_ext(filename, '.py')
 
+
 def is_ui_file(filename):
     return _check_ext(filename, '.ui')
+
 
 def is_po_file(filename):
     return _check_ext(filename, '.po')
@@ -201,7 +204,7 @@ class POWorkerCommand(BaseCommand):
 
     def _get_catalogs(self):
         if self.locale:
-            return [self.locale+'.po']
+            return [self.locale + '.po']
         else:
             return [fn for fn in os.listdir(self.directory) if is_po_file(fn)]
 

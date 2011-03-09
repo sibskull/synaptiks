@@ -65,6 +65,7 @@ class SynaptiksKCMBase(KCModule):
             '<title>Touchpad configuration</title>'
             '<para>This module lets you configure your touchpad.</para>'))
 
+
 class TouchpadErrorKCM(SynaptiksKCMBase):
     """
     KCM widget used to show a touchpad error.

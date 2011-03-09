@@ -52,7 +52,7 @@ def change_prefix(path, old_prefix, new_prefix):
     old_prefix = os.path.normpath(old_prefix)
     path = os.path.normpath(path)
     if path.startswith(old_prefix):
-        unprefixed_path = path[len(old_prefix)+1:]
+        unprefixed_path = path[len(old_prefix) + 1:]
         return os.path.normpath(os.path.join(new_prefix, unprefixed_path))
     else:
         return path

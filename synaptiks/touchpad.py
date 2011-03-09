@@ -224,7 +224,8 @@ Whether the touchpad is off or not.  Three valid values:
 
     tap_and_drag_gesture = device_property(
         'Synaptics Gestures', 'bool', 0,
-        '``True``, if the tap and drag gesture is enabled, ``False`` otherwise')
+        '``True``, if the tap and drag gesture is enabled, ``False`` '
+        'otherwise')
 
     locked_drags = device_property(
         'Synaptics Locked Drags', 'bool', 0,
@@ -234,7 +235,7 @@ Whether the touchpad is off or not.  Three valid values:
         'Synaptics Locked Drags Timeout', 'int', 0,
         'The timeout of locked drags in seconds as float')
     locked_drags_timeout.convert_from_property = lambda v: v / 1000
-    locked_drags_timeout.convert_to_property = lambda v: int(1000*v)
+    locked_drags_timeout.convert_to_property = lambda v: int(1000 * v)
 
     _edge_scrolling_property = partial(device_property,
                                        'Synaptics Edge Scrolling', 'bool')

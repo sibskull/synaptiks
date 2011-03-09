@@ -116,7 +116,7 @@ class ConfigurationWidgetMixin(object):
         """
         Get the configuration key for the given widget as string.
         """
-        return unicode(widget.objectName()[len(self.NAME_PREFIX)+1:])
+        return unicode(widget.objectName()[len(self.NAME_PREFIX) + 1:])
 
     def _get_property_name_for_widget(self, widget):
         """
@@ -152,7 +152,8 @@ class ConfigurationWidgetMixin(object):
         ``key`` in the configuration mapping.
 
         ``value`` is the value of the corresponding property in the widget and
-        can have an arbitrary type.  ``key`` is the configuration key as string.
+        can have an arbitrary type.  ``key`` is the configuration key as
+        string.
 
         The default implementation does nothing.
 

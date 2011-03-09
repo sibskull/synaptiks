@@ -51,11 +51,14 @@ XRecordClientSpec = c_ulong
 XRecordContext = c_ulong
 XRecordClientSpec_p = POINTER(XRecordClientSpec)
 
+
 class XRecordRange8(Structure):
     _fields_ = [('first', c_ubyte), ('last', c_ubyte)]
 
+
 class XRecordRange16(Structure):
     _fields_ = [('first', c_ushort), ('last', c_ushort)]
+
 
 class XRecordExtRange(Structure):
     _fields_ = [('ext_major', XRecordRange8), ('ext_minor', XRecordRange16)]
@@ -75,6 +78,7 @@ class XRecordRange(Structure):
         ]
 
 XRecordRange_p = POINTER(XRecordRange)
+
 
 class XRecordInterceptData(Structure):
     _fields_ = [
@@ -206,7 +210,8 @@ def context(display, client_spec, device_events=None):
     """
     Create a XRecord context and wrap it into a context manager:
 
-    >>> with context(display, ALL_CLIENTS, (KEY_PRESS, KEY_RELEASE)) as context:
+    >>> with context(display, ALL_CLIENTS,
+    ...              (KEY_PRESS, KEY_RELEASE)) as context:
     ...     enable_context(display, context, callback, None)
 
     ``display`` is an X11 display connection

@@ -46,7 +46,8 @@
     property values:
 
     >>> from synaptiks.qx11 import QX11Display
-    >>> devices = list(InputDevice.find_devices_with_property(QX11Display(), 'Synaptics Off'))
+    >>> devices = list(InputDevice.find_devices_with_property(
+    ...     QX11Display(), 'Synaptics Off'))
     >>> devices
     [<synaptiks.xinput.InputDevice object at 0xa599bcc>]
     >>> devices[0].name
@@ -116,7 +117,7 @@ def assert_xinput_version(display):
 
     Raise :exc:`XInputVersionError`, if the version isn't sufficient.
     """
-    matched, actual_version = xinput.query_version(display, (2,0))
+    matched, actual_version = xinput.query_version(display, (2, 0))
     if not matched:
         raise XInputVersionError((2, 0), actual_version)
 
