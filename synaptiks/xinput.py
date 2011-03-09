@@ -352,7 +352,7 @@ class InputDevice(Mapping):
         """
         The name of this device as unicode string.
         """
-        number_of_devices, device = xinput.query_device(self.display, self.id)
+        _, device = xinput.query_device(self.display, self.id)
         with scoped_pointer(device, xinput.free_device_info) as device:
             if not device:
                 raise InputDeviceNotFoundError(self.id)
