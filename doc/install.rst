@@ -44,17 +44,15 @@ the following native libraries and tools:
 - `Docbook XSL stylesheets`_ (only required during installation to compile the
   handbook, can be removed after successful installation)
 
-These libraries and tools *must* be installed through the package manager of
-your distribution before installing **synaptiks**.
-
-Moreover some additional Python modules are required:
+Moreover some Python modules are required:
 
 - pyudev_ (at least 0.6)
 - argparse_ (at least 1.1, not required, if Python 2.7 is installed)
 
-It is recommended, that you also install these modules with the package
-manager, if available.  However, this is not strictly required, because the
-installation script will automatically install any missing Python module.
+All these libraries must be available before installing **synaptiks**.  It is
+recommended, that you install them through the package manager of your
+distribution.  However, the Python modules listed above are also automatically
+installed by the installation script of **synaptiks**.
 
 Additionally **synaptiks** has some optional dependencies, which are not
 strictly required, but enable some additional features or improved components
