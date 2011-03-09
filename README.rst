@@ -48,7 +48,8 @@ in **synaptiks**:
 
 - libXtst (client side of the XRecord extension, for improved keyboard
   monitoring)
-- UPower_ (to handle mouse devices correctly across suspend and resume)
+- dbus-python_ and UPower_ (to handle mouse devices correctly across suspend
+  and resume)
 
 Finally xf86-input-synaptics 1.3 or newer must be installed and configured
 as touchpad driver.  synaptiks will not work, if the touchpad is managed by a
@@ -117,6 +118,7 @@ also send patches through the issue tracker or through email.
 .. _gettext: http://www.gnu.org/software/gettext/
 .. _pip: http://pip.openplans.org/
 .. _docbook xsl stylesheets: http://docbook.sourceforge.net/
+.. _dbus-python: http://www.freedesktop.org/wiki/Software/DBusBindings#Python
 .. _UPower: http://upower.freedesktop.org
 .. _issue tracker: https://github.com/lunaryorn/synaptiks/issues
 .. _GitHub: https://github.com/lunaryorn/synaptiks
