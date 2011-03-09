@@ -38,7 +38,12 @@ from __future__ import (print_function, division, unicode_literals,
 
 import os
 
-from synaptiks.kde.uic import loadUi
+from PyQt4.QtCore import PYQT_VERSION
+
+if PYQT_VERSION >= 0x40803:
+    from PyQt4.uic import loadUi
+else:
+    from synaptiks.kde.uic import loadUi
 
 
 PACKAGE_DIRECTORY = os.path.dirname(__file__)
