@@ -97,12 +97,6 @@ class ConfigurationWidgetMixin(object):
         The widget, which was changed, is available in ``sender``, the new
         value in ``changed_value``.
         """
-        config_key = self._get_config_key_for_widget(sender)
-        current_value = self.__config[config_key]
-        if current_value == changed_value:
-            self.__changed_keys.discard(config_key)
-        else:
-            self.__changed_keys.add(config_key)
         self.configurationChanged.emit(self.is_configuration_changed)
 
     def _find_configuration_widgets(self):
@@ -194,7 +188,7 @@ class ConfigurationWidgetMixin(object):
         from the actual configuration.  This usually means, that the user has
         changed some setting in the widget.
         """
-        return bool(self.__changed_keys)
+        return self.__config != self._get_mapping_from_widgets()
 
     def load_defaults(self, defaults=None):
         """
@@ -234,7 +228,5 @@ class ConfigurationWidgetMixin(object):
         Apply the contents of all configuration widgets to the internal
         configuration mapping.
         """
-        config = self._get_mapping_from_widgets()
-        self.__config.update(config)
-        self.__changed_keys.clear()
+        self.__config.update(self._get_mapping_from_widgets())
         self.configurationChanged.emit(self.is_configuration_changed)
