@@ -38,6 +38,7 @@ def pytest_funcarg__json_file(request):
     tmpdir = request.getfuncargvalue('tmpdir')
     return tmpdir.join('test.json')
 
+
 def pytest_funcarg__json_obj(request):
     return {'foo': 'bar', 'spam': 10, 'eggs': 5.0}
 

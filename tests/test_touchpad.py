@@ -38,18 +38,22 @@ def pytest_funcarg__touchpad(request):
     display = request.getfuncargvalue('display')
     return Touchpad.find_first(display)
 
+
 def pytest_funcarg__touchpad_id(request):
     return request.getfuncargvalue('touchpad').id
+
 
 def pytest_funcarg__touchpad_name(request):
     devices = request.getfuncargvalue('device_database')
     touchpad_id = request.getfuncargvalue('touchpad_id')
     return devices[touchpad_id].name
 
+
 def pytest_funcarg__touchpad_properties(request):
     devices = request.getfuncargvalue('device_database')
     touchpad_id = request.getfuncargvalue('touchpad_id')
     return devices[touchpad_id].properties
+
 
 def pytest_funcarg__touchpad_capabilities(request):
     touchpad_properties = request.getfuncargvalue('touchpad_properties')

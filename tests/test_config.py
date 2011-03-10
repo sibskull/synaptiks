@@ -108,6 +108,7 @@ def test_get_configuration_directory_default():
     assert os.path.normpath(directory) == os.path.normpath(
         os.path.expanduser(os.path.join('~', '.config', 'synaptiks')))
 
+
 def test_get_configuration_directory_nondefault(tmpdir):
     with config_home(tmpdir) as config_home_dir:
         assert config_home_dir.check(exists=False)
@@ -264,7 +265,7 @@ class TestTouchpadConfiguration(object):
             touchpad_config.save()
             config_file = py.path.local(config.get_touchpad_config_file_path())
             contents = json.loads(config_file.read())
-            assert contents == dict((k,k) for k in keys)
+            assert contents == dict((k, k) for k in keys)
 
     def test_save_with_filename(self, touchpad_config, tmpdir):
         config_file = tmpdir.join('test.json')
@@ -273,7 +274,7 @@ class TestTouchpadConfiguration(object):
             setattr(touchpad_config.touchpad, key, key)
         touchpad_config.save(str(config_file))
         contents = json.loads(config_file.read())
-        assert contents == dict((k,k) for k in keys)
+        assert contents == dict((k, k) for k in keys)
 
 
 class TestManagerConfiguration(object):
@@ -368,7 +369,8 @@ class TestManagerConfiguration(object):
             manager_config[key] = key
         with config_home(tmpdir):
             manager_config.save()
-            config_file = py.path.local(config.get_management_config_file_path())
+            config_file = py.path.local(
+                config.get_management_config_file_path())
             contents = json.loads(config_file.read())
             assert contents == dict((k, k) for k in manager_config.DEFAULTS)
 

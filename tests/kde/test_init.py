@@ -72,7 +72,7 @@ def test_make_about_data_copyright(about_data):
     assert 'Sebastian Wiesner' in copyright_statement
     this_year = date.today().year
     assert all(unicode(y) in copyright_statement
-               for y in range(2009, this_year+1))
+               for y in range(2009, this_year + 1))
 
 
 def test_make_about_data_homepage(about_data):

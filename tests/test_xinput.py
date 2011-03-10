@@ -46,7 +46,7 @@ def pytest_generate_tests(metafunc):
                 for property in device.properties:
                     test_id = '{0},id={1},property={2}'.format(
                         device.name, device.id, property)
-                    funcargs=dict(device_property=property)
+                    funcargs = dict(device_property=property)
                     metafunc.addcall(param=device.id, funcargs=funcargs,
                                      id=test_id)
             else:
@@ -60,7 +60,7 @@ def pytest_generate_tests(metafunc):
             if type_code == 'f':
                 testid = 'float'
             else:
-                bit_length = item_size*8
+                bit_length = item_size * 8
                 testid = 'uint{0}'.format(bit_length)
             metafunc.addcall(funcargs=funcargs, id=testid)
 
@@ -68,21 +68,25 @@ def pytest_generate_tests(metafunc):
 def pytest_funcarg__device_id(request):
     return request.param
 
+
 def pytest_funcarg__device_name(request):
     device_id = request.getfuncargvalue('device_id')
     devices = request.getfuncargvalue('device_database')
     return devices[device_id].name
+
 
 def pytest_funcarg__device_properties(request):
     device_id = request.getfuncargvalue('device_id')
     devices = request.getfuncargvalue('device_database')
     return devices[device_id].properties
 
+
 def pytest_funcarg__device_property_value(request):
     device_id = request.getfuncargvalue('device_id')
     devices = request.getfuncargvalue('device_database')
     device_property = request.getfuncargvalue('device_property')
     return devices[device_id].properties[device_property]
+
 
 def pytest_funcarg__device(request):
     display = request.getfuncargvalue('display')
@@ -97,6 +101,7 @@ def pytest_funcarg__test_keyboard(request):
     display = request.getfuncargvalue('display')
     return next(xinput.InputDevice.find_devices_by_name(
         display, 'Virtual core XTEST keyboard'))
+
 
 def pytest_funcarg__test_pointer(request):
     """
@@ -131,7 +136,7 @@ def test_make_struct_format():
 def test_pack_property_data(type_code, item_size):
     data = xinput._pack_property_data(type_code, [10, 20, 30])
     assert isinstance(data, bytes)
-    assert len(data) == 3*item_size
+    assert len(data) == 3 * item_size
 
 
 def test_unpack_property_data(type_code, item_size):
@@ -139,7 +144,7 @@ def test_unpack_property_data(type_code, item_size):
         # need some test for floating point packing too
         raise NotImplementedError()
 
-    pad_bytes = [b for b in repeat('\x00', item_size-1)]
+    pad_bytes = [b for b in repeat('\x00', item_size - 1)]
     value_byte = '\x01'
 
     if sys.byteorder == 'little':
