@@ -39,7 +39,7 @@ class MotionPage(QWidget, DynamicUserInterfaceMixin):
         self._load_userinterface()
 
 
-def test_dynamic_user_interface_mixin(qtapp):
+def test_dynamic_user_interface_mixin():
     """
     Test, that DynamicUserInterfaceMixin loads ui files based on the class
     name, and on the class name only.
