@@ -38,7 +38,7 @@ from __future__ import (print_function, division, unicode_literals,
 
 from functools import partial
 
-from PyQt4.QtCore import QRegExp
+from PyQt4.QtCore import QRegExp, QString
 from PyQt4.QtGui import QWidget
 
 
@@ -159,6 +159,8 @@ class ConfigurationWidgetMixin(object):
 
         Return the converted ``value``.
         """
+        if isinstance(value, QString):
+            return unicode(value)
         return value
 
     def _update_widgets_from_mapping(self, mapping):

@@ -70,12 +70,13 @@ class TouchpadManagementWidget(QWidget, ConfigurationWidgetMixin,
     def _convert_to_property(self, key, value):
         if key == 'ignored_mouses':
             return QStringList(value)
-        return value
+        return ConfigurationWidgetMixin._convert_to_property(self, key, value)
 
     def _convert_from_property(self, key, value):
         if key == 'ignored_mouses':
             return [unicode(d) for d in value]
-        return value
+        return ConfigurationWidgetMixin._convert_from_property(
+            self, key, value)
 
     def _get_defaults(self):
         return self.management_config.DEFAULTS
