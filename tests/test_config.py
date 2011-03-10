@@ -227,7 +227,7 @@ class TestTouchpadConfiguration(object):
         setattr(touchpad_config.touchpad, key, mock.sentinel.value)
         assert touchpad_config[key] is mock.sentinel.value
 
-    @pytest.mark.skipif(b'not config.xinput_has_touchpad')
+    @pytest.mark.skipif(b'not pytest.config.xinput_has_touchpad')
     def test_getitem_real(self, key, display):
         touchpad = Touchpad.find_first(display)
         touchpad_config = config.TouchpadConfiguration(touchpad)
