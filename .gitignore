@@ -3,3 +3,5 @@ synaptiks.egg-info/*
 .ropeproject/
 dist/*
 build/*
+.tox/*
+*-tests.xml
