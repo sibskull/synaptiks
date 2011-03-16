@@ -26,13 +26,15 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
+import pytest
+
+config = pytest.importorskip('synaptiks.kde.widget.config')
+
 from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtGui import QWidget, QHBoxLayout, QCheckBox, QLineEdit
 
-from synaptiks.kde.widgets.config import ConfigurationWidgetMixin
 
-
-class DummyConfigWidget(QWidget, ConfigurationWidgetMixin):
+class DummyConfigWidget(QWidget, config.ConfigurationWidgetMixin):
 
     NAME_PREFIX = 'dummy'
     PROPERTY_MAP = dict(QCheckBox='checked', QLineEdit='text')

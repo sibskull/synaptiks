@@ -26,14 +26,17 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
+import pytest
+
 from synaptiks import ISSUE_TRACKER_URL
 from synaptiks.touchpad import NoTouchpadError
 from synaptiks.xinput import XInputVersionError
-from synaptiks.kde.error import get_localized_error_message
+
+error = pytest.importorskip('synaptiks.kde.error')
 
 
 def test_get_localized_error_message_no_touchpad():
-    msg = unicode(get_localized_error_message(NoTouchpadError()))
+    msg = unicode(error.get_localized_error_message(NoTouchpadError()))
     assert 'No touchpad found' in msg
     assert ISSUE_TRACKER_URL in msg
     assert 'synaptics' in msg
@@ -41,7 +44,7 @@ def test_get_localized_error_message_no_touchpad():
 
 def test_get_localized_error_message_xinput_version():
     error = XInputVersionError((20, 20), (10, 10))
-    msg = unicode(get_localized_error_message(error))
+    msg = unicode(error.get_localized_error_message(error))
     assert 'Version error' in msg
     assert 'XInput extension' in msg
     assert 'Version 10.10 was found' in msg
@@ -50,7 +53,7 @@ def test_get_localized_error_message_xinput_version():
 
 def test_get_localized_error_message_unexpected_error():
     error = ValueError('spam with eggs')
-    msg = unicode(get_localized_error_message(error))
+    msg = unicode(error.get_localized_error_message(error))
     print(msg)
     assert 'Unexpected error occurred' in msg
     assert ISSUE_TRACKER_URL in msg

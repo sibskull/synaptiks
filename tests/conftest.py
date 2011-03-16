@@ -31,9 +31,7 @@ import re
 from collections import namedtuple
 from subprocess import Popen, PIPE
 
-from PyQt4.QtGui import QApplication
-
-from synaptiks.qx11 import QX11Display
+import pytest
 
 
 DEVICE_PATTERN = re.compile(
@@ -85,7 +83,6 @@ def _read_device_database():
 def pytest_configure(config):
     # make sure, that an application and consequently an X11 Display
     # connection exists
-    config.qt_application = QApplication([])
     config.xinput_device_database = _read_device_database()
     for device in config.xinput_device_database.itervalues():
         if 'Synaptics Off' in device.properties:
@@ -107,14 +104,19 @@ def pytest_funcarg__qtapp(request):
     Return the :class:`~PyQt4.QtGui.QApplication` instance for use in the
     tests.
     """
-    return request.config.qt_application
+    QtGui = pytest.importorskip('PyQt4.QtGui')
+    app = QtGui.QApplication.instance()
+    if not app:
+        app = QtGui.QApplication([])
+    return app
 
 
 def pytest_funcarg__qxdisplay(request):
     """
     Qt X11 display wrapper.
     """
-    return QX11Display()
+    qx11 = pytest.importorskip('synaptiks.qx11')
+    return qx11.QX11Display()
 
 
 def pytest_funcarg__display(request):

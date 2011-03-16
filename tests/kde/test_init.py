@@ -29,10 +29,13 @@ from __future__ import (print_function, division, unicode_literals,
 
 from datetime import date
 
+import pytest
+
+kde = pytest.importorskip('synaptiks.kde')
+
 from PyKDE4.kdecore import ki18n
 
 from synaptiks import ISSUE_TRACKER_URL, WEBSITE_URL, __version__
-from synaptiks.kde import make_about_data
 
 
 def pytest_funcarg__description(request):
@@ -41,7 +44,7 @@ def pytest_funcarg__description(request):
 
 def pytest_funcarg__about_data(request):
     description = request.getfuncargvalue('description')
-    return make_about_data(description)
+    return kde.make_about_data(description)
 
 
 def test_make_about_data_name(about_data):

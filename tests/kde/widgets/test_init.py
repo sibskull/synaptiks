@@ -26,13 +26,15 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
+import pytest
+
+widgets = pytest.importorskip('synaptiks.kde.widgets')
+
 from PyQt4.QtGui import QWidget
 from PyKDE4.kdeui import KDoubleNumInput
 
-from synaptiks.kde.widgets import DynamicUserInterfaceMixin
 
-
-class MotionPage(QWidget, DynamicUserInterfaceMixin):
+class MotionPage(QWidget, widgets.DynamicUserInterfaceMixin):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
