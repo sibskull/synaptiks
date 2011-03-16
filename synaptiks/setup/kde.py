@@ -37,6 +37,7 @@ from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
 import os
+import sys
 from glob import glob
 from collections import namedtuple
 from itertools import chain
@@ -93,9 +94,15 @@ class KDEBaseCmd(BaseCommand):
             install_directory = os.path.join(
                 self.kde4_prefix, 'share', 'autostart')
         elif resource_type == 'xdgconf-autostart':
+            root = '/'
+            virtualenv_keys = ('VIRTUAL_ENV', 'PIP_VIRTUALENV_BASE')
+            if any(k in os.environ for k in virtualenv_keys):
+                # we are installing into a virtualenv for testing purposes, so
+                # adjust the prefix
+                root = sys.prefix
             # the system-wide autostart directory is given by the XDG autostart
             # spec
-            install_directory = '/etc/xdg/autostart'
+            install_directory = os.path.join(root, 'etc/xdg/autostart')
         else:
             install_directory = get_output(
                 [self.kde4_config_exe, '--install', resource_type])
