@@ -56,7 +56,7 @@ as touchpad driver.  synaptiks will not work, if the touchpad is managed by a
 generic mouse device driver like xf86-input-evdev.
 
 Please make sure, that any previous release of synaptiks is completely removed
-before this release of synaptiks.
+before this release of synaptiks is installed.
 
 
 Installation
