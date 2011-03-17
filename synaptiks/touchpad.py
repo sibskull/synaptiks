@@ -138,7 +138,7 @@ class Touchpad(InputDevice):
     """
     A touchpad registered on the X11 server.
 
-    This class is a child of :class:`~synaptiks.qxinput.InputDevice`,
+    This class is a child of :class:`~synaptiks.xinput.InputDevice`,
     consequently all of the input device methods are available on this class as
     well.  Additionally this class provides special methods and properties
     specific to touchpads.
@@ -159,8 +159,8 @@ class Touchpad(InputDevice):
         Return an iterator over all :class:`Touchpad` objects present on this
         system.
 
-        Raise :exc:`XInputVersionError`, if the XInput version isn't sufficient
-        to support input device management.
+        Raise :exc:`synaptiks.xinput.XInputVersionError`, if the XInput version
+        isn't sufficient to support input device management.
         """
         return cls.find_devices_with_property(display, 'Synaptics Off')
 
@@ -175,8 +175,8 @@ class Touchpad(InputDevice):
         :func:`synaptiks._bindings.xlib.display`).
 
         Raise :exc:`NoTouchpadError`, if no touchpad was found.  Raise
-        :exc:`synaptiks.qxinput.XInputVersionError`, if the XInput version
-        isn't sufficient to support input device management.
+        :exc:`synaptiks.xinput.XInputVersionError`, if the XInput version isn't
+        sufficient to support input device management.
         """
         touchpad = next(cls.find_all(display), None)
         if touchpad is None:
