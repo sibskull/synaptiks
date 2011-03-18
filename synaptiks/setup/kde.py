@@ -95,8 +95,7 @@ class KDEBaseCmd(BaseCommand):
                 self.kde4_prefix, 'share', 'autostart')
         elif resource_type == 'xdgconf-autostart':
             root = '/'
-            virtualenv_keys = ('VIRTUAL_ENV', 'PIP_VIRTUALENV_BASE')
-            if any(k in os.environ for k in virtualenv_keys):
+            if sys.prefix != getattr(sys, 'real_prefix', None):
                 # we are installing into a virtualenv for testing purposes, so
                 # adjust the prefix
                 root = sys.prefix
