@@ -43,8 +43,8 @@ def test_get_localized_error_message_no_touchpad():
 
 
 def test_get_localized_error_message_xinput_version():
-    error = XInputVersionError((20, 20), (10, 10))
-    msg = unicode(error.get_localized_error_message(error))
+    msg = unicode(error.get_localized_error_message(
+        XInputVersionError((20, 20), (10, 10))))
     assert 'Version error' in msg
     assert 'XInput extension' in msg
     assert 'Version 10.10 was found' in msg
@@ -52,9 +52,8 @@ def test_get_localized_error_message_xinput_version():
 
 
 def test_get_localized_error_message_unexpected_error():
-    error = ValueError('spam with eggs')
-    msg = unicode(error.get_localized_error_message(error))
-    print(msg)
+    msg = unicode(error.get_localized_error_message(
+        ValueError('spam with eggs')))
     assert 'Unexpected error occurred' in msg
     assert ISSUE_TRACKER_URL in msg
     assert 'spam with eggs' in msg
