@@ -29,6 +29,10 @@
       objects, each of which represents a single transition from the ``source``
       state to the ``destination`` state.
 
+   .. autoattribute:: current_state
+
+   .. autoattribute:: current_state_name
+
    .. autoattribute:: monitor_mouses
 
    .. autoattribute:: monitor_keyboard

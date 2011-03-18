@@ -274,6 +274,24 @@ class TouchpadManager(QStateMachine):
         self._add_transition('off', 'on', action.triggered)
 
     @property
+    def current_state(self):
+        """
+        The current state as :class:`~PyQt4.QtCore.QState` object.
+        """
+        config = self.configuration()
+        if config:
+            return config[0]
+        return None
+
+    @property
+    def current_state_name(self):
+        """
+        The name of the current state as unicode string.
+        """
+        if self.current_state:
+            return unicode(self.current_state.objectName())
+
+    @property
     def monitor_mouses(self):
         """
         ``True``, if the touchpad is to switch, if mouses are plugged or
