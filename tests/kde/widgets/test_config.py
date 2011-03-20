@@ -28,7 +28,7 @@ from __future__ import (print_function, division, unicode_literals,
 
 import pytest
 
-config = pytest.importorskip('synaptiks.kde.widget.config')
+config = pytest.importorskip('synaptiks.kde.widgets.config')
 
 from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtGui import QWidget, QHBoxLayout, QCheckBox, QLineEdit
