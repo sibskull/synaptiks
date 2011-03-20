@@ -66,7 +66,7 @@ def test_inheritance():
 
 @pytest.mark.skipif(b'config.xinput_has_touchpad')
 def test_no_touchpad(display):
-    assert not Touchpad.find_all()
+    assert not list(Touchpad.find_all(display))
     with pytest.raises(NoTouchpadError):
         Touchpad.find_first(display)
 
