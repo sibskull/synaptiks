@@ -72,6 +72,7 @@ from __future__ import (print_function, division, unicode_literals,
 
 
 __version__ = '0.6.0'
+__version_info__ = tuple(map(int, __version__.split('.')))
 
 WEBSITE_URL = 'http://synaptiks.lunaryorn.de'
 ISSUE_TRACKER_URL = 'https://github.com/lunaryorn/synaptiks/issues'
