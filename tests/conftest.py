@@ -81,8 +81,6 @@ def _read_device_database():
 
 
 def pytest_configure(config):
-    # make sure, that an application and consequently an X11 Display
-    # connection exists
     config.xinput_device_database = _read_device_database()
     for device in config.xinput_device_database.itervalues():
         if 'Synaptics Off' in device.properties:
