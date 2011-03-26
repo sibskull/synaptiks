@@ -218,6 +218,22 @@ class TouchpadManager(QStateMachine):
             else:
                 monitor.stop()
 
+    @property
+    def keyboard_monitor(self):
+        """
+        The keyboard monitor used by this manager (an instance of a subclass of
+        :class:`~synaptiks.monitors.AbstractKeyboardMonitor`).
+        """
+        return self._monitors['keyboard']
+
+    @property
+    def mouse_manager(self):
+        """
+        The :class:`~synaptiks.monitors.MouseDevicesManager` used by this
+        manager.
+        """
+        return self._monitors['mouses']
+
     monitor_mouses = _monitor_property('mouses', """\
 ``True``, if the touchpad is to switch, if mouses are plugged or unplugged,
 ``False`` otherwise.

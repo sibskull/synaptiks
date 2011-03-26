@@ -29,6 +29,10 @@
 
    .. autoattribute:: current_state_name
 
+   .. autoattribute:: keyboard_monitor
+
+   .. autoattribute:: mouse_manager
+
    .. autoattribute:: monitor_mouses
 
    .. autoattribute:: monitor_keyboard
