@@ -26,9 +26,10 @@
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
+import time
+
 import mock
 from PyQt4.QtCore import QSignalTransition
-
 
 from synaptiks.management import TouchpadManager
 
@@ -54,6 +55,26 @@ def pytest_funcarg__manager(request):
 
 
 class TestTouchpadManager(object):
+
+    def _loop_until(self, qtapp, cond_func):
+        while not cond_func():
+            qtapp.processEvents()
+            time.sleep(0.1)
+
+    def _wait_until_state(self, qtapp, manager, state_name):
+        self._loop_until(
+            qtapp, lambda: manager.current_state_name == state_name)
+
+    def _wait_until_started(self, qtapp, manager):
+        self._loop_until(qtapp, lambda: bool(manager.current_state))
+
+    def _start(self, qtapp, manager):
+        manager.start()
+        self._wait_until_started(qtapp, manager)
+
+    def _stop(self, qtapp, manager):
+        manager.stop()
+        self._loop_until(qtapp, lambda: not manager.isRunning())
 
     def test_touchpad(self, manager, touchpad):
         assert manager.touchpad is touchpad
@@ -87,30 +108,24 @@ class TestTouchpadManager(object):
         assert 'typingStopped' in str(temp_off_on.signal())
 
     def test_initial_state(self, qtapp, manager, touchpad):
-        manager.start()
-        while not manager.current_state:
-            qtapp.processEvents()
+        self._start(qtapp, manager)
         assert manager.current_state_name == 'on'
         assert not touchpad.off
 
     def test_keyboard_activity(self, qtapp, manager, touchpad):
-        manager.start()
-        while manager.current_state_name != 'temporarily_off':
-            manager._monitors['keyboard'].typingStarted.emit()
-            qtapp.processEvents()
+        self._start(qtapp, manager)
+        manager._monitors['keyboard'].typingStarted.emit()
+        self._wait_until_state(qtapp, manager, 'temporarily_off')
         assert touchpad.off
-        while manager.current_state_name != 'on':
-            manager._monitors['keyboard'].typingStopped.emit()
-            qtapp.processEvents()
+        manager._monitors['keyboard'].typingStopped.emit()
+        self._wait_until_state(qtapp, manager, 'on')
         assert not touchpad.off
 
     def test_mouse_plugging(self, qtapp, manager, touchpad, mouse_device):
-        manager.start()
-        while manager.current_state_name != 'off':
-            manager._monitors['mouses'].firstMousePlugged.emit(mouse_device)
-            qtapp.processEvents()
+        self._start(qtapp, manager)
+        manager._monitors['mouses'].firstMousePlugged.emit(mouse_device)
+        self._wait_until_state(qtapp, manager, 'off')
         assert touchpad.off
-        while manager.current_state_name != 'on':
-            manager._monitors['mouses'].lastMouseUnplugged.emit(mouse_device)
-            qtapp.processEvents()
+        manager._monitors['mouses'].lastMouseUnplugged.emit(mouse_device)
+        self._wait_until_state(qtapp, manager, 'on')
         assert not touchpad.off
