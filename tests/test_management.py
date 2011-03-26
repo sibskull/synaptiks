@@ -72,7 +72,7 @@ class TestTouchpadManager(object):
         off_on = manager.transitions[('off', 'on')][0]
         for transition in (on_off, temp_off_off, off_on):
             assert isinstance(transition, QSignalTransition)
-            assert transition.senderObject() is manager.mouse_manager
+            assert transition.senderObject() is manager._monitors['mouses']
         for transition in (on_off, temp_off_off):
             assert 'firstMousePlugged' in str(transition.signal())
         assert 'lastMouseUnplugged' in off_on.signal()
@@ -82,7 +82,7 @@ class TestTouchpadManager(object):
         temp_off_on = manager.transitions[('temporarily_off', 'on')][0]
         for transition in (on_temp_off, temp_off_on):
             assert isinstance(transition, QSignalTransition)
-            assert transition.senderObject() is manager.keyboard_monitor
+            assert transition.senderObject() is manager._monitors['keyboard']
         assert 'typingStarted' in str(on_temp_off.signal())
         assert 'typingStopped' in str(temp_off_on.signal())
 
@@ -96,21 +96,21 @@ class TestTouchpadManager(object):
     def test_keyboard_activity(self, qtapp, manager, touchpad):
         manager.start()
         while manager.current_state_name != 'temporarily_off':
-            manager.keyboard_monitor.typingStarted.emit()
+            manager._monitors['keyboard'].typingStarted.emit()
             qtapp.processEvents()
         assert touchpad.off
         while manager.current_state_name != 'on':
-            manager.keyboard_monitor.typingStopped.emit()
+            manager._monitors['keyboard'].typingStopped.emit()
             qtapp.processEvents()
         assert not touchpad.off
 
     def test_mouse_plugging(self, qtapp, manager, touchpad, mouse_device):
         manager.start()
         while manager.current_state_name != 'off':
-            manager.mouse_manager.firstMousePlugged.emit(mouse_device)
+            manager._monitors['mouses'].firstMousePlugged.emit(mouse_device)
             qtapp.processEvents()
         assert touchpad.off
         while manager.current_state_name != 'on':
-            manager.mouse_manager.lastMouseUnplugged.emit(mouse_device)
+            manager._monitors['mouses'].lastMouseUnplugged.emit(mouse_device)
             qtapp.processEvents()
         assert not touchpad.off

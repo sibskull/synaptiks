@@ -181,6 +181,28 @@ class TouchpadQtWrapper(QObject):
         self.touchpad.off = value
 
 
+class _monitor_property(object):
+    """
+    A property, which controls a monitor object in a :class:`TouchpadManager`
+    """
+
+    def __init__(self, monitor_name, doc):
+        self.monitor_name = monitor_name
+        self.__doc__ = doc
+
+    def __get__(self, obj, owner=None):
+        if obj is None:
+            return self
+        return self.monitor_name in obj._enabled_monitors
+
+    def __set__(self, obj, enabled):
+        if enabled:
+            obj._enabled_monitors.add(self.monitor_name)
+        else:
+            obj._enabled_monitors.discard(self.monitor_name)
+        obj._start_stop_monitors()
+
+
 class TouchpadManager(QStateMachine):
     """
     Manage the touchpad state state.
@@ -226,8 +248,9 @@ class TouchpadManager(QStateMachine):
         self.touchpad = touchpad
         self._touchpad_wrapper = TouchpadQtWrapper(self.touchpad, self)
         # setup monitoring objects
-        self.mouse_manager = MouseDevicesManager(self)
-        self.keyboard_monitor = create_keyboard_monitor(self)
+        self._monitors = {'mouses': MouseDevicesManager(self),
+                          'keyboard': create_keyboard_monitor(self)}
+        self._enabled_monitors = set()
         # setup the states:
         self.states = {}
         for name, touchpad_off in self._STATE_NAMES.iteritems():
@@ -242,14 +265,25 @@ class TouchpadManager(QStateMachine):
         # mouse management transitions
         for state in ('on', 'temporarily_off'):
             self._add_transition(
-                state, 'off', self.mouse_manager.firstMousePlugged)
+                state, 'off', self._monitors['mouses'].firstMousePlugged)
         self._add_transition(
-            'off', 'on', self.mouse_manager.lastMouseUnplugged)
+            'off', 'on', self._monitors['mouses'].lastMouseUnplugged)
         # keyboard management transitions
         self._add_transition('on', 'temporarily_off',
-                             self.keyboard_monitor.typingStarted)
+                             self._monitors['keyboard'].typingStarted)
         self._add_transition('temporarily_off', 'on',
-                             self.keyboard_monitor.typingStopped)
+                             self._monitors['keyboard'].typingStopped)
+        # start monitors
+        self.initialState().entered.connect(self._start_stop_monitors)
+        # stop monitors if the state machine is stopped
+        self.stopped.connect(self._stop_all_monitors)
+
+    def _stop_all_monitors(self):
+        """
+        Unconditionally stop all monitors.
+        """
+        for monitor in self._monitors.itervalues():
+            monitor.stop()
 
     def _add_transition(self, source, dest, signal):
         if isinstance(source, basestring):
@@ -291,42 +325,29 @@ class TouchpadManager(QStateMachine):
         if self.current_state:
             return unicode(self.current_state.objectName())
 
-    @property
-    def monitor_mouses(self):
+    def _start_stop_monitors(self):
         """
-        ``True``, if the touchpad is to switch, if mouses are plugged or
-        unplugged, ``False`` otherwise.
+        Reconfigure the internal monitoring.
 
-        If ``True``, the state machine will switch the touchpad off, if the
-        first mouse is plugged, and on again, if the last mouse is unplugged.
+        If the state machine is running, all enabled monitors are started, and
+        all disabled monitors are stopped.  Otherwise this method does nothing.
         """
-        return self.mouse_manager.is_running
+        if not self.isRunning():
+            return
+        for monitor_name, monitor in self._monitors.iteritems():
+            if monitor_name in self._enabled_monitors:
+                monitor.start()
+            else:
+                monitor.stop()
 
-    @monitor_mouses.setter
-    def monitor_mouses(self, enabled):
-        if enabled and not self.monitor_mouses:
-            # start the manager, if the initial state is entered
-            self.initialState().entered.connect(self.mouse_manager.start)
-            if self.isRunning():
-                self.mouse_manager.start()
-        elif not enabled and self.monitor_mouses:
-            self.mouse_manager.stop()
-            self.initialState().entered.disconnect(self.mouse_manager.start)
+    monitor_mouses = _monitor_property('mouses', """\
+``True``, if the touchpad is to switch, if mouses are plugged or unplugged,
+``False`` otherwise.
 
-    @property
-    def monitor_keyboard(self):
-        """
-        ``True``, if the touchpad is temporarily disabled on keyboard activity,
-        ``False`` otherwise.
-        """
-        return self.keyboard_monitor.is_running
+If ``True``, the state machine will switch the touchpad off, if the first mouse
+is plugged, and on again, if the last mouse is unplugged.
+""")
 
-    @monitor_keyboard.setter
-    def monitor_keyboard(self, enabled):
-        if enabled and not self.monitor_keyboard:
-            self.started.connect(self.keyboard_monitor.start)
-            if self.isRunning():
-                self.keyboard_monitor.start()
-        elif not enabled and self.monitor_keyboard:
-            self.keyboard_monitor.stop()
-            self.started.disconnect(self.keyboard_monitor.start)
+    monitor_keyboard = _monitor_property('keyboard', """\
+``True``, if the touchpad is temporarily disabled on keyboard activity,
+``False`` otherwise.""")
