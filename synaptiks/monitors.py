@@ -40,6 +40,7 @@ from itertools import ifilter
 from collections import namedtuple
 from itertools import izip
 from array import array
+from threading import Event
 
 import pyudev
 try:
@@ -49,6 +50,7 @@ except ImportError:
     dbus = None
 from pyudev.pyqt4 import QUDevMonitorObserver
 from PyQt4.QtCore import QObject, QTimer, QThread, QTime, pyqtSignal
+from PyQt4.QtGui import QApplication
 
 from synaptiks.qx11 import QX11Display
 from synaptiks._bindings import xlib
@@ -290,6 +292,8 @@ class EventRecorder(QThread):
 
     def __init__(self, parent=None):
         QThread.__init__(self, parent)
+        # to synchronize startup
+        self._started = Event()
         # XXX: dirty hack: ctypes insists on a per-instance reference to the
         # event handling callback, otherwise "self" is garbage in the event
         # handler, and access to "self" causes a segfault.  Reason is unknown
@@ -318,16 +322,27 @@ class EventRecorder(QThread):
         """
         Stop this recorder.
         """
+        if not self.isRunning():
+            return
+        self._started.wait()
         xrecord.disable_context(QX11Display(), self._context)
+        # immediately process the end of data event.  This allows us to wait
+        # for this thread to terminate in the next line, thus making this
+        # method synchronous.
+        QApplication.instance().processEvents()
+        self.wait()
+        self._started.clear()
 
     def _handle_event(self, _, data):
         with scoped_pointer(data, xrecord.free_data):
-            if data.contents.category != xrecord.FROM_SERVER:
-                # ignore client side events (e.g. START_OF_DATA)
-                return
-            event_type, keycode = data.contents.event
-            signal = self._event_signal_map[event_type]
-            signal.emit(keycode)
+            if data.contents.category == xrecord.START_OF_DATA:
+                # the recorder has started
+                self._started.set()
+            elif data.contents.category == xrecord.FROM_SERVER:
+                event_type, keycode = data.contents.event
+                signal = self._event_signal_map[event_type]
+                signal.emit(keycode)
+            # all other client side events are ignored (e.g. END_OF_DATA)
 
 
 class RecordingKeyboardMonitor(AbstractKeyboardMonitor):
