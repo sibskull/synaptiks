@@ -423,6 +423,7 @@ class RecordingKeyboardMonitor(AbstractKeyboardMonitor):
 
     def stop(self):
         AbstractKeyboardMonitor.stop(self)
+        self._idle_timer.stop()
         self._recorder.stop()
 
     @property
