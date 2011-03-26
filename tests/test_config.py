@@ -265,9 +265,15 @@ class TestTouchpadConfiguration(object):
         with pytest.raises(KeyError):
             touchpad_config['spam'] = mock.sentinel.value
 
-    def test_delitem(self, touchpad_config, key):
-        with pytest.raises(NotImplementedError):
+    def test_delitem(self, tmpdir, touchpad_config, key):
+        with config_home(tmpdir):
+            defaults_file = py.path.local(
+                config.get_touchpad_defaults_file_path())
+            keys = config.TouchpadConfiguration.CONFIG_KEYS
+            defaults_file.write(json.dumps(dict((k, 'default') for k in keys)))
+            assert touchpad_config[key] != 'default'
             del touchpad_config[key]
+            assert touchpad_config[key] == 'default'
 
     def test_save_without_filename(self, touchpad_config, tmpdir):
         keys = touchpad_config.CONFIG_KEYS
@@ -412,9 +418,11 @@ class TestManagerConfiguration(object):
         with pytest.raises(KeyError):
             manager_config['spam'] = 'eggs'
 
-    def test_delitem(self, manager_config, key):
-        with pytest.raises(NotImplementedError):
-            del manager_config[key]
+    def test_delitem(self, manager_config, manager_config_sample, key):
+        manager_config.update(manager_config_sample)
+        assert manager_config[key] != manager_config.defaults[key]
+        del manager_config[key]
+        assert manager_config[key] == manager_config.defaults[key]
 
     def test_save_without_filename(self, manager_config,
                                    manager_config_sample, tmpdir):

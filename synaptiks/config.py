@@ -158,6 +158,10 @@ class TouchpadConfiguration(MutableMapping):
     """
     A mutable mapping class representing the current configuration of the
     touchpad.
+
+    As a special case, deleting a key (e.g. ``del config['minimum_speed']``)
+    resets the setting back to its default value (as provided by
+    :attr:`defaults`).
     """
 
     CONFIG_KEYS = frozenset([
@@ -246,7 +250,9 @@ class TouchpadConfiguration(MutableMapping):
         setattr(self.touchpad, key, value)
 
     def __delitem__(self, key):
-        raise NotImplementedError
+        default = self.defaults.get(key)
+        if default is not None:
+            self[key] = default
 
     def save(self, filename=None):
         """
@@ -272,6 +278,10 @@ class ManagerConfiguration(MutableMapping):
     """
     A mutable mapping class representing the configuration of a
     :class:`~synaptiks.management.TouchpadManager`.
+
+    As a special case, deleting a key (e.g. ``del config['minimum_speed']``)
+    resets the setting back to its default value (as provided by
+    :attr:`defaults`).
     """
 
     #: A mapping with the default values for all configuration keys
@@ -370,7 +380,7 @@ class ManagerConfiguration(MutableMapping):
         setattr(target, key, value)
 
     def __delitem__(self, key):
-        raise NotImplementedError
+        self[key] = self._DEFAULTS[key]
 
     def save(self, filename=None):
         """
