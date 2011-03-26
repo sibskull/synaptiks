@@ -21,7 +21,7 @@ Mouse device monitoring
 
 .. autoclass:: MouseDevicesMonitor
 
-   .. attribute:: plugged_devices
+   .. autoattribute:: plugged_devices
 
    .. rubric:: Signals
 

@@ -110,8 +110,8 @@ class MouseDevicesMonitor(QObject):
     @property
     def plugged_devices(self):
         """
-        An iterator over all plugged mouse devices as :class:`MouseDevice`
-        objects.
+        An iterator over all currently plugged mouse devices as
+        :class:`MouseDevice` objects.
         """
         devices = self._udev.list_devices().match_subsystem(
             'input').match_property('ID_INPUT_MOUSE', True)
