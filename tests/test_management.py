@@ -153,3 +153,13 @@ class TestTouchpadManager(object):
         manager._monitors['mouses'].lastMouseUnplugged.emit(mouse_device)
         self._wait_until_state(qtapp, manager, 'on')
         assert not touchpad.off
+
+    def test_mouse_plugged_after_keyboard_activity(self, qtapp, manager,
+                                                   touchpad, mouse_device):
+        self._start(qtapp, manager)
+        manager._monitors['keyboard'].typingStarted.emit()
+        self._wait_until_state(qtapp, manager, 'temporarily_off')
+        assert touchpad.off
+        manager._monitors['mouses'].firstMousePlugged.emit(mouse_device)
+        self._wait_until_state(qtapp, manager, 'off')
+        assert touchpad.off
