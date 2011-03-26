@@ -86,6 +86,14 @@ def pytest_funcarg__config_widget(request):
 
 class TestConfigurationWidgetMixin(object):
 
+    def test_setup_no_defaults_attribute(self, qtapp, config):
+        invalid_config = dict(config)
+        assert not hasattr(invalid_config, 'defaults')
+        with pytest.raises(TypeError) as exc_info:
+            DummyConfigWidget(invalid_config)
+        msg = 'The given configuration does not provide defaults'
+        assert str(exc_info.value) == msg
+
     def test_setup(self, config_widget):
         config_widget.check('spam', False)
 

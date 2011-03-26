@@ -82,7 +82,13 @@ class ConfigurationWidgetMixin(object):
         default values.
 
         Call this in ``__init__()`` of your configuration widget.
+
+        Raise :attr:`TypeError`, if the given ``config`` does not have a
+        ``defaults`` attribute and thus does not provide any defaults.
         """
+        if not hasattr(config, 'defaults'):
+            raise TypeError(
+                'The given configuration does not provide defaults')
         self.__config = config
         self.__changed_keys = set()
         for widget in self._find_configuration_widgets():
