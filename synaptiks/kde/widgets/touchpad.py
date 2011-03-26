@@ -42,7 +42,6 @@ from PyQt4.QtGui import QWidget
 from PyKDE4.kdecore import i18nc
 from PyKDE4.kdeui import KTabWidget, KIconLoader, KComboBox
 
-from synaptiks.config import get_touchpad_defaults
 from synaptiks.kde.widgets import DynamicUserInterfaceMixin
 from synaptiks.kde.widgets.config import ConfigurationWidgetMixin
 
@@ -233,6 +232,3 @@ class TouchpadConfigurationWidget(KTabWidget, ConfigurationWidgetMixin):
         widget.
         """
         return self.touchpad_config.touchpad
-
-    def _get_defaults(self):
-        return get_touchpad_defaults()

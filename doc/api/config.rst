@@ -28,6 +28,8 @@ Touchpad configuration
 
    .. automethod:: __init__
 
+   .. autoattribute:: defaults
+
    .. automethod:: save
 
 
@@ -36,11 +38,11 @@ Manager Configuration
 
 .. autoclass:: ManagerConfiguration
 
-   .. autoattribute:: DEFAULTS
-
    .. automethod:: load
 
    .. automethod:: __init__
+
+   .. autoattribute:: defaults
 
    .. automethod:: save
 

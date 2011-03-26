@@ -53,18 +53,26 @@
     Handling of default values
     --------------------------
 
-    The touchpad manager configuration (see :class:`ManagerConfiguration`)
-    provides explicit defaults.  The touchpad configuration (see
-    :class:`TouchpadConfiguration`) however uses defaults provided by the
-    touchpad driver.
+    Configuration mappings provided by this module provide their default values
+    through a ``defaults`` property, see :attr:`TouchpadConfiguration.defaults`
+    and :attr:`ManagerConfiguration.defaults`.
 
-    As the touchpad driver doesn't expose special access to the default values,
-    **synaptiks** simply creates a :class:`TouchpadConfiguration` after session
-    startup, but *before* loading the actual configuration from disk.  At this
-    point, the touchpad still uses the driver default setting, which are now
-    dumped to a special file in JSON format (see
-    :func:`get_touchpad_defaults_file_path()`).  They can later be loaded using
-    :func:`get_touchpad_defaults()`.
+    In case of :class:`ManagerConfiguration` these are explicit default values,
+    which do not change.  :class:`TouchpadConfiguration` however uses the
+    defaults provided by the touchpad driver.
+
+    Unfortunately the touchpad driver does not provide special access to these
+    default values.  To work around this restriction, **synaptiks** saves the
+    touchpad configuration to disc (see
+    :func:`get_touchpad_defaults_file_path()`) right after session startup
+    (through an autostart command ``synaptikscfg init``, see
+    :ref:`script_usage`), before loading the actual configuration.  At this
+    point, the driver properties haven't yet been modified, and thus still
+    contain the default values.  These dumped defaults can later be loaded
+    through :func:`get_touchpad_defaults()` and are also returned by
+    :attr:`TouchpadConfiguration.defaults`.
+
+    .. _script_usage:
 
     Script usage
     ------------
@@ -201,6 +209,19 @@ class TouchpadConfiguration(MutableMapping):
         """
         self.touchpad = touchpad
 
+    @property
+    def defaults(self):
+        """
+        A dictionary of default values for this configuration.
+
+        The default values of this configuration are dynamically loaded from
+        disc, where the have been dumped to at session startup.
+
+        Use ``config.update(config.defaults)`` to restore the configuration to
+        its default values.
+        """
+        return get_touchpad_defaults()
+
     def __contains__(self, key):
         return key in self.CONFIG_KEYS
 
@@ -254,7 +275,7 @@ class ManagerConfiguration(MutableMapping):
     """
 
     #: A mapping with the default values for all configuration keys
-    DEFAULTS = {'monitor_mouses': False, 'ignored_mouses': [],
+    _DEFAULTS = {'monitor_mouses': False, 'ignored_mouses': [],
                 'monitor_keyboard': False, 'idle_time': 2.0,
                 'keys_to_ignore': 2}
 
@@ -272,7 +293,7 @@ class ManagerConfiguration(MutableMapping):
         default configuration file as returned by
         :func:`get_management_config_file_path`.  Otherwise the configuration
         is loaded from the given file.  If the file doesn't exist, the default
-        config as given by :attr:`DEFAULTS` is loaded.
+        config as given by :attr:`defaults` is loaded.
 
         After the configuration is loaded, it is applied to the given
         ``touchpad_manager``.
@@ -289,13 +310,27 @@ class ManagerConfiguration(MutableMapping):
             filename = get_management_config_file_path()
         config = cls(touchpad_manager)
         # use defaults for all non-existing settings
-        loaded_config = dict(cls.DEFAULTS)
+        loaded_config = dict(cls._DEFAULTS)
         loaded_config.update(load_json(filename, default={}))
         config.update(loaded_config)
         return config
 
     def __init__(self, touchpad_manager):
         self.touchpad_manager = touchpad_manager
+
+    @property
+    def defaults(self):
+        """
+        A dictionary of default values for this configuration.
+
+        This dictionary is a copy, modifications do not affect future access to
+        this attribute.  Consequently you are free to modify this dictionary as
+        you like.
+
+        Use ``config.update(config.defaults)`` to restore the configuration to
+        its default values.
+        """
+        return dict(self._DEFAULTS)
 
     @property
     def mouse_manager(self):
@@ -306,13 +341,13 @@ class ManagerConfiguration(MutableMapping):
         return self.touchpad_manager.keyboard_monitor
 
     def __contains__(self, key):
-        return key in self.DEFAULTS
+        return key in self._DEFAULTS
 
     def __len__(self):
-        return len(self.DEFAULTS)
+        return len(self._DEFAULTS)
 
     def __iter__(self):
-        return iter(self.DEFAULTS)
+        return iter(self._DEFAULTS)
 
     def __getitem__(self, key):
         if key not in self:

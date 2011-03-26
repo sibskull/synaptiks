@@ -69,16 +69,17 @@ class ConfigurationWidgetMixin(object):
     :meth:`_convert_from_property()`.  The default implementations do not
     perform any conversion.
 
-    An at last, classes deriving from this mixin, must define a
-    ``configurationChanged(bool)`` signal, and a :meth:`_get_defaults()`, which
-    returns default values for all configuration keys.
+    At last, classes deriving from this mixin, must define a
+    ``configurationChanged(bool)`` signal.
 
     See :class:`TouchpadConfigurationWidget` for an example.
     """
 
     def _setup(self, config):
         """
-        Setup the mixin with the given ``config`` mapping.
+        Setup the mixin with the given ``config`` mapping.  This mapping must
+        have an attribute called ``defaults``, which provides a dictionary of
+        default values.
 
         Call this in ``__init__()`` of your configuration widget.
         """
@@ -190,32 +191,22 @@ class ConfigurationWidgetMixin(object):
         """
         return self.__config != self._get_mapping_from_widgets()
 
-    def load_defaults(self, defaults=None):
+    def load_defaults(self):
         """
-        Load the default values in the ``defaults`` mapping.
-
-        If ``defaults`` is ``None``, use the standard defaults provided by this
-        widget.
+        Load the default values from the underlying configuration.
         """
-        if defaults is None:
-            defaults = self._get_defaults()
-        self._update_widgets_from_mapping(defaults)
+        self._update_widgets_from_mapping(self.__config.defaults)
 
-    def shows_defaults(self, defaults=None):
+    def shows_defaults(self):
         """
         Check, if the configuration widgets currently show the default values
-        given by the ``defaults`` mapping.
-
-        If ``defaults`` is ``None``, use the standard defaults provided by this
-        widget (see :meth:`_get_defaults()`).
+        of the underlying configuration.
 
         Return ``True``, if the given defaults are contained in the widgets, or
         ``False`` otherwise.
         """
-        if defaults is None:
-            defaults = self._get_defaults()
         current = self._get_mapping_from_widgets()
-        return current == defaults
+        return current == self.__config.defaults
 
     def load_configuration(self):
         """

@@ -77,6 +77,3 @@ class TouchpadManagementWidget(QWidget, ConfigurationWidgetMixin,
             return [unicode(d) for d in value]
         return ConfigurationWidgetMixin._convert_from_property(
             self, key, value)
-
-    def _get_defaults(self):
-        return self.management_config.DEFAULTS

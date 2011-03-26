@@ -71,7 +71,7 @@ def pytest_generate_tests(metafunc):
                 metafunc.addcall(funcargs=dict(key=key), id=key)
     elif metafunc.cls == TestManagerConfiguration:
         if 'key' in metafunc.funcargnames:
-            for key in config.ManagerConfiguration.DEFAULTS:
+            for key in config.ManagerConfiguration._DEFAULTS:
                 metafunc.addcall(funcargs=dict(key=key), id=key)
 
 
@@ -209,6 +209,18 @@ class TestTouchpadConfiguration(object):
         assert touchpad_config.touchpad is touchpad
         assert all(getattr(touchpad, k) == k for k in keys)
 
+    def test_defaults_empty(self, tmpdir, touchpad_config):
+        with config_home(tmpdir):
+            assert touchpad_config.defaults == {}
+
+    def test_defaults(self, tmpdir, touchpad_config):
+        with config_home(tmpdir):
+            defaults_file = py.path.local(
+                config.get_touchpad_defaults_file_path())
+            data = {'spam': 'eggs'}
+            defaults_file.write(json.dumps(data))
+            assert touchpad_config.defaults == data
+
     def test_init(self):
         cfg = config.TouchpadConfiguration(mock.sentinel.touchpad)
         assert cfg.touchpad is mock.sentinel.touchpad
@@ -284,13 +296,13 @@ class TestManagerConfiguration(object):
         with config_home(tmpdir):
             manager_config = config.ManagerConfiguration.load(touchpad_manager)
             assert manager_config.touchpad_manager is touchpad_manager
-            assert dict(manager_config) == manager_config.DEFAULTS
+            assert dict(manager_config) == manager_config._DEFAULTS
 
     def test_load_without_filename_existing(self, tmpdir, touchpad_manager):
         with config_home(tmpdir):
             config_file = py.path.local(
                 config.get_management_config_file_path())
-            keys = config.ManagerConfiguration.DEFAULTS
+            keys = config.ManagerConfiguration._DEFAULTS
             config_file.write(json.dumps(dict((k, k) for k in keys)))
             manager_config = config.ManagerConfiguration.load(touchpad_manager)
             assert manager_config.touchpad_manager is touchpad_manager
@@ -302,22 +314,24 @@ class TestManagerConfiguration(object):
         manager_config = config.ManagerConfiguration.load(
             touchpad_manager, str(config_file))
         assert manager_config.touchpad_manager is touchpad_manager
-        assert dict(manager_config) == manager_config.DEFAULTS
+        assert dict(manager_config) == manager_config._DEFAULTS
 
     def test_load_with_filename_existing(self, tmpdir, touchpad_manager):
         config_file = tmpdir.join('test.json')
-        keys = config.ManagerConfiguration.DEFAULTS
+        keys = config.ManagerConfiguration._DEFAULTS
         config_file.write(json.dumps(dict((k, k) for k in keys)))
         manager_config = config.ManagerConfiguration.load(
             touchpad_manager, str(config_file))
         assert manager_config.touchpad_manager is touchpad_manager
         assert all(manager_config[k] == k for k in keys)
 
-    def test_defaults(self):
-        assert config.ManagerConfiguration.DEFAULTS == \
-               {'monitor_mouses': False, 'ignored_mouses': [],
-                'monitor_keyboard': False, 'idle_time': 2.0,
-                'keys_to_ignore': 2}
+    def test_defaults(self, manager_config):
+        defaults = config.ManagerConfiguration._DEFAULTS
+        assert defaults == {
+            'monitor_mouses': False, 'ignored_mouses': [],
+            'monitor_keyboard': False, 'idle_time': 2.0,
+            'keys_to_ignore': 2}
+        assert manager_config.defaults == defaults
 
     def test_init(self):
         cfg = config.ManagerConfiguration(mock.sentinel.manager)
@@ -335,10 +349,10 @@ class TestManagerConfiguration(object):
         assert key in manager_config
 
     def test_len(self, manager_config):
-        assert len(manager_config) == len(config.ManagerConfiguration.DEFAULTS)
+        assert len(manager_config) == len(config.ManagerConfiguration._DEFAULTS)
 
     def test_iter(self, manager_config):
-        assert set(manager_config) == set(config.ManagerConfiguration.DEFAULTS)
+        assert set(manager_config) == set(config.ManagerConfiguration._DEFAULTS)
 
     def test_getitem(self, manager_config, key):
         assert manager_config[key] is mock.sentinel.value
@@ -365,19 +379,19 @@ class TestManagerConfiguration(object):
             del manager_config[key]
 
     def test_save_without_filename(self, manager_config, tmpdir):
-        for key in manager_config.DEFAULTS:
+        for key in manager_config._DEFAULTS:
             manager_config[key] = key
         with config_home(tmpdir):
             manager_config.save()
             config_file = py.path.local(
                 config.get_management_config_file_path())
             contents = json.loads(config_file.read())
-            assert contents == dict((k, k) for k in manager_config.DEFAULTS)
+            assert contents == dict((k, k) for k in manager_config._DEFAULTS)
 
     def test_save_with_filename(self, manager_config, tmpdir):
-        for key in manager_config.DEFAULTS:
+        for key in manager_config._DEFAULTS:
             manager_config[key] = key
         config_file = tmpdir.join('test.json')
         manager_config.save(str(config_file))
         contents = json.loads(config_file.read())
-        assert contents == dict((k, k) for k in manager_config.DEFAULTS)
+        assert contents == dict((k, k) for k in manager_config._DEFAULTS)

@@ -34,6 +34,16 @@ from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtGui import QWidget, QHBoxLayout, QCheckBox, QLineEdit
 
 
+class DummyConfig(dict):
+    """
+    A dummy configuration object for use in the tests.
+    """
+
+    @property
+    def defaults(self):
+        return {'lineedit': 'spam', 'checkbox': False}
+
+
 class DummyConfigWidget(QWidget, config.ConfigurationWidgetMixin):
 
     NAME_PREFIX = 'dummy'
@@ -54,9 +64,6 @@ class DummyConfigWidget(QWidget, config.ConfigurationWidgetMixin):
         layout.addWidget(self.lineedit)
         self._setup(config)
 
-    def _get_defaults(self):
-        return {'lineedit': 'spam', 'checkbox': False}
-
     def change(self, text, check_state):
         self.lineedit.setText(text)
         self.checkbox.setChecked(check_state)
@@ -68,7 +75,7 @@ class DummyConfigWidget(QWidget, config.ConfigurationWidgetMixin):
 
 
 def pytest_funcarg__config(request):
-    return {'lineedit': 'spam', 'checkbox': False}
+    return DummyConfig({'lineedit': 'spam', 'checkbox': False})
 
 
 def pytest_funcarg__config_widget(request):
