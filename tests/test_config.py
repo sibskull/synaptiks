@@ -35,6 +35,7 @@ import pytest
 import py.path
 
 from synaptiks import config
+from synaptiks.management import TouchpadManager
 from synaptiks.touchpad import Touchpad, device_property
 
 
@@ -75,27 +76,26 @@ def pytest_generate_tests(metafunc):
                 metafunc.addcall(funcargs=dict(key=key), id=key)
 
 
-def pytest_funcarg__touchpad_config(request):
+def pytest_funcarg__touchpad(request):
     keys = config.TouchpadConfiguration.CONFIG_KEYS
-    touchpad = mock.Mock(name='Touchpad', spec_set=list(keys))
+    return mock.Mock(name='Touchpad', spec_set=list(keys))
+
+
+def pytest_funcarg__touchpad_config(request):
+    touchpad = request.getfuncargvalue('touchpad')
     return config.TouchpadConfiguration(touchpad)
 
 
 def pytest_funcarg__touchpad_manager(request):
-    touchpad_manager = mock.Mock(
-        name='TouchpadManager',
-        spec_set=['monitor_mouses', 'monitor_keyboard',
-                  'mouse_manager', 'keyboard_monitor'])
-    touchpad_manager.monitor_mouses = mock.sentinel.value
-    touchpad_manager.monitor_keyboard = mock.sentinel.value
-    touchpad_manager.mouse_manager = mock.Mock(
-        name='MouseManager', spec_set=['ignored_mouses'])
-    touchpad_manager.mouse_manager.ignored_mouses = mock.sentinel.value
-    touchpad_manager.keyboard_monitor = mock.Mock(
-        name='KeyboardMonitor', spec_set=['keys_to_ignore', 'idle_time'])
-    touchpad_manager.keyboard_monitor.keys_to_ignore = mock.sentinel.value
-    touchpad_manager.keyboard_monitor.idle_time = mock.sentinel.value
-    return touchpad_manager
+    # the touchpad manager requires a X11 display connection
+    request.getfuncargvalue('qtapp')
+    touchpad = request.getfuncargvalue('touchpad')
+    return TouchpadManager(touchpad)
+
+
+def pytest_funcarg__manager_config_sample(request):
+    return {'monitor_mouses': True, 'ignored_mouses': ['spam', 'eggs'],
+            'monitor_keyboard': True, 'idle_time': 0.5, 'keys_to_ignore': 1}
 
 
 def pytest_funcarg__manager_config(request):
@@ -179,7 +179,7 @@ class TestTouchpadConfiguration(object):
             touchpad_config = config.TouchpadConfiguration.load(touchpad)
             assert touchpad_config.touchpad is touchpad
 
-    def test_load_without_filename_existing(self, tmpdir):
+    def test_load_without_filename_existing(self, tmpdir, manager_config_sample):
         with config_home(tmpdir):
             config_file = py.path.local(config.get_touchpad_config_file_path())
             keys = config.TouchpadConfiguration.CONFIG_KEYS
@@ -291,22 +291,57 @@ class TestTouchpadConfiguration(object):
 
 class TestManagerConfiguration(object):
 
+    def check_manager(self, manager, config):
+        __tracebackhide__ = True
+        assert manager.monitor_mouses == config['monitor_mouses']
+        assert manager.monitor_keyboard == config['monitor_keyboard']
+        keyboard_monitor = manager.keyboard_monitor
+        assert keyboard_monitor.idle_time == config['idle_time']
+        assert keyboard_monitor.keys_to_ignore == config['keys_to_ignore']
+        mouse_manager = manager.mouse_manager
+        assert mouse_manager.ignored_mouses == config['ignored_mouses']
+
+    def check_config_equals(self, left, right):
+        __tracebackhide__ = True
+        left_d = dict(left)
+        right_d = dict(right)
+        left_d['ignored_mouses'].sort()
+        right_d['ignored_mouses'].sort()
+        assert left == right
+
+    def get_value(self, manager, key):
+        if key in ('idle_time', 'keys_to_ignore'):
+            return getattr(manager.keyboard_monitor, key)
+        elif key == 'ignored_mouses':
+            return getattr(manager.mouse_manager, key)
+        else:
+            return getattr(manager, key)
+
+    def test_sample(self, manager_config_sample):
+        """
+        Sanity check for the non-default configuration, in case someone changes
+        the manager configuration defaults.
+        """
+        assert manager_config_sample != config.ManagerConfiguration._DEFAULTS
+
     def test_load_without_filename_non_existing(self, tmpdir,
                                                 touchpad_manager):
         with config_home(tmpdir):
             manager_config = config.ManagerConfiguration.load(touchpad_manager)
             assert manager_config.touchpad_manager is touchpad_manager
-            assert dict(manager_config) == manager_config._DEFAULTS
+            assert manager_config == manager_config.defaults
+            self.check_manager(touchpad_manager, manager_config.defaults)
 
-    def test_load_without_filename_existing(self, tmpdir, touchpad_manager):
+    def test_load_without_filename_existing(self, tmpdir, touchpad_manager,
+                                            manager_config_sample):
         with config_home(tmpdir):
             config_file = py.path.local(
                 config.get_management_config_file_path())
-            keys = config.ManagerConfiguration._DEFAULTS
-            config_file.write(json.dumps(dict((k, k) for k in keys)))
+            config_file.write(json.dumps(manager_config_sample))
             manager_config = config.ManagerConfiguration.load(touchpad_manager)
             assert manager_config.touchpad_manager is touchpad_manager
-            assert all(manager_config[k] == k for k in keys)
+            self.check_config_equals(manager_config, manager_config_sample)
+            self.check_manager(touchpad_manager, manager_config_sample)
 
     def test_load_with_filename_non_existing(self, tmpdir, touchpad_manager):
         config_file = tmpdir.join('test.json')
@@ -314,16 +349,18 @@ class TestManagerConfiguration(object):
         manager_config = config.ManagerConfiguration.load(
             touchpad_manager, str(config_file))
         assert manager_config.touchpad_manager is touchpad_manager
-        assert dict(manager_config) == manager_config._DEFAULTS
+        assert manager_config == manager_config.defaults
+        self.check_manager(touchpad_manager, manager_config.defaults)
 
-    def test_load_with_filename_existing(self, tmpdir, touchpad_manager):
+    def test_load_with_filename_existing(self, tmpdir, touchpad_manager,
+                                         manager_config_sample):
         config_file = tmpdir.join('test.json')
-        keys = config.ManagerConfiguration._DEFAULTS
-        config_file.write(json.dumps(dict((k, k) for k in keys)))
+        config_file.write(json.dumps(manager_config_sample))
         manager_config = config.ManagerConfiguration.load(
             touchpad_manager, str(config_file))
         assert manager_config.touchpad_manager is touchpad_manager
-        assert all(manager_config[k] == k for k in keys)
+        self.check_config_equals(manager_config, manager_config_sample)
+        self.check_manager(touchpad_manager, manager_config_sample)
 
     def test_defaults(self, manager_config):
         defaults = config.ManagerConfiguration._DEFAULTS
@@ -354,21 +391,22 @@ class TestManagerConfiguration(object):
     def test_iter(self, manager_config):
         assert set(manager_config) == set(config.ManagerConfiguration._DEFAULTS)
 
-    def test_getitem(self, manager_config, key):
-        assert manager_config[key] is mock.sentinel.value
+    def test_getitem(self, touchpad_manager, manager_config, key):
+        assert manager_config[key] == self.get_value(touchpad_manager, key)
 
     def test_getitem_unknown_key(self, manager_config):
         with pytest.raises(KeyError):
             manager_config['spam']
 
-    def test_setitem(self, manager_config, key):
-        manager_config[key] = 'eggs'
+    def test_setitem(self, touchpad_manager,
+                     manager_config, manager_config_sample, key):
+        value = manager_config_sample[key]
+        manager_config[key] = value
+        config_value = self.get_value(touchpad_manager, key)
         if key == 'ignored_mouses':
-            assert manager_config.mouse_manager.ignored_mouses == 'eggs'
-        elif key in ('idle_time', 'keys_to_ignore'):
-            assert getattr(manager_config.keyboard_monitor, key) == 'eggs'
-        else:
-            assert getattr(manager_config.touchpad_manager, key) == 'eggs'
+            config_value.sort()
+            value.sort()
+        assert config_value == value
 
     def test_setitem_unknown_key(self, manager_config):
         with pytest.raises(KeyError):
@@ -378,20 +416,20 @@ class TestManagerConfiguration(object):
         with pytest.raises(NotImplementedError):
             del manager_config[key]
 
-    def test_save_without_filename(self, manager_config, tmpdir):
-        for key in manager_config._DEFAULTS:
-            manager_config[key] = key
+    def test_save_without_filename(self, manager_config,
+                                   manager_config_sample, tmpdir):
+        manager_config.update(manager_config_sample)
         with config_home(tmpdir):
             manager_config.save()
             config_file = py.path.local(
                 config.get_management_config_file_path())
             contents = json.loads(config_file.read())
-            assert contents == dict((k, k) for k in manager_config._DEFAULTS)
+            self.check_config_equals(contents, manager_config_sample)
 
-    def test_save_with_filename(self, manager_config, tmpdir):
-        for key in manager_config._DEFAULTS:
-            manager_config[key] = key
+    def test_save_with_filename(self, manager_config,
+                                manager_config_sample, tmpdir):
+        manager_config.update(manager_config_sample)
         config_file = tmpdir.join('test.json')
         manager_config.save(str(config_file))
         contents = json.loads(config_file.read())
-        assert contents == dict((k, k) for k in manager_config._DEFAULTS)
+        self.check_config_equals(contents, manager_config_sample)
