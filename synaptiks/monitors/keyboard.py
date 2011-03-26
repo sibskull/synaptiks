@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -23,145 +23,34 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-
 """
-    synaptiks.monitors
-    ==================
+    synaptiks.monitors.keyboard
+    ===========================
 
-    Monitor classes for various external event sources.
+    Implementation of keyboard monitoring.
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
 
+
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
-from itertools import ifilter
-from collections import namedtuple
-from itertools import izip
-from array import array
 from threading import Event
+from array import array
+from itertools import izip
 
-import pyudev
-try:
-    import dbus
-    from  dbus.mainloop.glib import DBusGMainLoop
-except ImportError:
-    dbus = None
-from pyudev.pyqt4 import QUDevMonitorObserver
-from PyQt4.QtCore import QObject, QTimer, QThread, QTime, pyqtSignal
+from PyQt4.QtCore import QObject, QTimer, QTime, QThread, pyqtSignal
 from PyQt4.QtGui import QApplication
 
 from synaptiks.qx11 import QX11Display
 from synaptiks._bindings import xlib
-try:
-    from synaptiks._bindings import xrecord
-except ImportError:
-    xrecord = None
+from synaptiks._bindings import xrecord
 from synaptiks._bindings.util import scoped_pointer
 
 
-def _is_mouse(device):
-    return (device.sys_name.startswith('mouse') and
-            device.get('ID_INPUT_MOUSE') == '1' and
-            not device.get('ID_INPUT_TOUCHPAD') == '1')
-
-
-class MouseDevice(namedtuple('_MouseDevice', ['serial', 'name'])):
-    """
-    A :func:`~collections.namedtuple()` representing a mouse device.
-
-    A mouse device currently has two attributes, the order corresponds to the
-    tuple index:
-
-    - :attr:`serial`
-    - :attr:`name`
-    """
-
-    @classmethod
-    def from_udev(cls, device):
-        """
-        Create a :class:`MouseDevice` tuple from a :class:`pyudev.Device`.
-        """
-        # The name is available from the parent device of the actual event
-        # device.  The parent represents the actual physical device.  The name
-        # may be decorated with quotation marks, which are removed for the sake
-        # of a clean represenation
-        return cls(device['ID_SERIAL'], device.parent['NAME'].strip('"'))
-
-
-class MouseDevicesMonitor(QObject):
-    """
-    Watch for plugged or unplugged mouse devices.
-    """
-
-    #: Qt signal, which is emitted, when a mouse is plugged.  The slot gets a
-    #: single argument of :class:`MouseDevice`, which represents the plugged
-    #: mouse device
-    mousePlugged = pyqtSignal(MouseDevice)
-    #: Qt signal, which is emitted, when a mouse is unplugged.  The slot gets a
-    #: single argument of type :class:`MouseDevice`, which represents the
-    #: unplugged mouse device
-    mouseUnplugged = pyqtSignal(MouseDevice)
-
-    def __init__(self, parent=None):
-        """
-        Create a new monitor.
-
-        ``parent`` is the parent :class:`~PyQt4.QtCore.QObject`.
-        """
-        QObject.__init__(self, parent)
-        self._udev = pyudev.Context()
-        self._notifier = QUDevMonitorObserver(
-            pyudev.Monitor.from_netlink(self._udev), self)
-        self._notifier.deviceEvent.connect(self._handle_udev_event)
-        self._notifier.monitor.filter_by('input')
-        self._notifier.monitor.start()
-        self._event_signal_map = dict(
-            add=self.mousePlugged, remove=self.mouseUnplugged)
-
-    @property
-    def plugged_devices(self):
-        """
-        An iterator over all plugged mouse devices as :class:`MouseDevice`
-        objects.
-        """
-        devices = self._udev.list_devices().match_subsystem(
-            'input').match_property('ID_INPUT_MOUSE', True)
-        for device in ifilter(_is_mouse, devices):
-            yield MouseDevice.from_udev(device)
-
-    def _handle_udev_event(self, evt, device):
-        signal = self._event_signal_map.get(unicode(evt))
-        if signal and _is_mouse(device):
-            signal.emit(MouseDevice.from_udev(device))
-
-
-def create_keyboard_monitor(parent=None):
-    """
-    Create a new keyboard monitor:
-
-    >>> monitor = create_keyboard_monitor(parent)
-    >>> monitor.idle_time = 0.5
-    >>> monitor.keys_to_ignore = monitor.IGNORE_MODIFIER_COMBOS
-    >>> monitor.typingStarted.connect(lambda: print('typing started'))
-    >>> monitor.typingStopped.connect(lambda: print('typing stopped'))
-    >>> monitor.start()
-
-    This function automatically chooses the "best" available implementation.
-    Currently this means, that a :class:`RecordingKeyboardMonitor` is created,
-    if the XRecord extension is available.  Otherwise this functions falls back
-    to :class:`PollingKeyboardMonitor`.
-
-    ``parent`` is the parent :class:`~PyQt4.QtCore.QObject`.
-
-    Return an implementation of :class:`AbstractKeyboardMonitor`.
-    """
-    if xrecord:
-        success, _ = xrecord.query_version(QX11Display())
-        if success:
-            return RecordingKeyboardMonitor(parent)
-    return PollingKeyboardMonitor(parent)
+__all__ = ['create_keyboard_monitor', 'AbstractKeyboardMonitor',
+           'PollingKeyboardMonitor', 'RecordingKeyboardMonitor']
 
 
 class AbstractKeyboardMonitor(QObject):
@@ -547,69 +436,28 @@ class PollingKeyboardMonitor(AbstractKeyboardMonitor):
             self.typingStopped.emit()
 
 
-def create_resume_monitor(parent=None):
+def create_keyboard_monitor(parent=None):
     """
-    Create a new resume monitor:
+    Create a new keyboard monitor:
 
-    >>> monitor = create_resume_monitor(parent)
-    >>> monitor.resuming.connect(lambda: print('system is resuming'))
+    >>> monitor = create_keyboard_monitor(parent)
+    >>> monitor.idle_time = 0.5
+    >>> monitor.keys_to_ignore = monitor.IGNORE_MODIFIER_COMBOS
+    >>> monitor.typingStarted.connect(lambda: print('typing started'))
+    >>> monitor.typingStopped.connect(lambda: print('typing stopped'))
+    >>> monitor.start()
 
     This function automatically chooses the "best" available implementation.
-    Currently this means, that a :class:`UPowerResumeMonitor` is created, if
-    UPower is installed and working.  Otherwise ``None`` is returned.
+    Currently this means, that a :class:`RecordingKeyboardMonitor` is created,
+    if the XRecord extension is available.  Otherwise this functions falls back
+    to :class:`PollingKeyboardMonitor`.
 
-    .. note::
+    ``parent`` is the parent :class:`~PyQt4.QtCore.QObject`.
 
-       This should actually be the task of KDEs hardware abstraction library
-       Solid.  It indeed provides this functionality through the
-       ``Solid::PowerManagement::Notifier::resumingFromSuspend`` signal, but
-       unfortunately the ``Notifier`` class is not wrapped by PyKDE.
-
-    Return an implementation of :class:`AbstractResumeMonitor`, or ``None``, if
-    this system does not support monitoring of power state.
+    Return an implementation of :class:`AbstractKeyboardMonitor`.
     """
-    if dbus:
-        bus = dbus.SystemBus(mainloop=DBusGMainLoop())
-        activatable_names = bus.list_activatable_names()
-        if 'org.freedesktop.UPower' in activatable_names:
-            # UPower is available on the system bus
-            return UPowerResumeMonitor(parent)
-    # no power state monitoring available
-    return None
-
-
-class AbstractResumeMonitor(QObject):
-    """
-    Abstract base class for suspend monitors.
-
-    This class defines the interface for classes, which monitor the systems
-    power state and emit :attr:`resuming`, whenever the system resumes from a
-    sleep state.
-
-    Use :func:`create_resume_monitor()` to create an instance of the "best"
-    implementation of this class.
-    """
-
-    #: Qt signal, emitted whenever the system resumes from a sleep state.  Has
-    #: no arguments.
-    resuming = pyqtSignal()
-
-
-class UPowerResumeMonitor(AbstractResumeMonitor):
-    """
-    Implementation of :class:`AbstractResumeMonitor`, which uses UPower_ to
-    monitor the system's power state.
-
-    .. _UPower: http://upower.freedesktop.org
-    """
-
-    UPOWER_SERVICE_NAME = 'org.freedesktop.UPower'
-    UPOWER_INTERFACE = 'org.freedesktop.UPower'
-    UPOWER_OBJECT_PATH = '/org/freedesktop/UPower'
-
-    def __init__(self, parent=None):
-        AbstractResumeMonitor.__init__(self, parent)
-        self._bus = dbus.SystemBus(mainloop=DBusGMainLoop())
-        self._bus.add_signal_receiver(
-            self.resuming.emit, 'Resuming', self.UPOWER_SERVICE_NAME,
-            self.UPOWER_INTERFACE, self.UPOWER_OBJECT_PATH)
+    if xrecord:
+        success, _ = xrecord.query_version(QX11Display())
+        if success:
+            return RecordingKeyboardMonitor(parent)
+    return PollingKeyboardMonitor(parent)

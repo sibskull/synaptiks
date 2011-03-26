@@ -74,7 +74,7 @@ setup(
         'Topic :: Utilities',
         ],
     packages=['synaptiks', 'synaptiks.kde', 'synaptiks.kde.widgets',
-              'synaptiks._bindings'],
+              'synaptiks.monitors', 'synaptiks._bindings'],
     package_data={
         'synaptiks.kde.widgets': ['ui/*.ui'],
         },
