@@ -76,6 +76,12 @@ class TestTouchpadManager(object):
         manager.stop()
         self._loop_until(qtapp, lambda: not manager.isRunning())
 
+    def test_keyboard_monitor(self, manager):
+        assert manager.keyboard_monitor is manager._monitors['keyboard']
+
+    def test_mouse_manager(self, manager):
+        assert manager.mouse_manager is manager._monitors['mouses']
+
     def test_touchpad(self, manager, touchpad):
         assert manager.touchpad is touchpad
 
@@ -93,7 +99,7 @@ class TestTouchpadManager(object):
         off_on = manager.transitions[('off', 'on')][0]
         for transition in (on_off, temp_off_off, off_on):
             assert isinstance(transition, QSignalTransition)
-            assert transition.senderObject() is manager._monitors['mouses']
+            assert transition.senderObject() is manager.mouse_manager
         for transition in (on_off, temp_off_off):
             assert 'firstMousePlugged' in str(transition.signal())
         assert 'lastMouseUnplugged' in off_on.signal()
@@ -103,7 +109,7 @@ class TestTouchpadManager(object):
         temp_off_on = manager.transitions[('temporarily_off', 'on')][0]
         for transition in (on_temp_off, temp_off_on):
             assert isinstance(transition, QSignalTransition)
-            assert transition.senderObject() is manager._monitors['keyboard']
+            assert transition.senderObject() is manager.keyboard_monitor
         assert 'typingStarted' in str(on_temp_off.signal())
         assert 'typingStopped' in str(temp_off_on.signal())
 
@@ -122,11 +128,11 @@ class TestTouchpadManager(object):
         assert manager.isRunning()
         assert manager.monitor_keyboard
         assert manager.monitor_mouses
-        assert manager._monitors['keyboard'].is_running
-        assert manager._monitors['mouses'].is_running
+        assert manager.keyboard_monitor.is_running
+        assert manager.mouse_manager.is_running
         self._stop(qtapp, manager)
-        assert not manager._monitors['keyboard'].is_running
-        assert not manager._monitors['mouses'].is_running
+        assert not manager.keyboard_monitor.is_running
+        assert not manager.mouse_manager.is_running
         assert manager.monitor_keyboard
         assert manager.monitor_mouses
 
@@ -137,28 +143,28 @@ class TestTouchpadManager(object):
 
     def test_keyboard_activity(self, qtapp, manager, touchpad):
         self._start(qtapp, manager)
-        manager._monitors['keyboard'].typingStarted.emit()
+        manager.keyboard_monitor.typingStarted.emit()
         self._wait_until_state(qtapp, manager, 'temporarily_off')
         assert touchpad.off
-        manager._monitors['keyboard'].typingStopped.emit()
+        manager.keyboard_monitor.typingStopped.emit()
         self._wait_until_state(qtapp, manager, 'on')
         assert not touchpad.off
 
     def test_mouse_plugging(self, qtapp, manager, touchpad, mouse_device):
         self._start(qtapp, manager)
-        manager._monitors['mouses'].firstMousePlugged.emit(mouse_device)
+        manager.mouse_manager.firstMousePlugged.emit(mouse_device)
         self._wait_until_state(qtapp, manager, 'off')
         assert touchpad.off
-        manager._monitors['mouses'].lastMouseUnplugged.emit(mouse_device)
+        manager.mouse_manager.lastMouseUnplugged.emit(mouse_device)
         self._wait_until_state(qtapp, manager, 'on')
         assert not touchpad.off
 
     def test_mouse_plugged_after_keyboard_activity(self, qtapp, manager,
                                                    touchpad, mouse_device):
         self._start(qtapp, manager)
-        manager._monitors['keyboard'].typingStarted.emit()
+        manager.keyboard_monitor.typingStarted.emit()
         self._wait_until_state(qtapp, manager, 'temporarily_off')
         assert touchpad.off
-        manager._monitors['mouses'].firstMousePlugged.emit(mouse_device)
+        manager.mouse_manager.firstMousePlugged.emit(mouse_device)
         self._wait_until_state(qtapp, manager, 'off')
         assert touchpad.off
