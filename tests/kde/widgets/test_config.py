@@ -79,6 +79,8 @@ def pytest_funcarg__config(request):
 
 
 def pytest_funcarg__config_widget(request):
+    # we must have a qt app object before we can construct widgets
+    request.getfuncargvalue('qtapp')
     return DummyConfigWidget(request.getfuncargvalue('config'))
 
 
