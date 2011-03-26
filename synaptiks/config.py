@@ -80,18 +80,21 @@
     .. program:: synaptikscfg
 
     This module is usable as script, available also as :program:`synaptikscfg`
-    in the ``$PATH``.  It provides three different, of which ``load`` and
-    ``save`` are really self-explanatory. ``init`` however deserves some
+    in the ``$PATH``.  It provides three different actions, of which ``load``
+    and ``save`` are really self-explanatory. ``init`` however deserves some
     detailled explanation.
 
     The `init` action is supposed to run automatically as script during session
     startup.  To do this, the installation script installs an autostart entry
-    to execute ``synaptikscfg init`` at KDE startup.  This action first dumps
+    (as specified by the `XDG Desktop Application Autostart Specification`_) to
+    execute ``synaptikscfg init`` at session startup.  This action first dumps
     the default settings from the touchpad driver as described above, and then
     loads and applies the actual touchpad configuration stored on disk.
 
     The command line parsing of the script is implemented with :mod:`argparse`,
     so you can expected standard semantics, and an extensive ``--help`` option.
+
+    .. _XDG Desktop Application Autostart Specification: http://standards.freedesktop.org/autostart-spec/autostart-spec-latest.html
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
