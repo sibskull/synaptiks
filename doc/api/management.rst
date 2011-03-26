@@ -5,10 +5,6 @@
    :synopsis: Touchpad management
    :platform: X11
 
-
-:class:`TouchpadManager` – The touchpad management class
---------------------------------------------------------
-
 .. autoclass:: TouchpadManager
 
    .. attribute:: states
@@ -38,30 +34,3 @@
    .. autoattribute:: monitor_keyboard
 
    .. automethod:: add_touchpad_switch_action
-
-
-Helper classes
---------------
-
-.. autoclass::  MouseDevicesManager
-
-   .. rubric:: Signals
-
-   .. autoattribute:: firstMousePlugged
-
-   .. autoattribute:: lastMouseUnplugged
-
-   .. rubric:: Other members
-
-   .. automethod:: start
-
-   .. automethod:: stop
-
-   .. attribute:: is_running
-
-      ``True``, if the manager is currently running, ``False`` otherwise.
-
-      .. seealso:: :meth:`start()` and :meth:`stop()`
-
-   .. autoattribute:: ignored_mouses
-

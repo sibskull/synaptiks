@@ -29,6 +29,29 @@ Mouse device monitoring
 
    .. autoattribute:: mouseUnplugged
 
+.. autoclass::  MouseDevicesManager
+
+   .. rubric:: Signals
+
+   .. autoattribute:: firstMousePlugged
+
+   .. autoattribute:: lastMouseUnplugged
+
+   .. rubric:: Other members
+
+   .. automethod:: start
+
+   .. automethod:: stop
+
+   .. attribute:: is_running
+
+      ``True``, if the manager is currently running, ``False`` otherwise.
+
+      .. seealso:: :meth:`start()` and :meth:`stop()`
+
+   .. autoattribute:: ignored_mouses
+
+
 
 Keyboard monitoring
 -------------------
