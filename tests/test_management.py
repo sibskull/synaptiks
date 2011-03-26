@@ -107,6 +107,30 @@ class TestTouchpadManager(object):
         assert 'typingStarted' in str(on_temp_off.signal())
         assert 'typingStopped' in str(temp_off_on.signal())
 
+    def test_monitoring_enabled(self, qtapp, manager):
+        assert not manager.monitor_mouses
+        assert not manager.monitor_keyboard
+        manager.monitor_mouses = True
+        manager.monitor_keyboard = True
+        assert manager.monitor_mouses
+        assert manager.monitor_keyboard
+
+    def test_monitor_start_stop(self, qtapp, manager):
+        manager.monitor_mouses = True
+        manager.monitor_keyboard = True
+        self._start(qtapp, manager)
+        assert manager.isRunning()
+        assert manager.monitor_keyboard
+        assert manager.monitor_mouses
+        assert manager._monitors['keyboard'].is_running
+        assert manager._monitors['mouses'].is_running
+        time.sleep(0.5)
+        self._stop(qtapp, manager)
+        assert not manager._monitors['keyboard'].is_running
+        assert not manager._monitors['mouses'].is_running
+        assert manager.monitor_keyboard
+        assert manager.monitor_mouses
+
     def test_initial_state(self, qtapp, manager, touchpad):
         self._start(qtapp, manager)
         assert manager.current_state_name == 'on'
