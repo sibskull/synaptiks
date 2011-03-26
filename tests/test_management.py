@@ -124,7 +124,6 @@ class TestTouchpadManager(object):
         assert manager.monitor_mouses
         assert manager._monitors['keyboard'].is_running
         assert manager._monitors['mouses'].is_running
-        time.sleep(0.5)
         self._stop(qtapp, manager)
         assert not manager._monitors['keyboard'].is_running
         assert not manager._monitors['mouses'].is_running
