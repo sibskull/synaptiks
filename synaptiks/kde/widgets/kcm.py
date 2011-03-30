@@ -121,12 +121,8 @@ class TouchpadConfigurationKCM(SynaptiksKCMBase):
     def defaults(self, defaults=None):
         """
         Load the default settings into the widgets.
-
-        ``defaults`` is a mapping with the default touchpad configuration, or
-        ``None``.  In the latter case, the defaults are implicitly loaded from
-        disk.
         """
-        self.config_widget.load_defaults(defaults)
+        self.config_widget.load_defaults()
 
     def load(self):
         """
