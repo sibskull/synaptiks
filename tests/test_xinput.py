@@ -243,6 +243,10 @@ class TestInputDevice(object):
             else:
                 assert device(left_id) != device(right_id)
 
+    def test_repr(self, device, device_id, device_name):
+        assert repr(device) == '<InputDevice({0}, name={1!r})>'.format(
+            device_id, device_name)
+
     def test_hash(self, device, device_id):
         assert hash(device) == hash(device_id)
 
