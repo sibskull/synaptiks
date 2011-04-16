@@ -259,6 +259,8 @@ class TestInputDevice(object):
         assert not 'a undefined property' in device
 
     def test_getitem(self, device, device_property, device_property_value):
+        if not device_property_value:
+            pytest.skip('no items for property {0}'.format(device_property))
         if isinstance(device_property_value[0], float):
             values = [round(v, 6) for v in device[device_property]]
         else:

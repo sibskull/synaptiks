@@ -59,6 +59,9 @@ def _read_device_properties(device_id):
                 value = float(value_string)
             elif '(' in value_string:
                 value = int(ATOM_PATTERN.search(value_string).group('value'))
+            elif value_string == '<no items>':
+                # property without any items, simply ignore it
+                continue
             else:
                 value = int(value_string)
             values.append(value)
