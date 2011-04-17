@@ -48,7 +48,7 @@ from synaptiks._bindings.util import load_library, scoped_pointer
 c_ubyte_p = POINTER(c_ubyte)
 
 # X11 types
-Atom = c_uint32
+Atom = c_ulong
 Atom_p = POINTER(Atom)
 Bool = c_int
 Status = c_int

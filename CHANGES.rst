@@ -4,6 +4,7 @@
 - #1: Use XRecord for keyboard management, if available
 - #6: Reinitialize mouse monitoring and mouse display if the system is resuming
   from suspend
+- #4: Fixed touchpad search on 64-bit systems
 
 
 0.5.3 (Mar 8, 2011)
