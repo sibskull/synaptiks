@@ -1,5 +1,5 @@
-0.6 (in development)
-====================
+0.6 (Apr 19, 2011)
+==================
 
 - #1: Use XRecord for keyboard management, if available
 - #6: Reinitialize mouse monitoring and mouse display if the system is resuming
