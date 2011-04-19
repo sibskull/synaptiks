@@ -124,7 +124,7 @@ class ExtractMessages(BaseCommand):
             self.xgettext_exe, '-ci18n', '--from-code', 'UTF-8',
             '--language', 'Python', '--width', '80',
             '--kde', '--keyword', '--output', self.template_file,
-            '--foreign-user',
+            '--sort-by-file', '--foreign-user',
             '--package-name', self.distribution.metadata.name,
             '--package-version', self.distribution.metadata.version]
         if self.msgid_bugs_address:
@@ -238,8 +238,8 @@ class UpdateCatalog(POWorkerCommand):
         for catalog in self._get_catalogs():
             msgmerge_command = [
                 self.msgmerge_exe, '--width', '80', '--quiet', '--backup=none',
-                '--update', os.path.join(self.directory, catalog),
-                self.template_file]
+                '--sort-by-file', '--update',
+                os.path.join(self.directory, catalog), self.template_file]
             self.spawn(msgmerge_command)
 
 
