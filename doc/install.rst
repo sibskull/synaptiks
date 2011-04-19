@@ -152,7 +152,7 @@ Repository`_, which is however not supported by the **synaptiks** developers.
 .. _pyudev: http://packages.python.org/pyudev
 .. _argparse: http://code.google.com/p/argparse/
 .. _gettext: http://www.gnu.org/software/gettext/
-.. _pip: http://pip.openplans.org/
+.. _pip: http://www.pip-installer.org/
 .. _docbook xsl stylesheets: http://docbook.sourceforge.net/
 .. _dbus-python: http://www.freedesktop.org/wiki/Software/DBusBindings#Python
 .. _UPower: http://upower.freedesktop.org
