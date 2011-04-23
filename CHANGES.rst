@@ -1,6 +1,8 @@
 0.6.1 (in development)
 ======================
 
+- #9: Fixed installation of autostart files
+
 
 0.6 (Apr 19, 2011)
 ==================
