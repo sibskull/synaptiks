@@ -225,6 +225,9 @@ class TestInputDevice(object):
         assert devices
         assert all('XTEST' in d.name for d in devices)
 
+    def test_display(self, display, device):
+        assert device.display is display
+
     def test_self_identity(self, device):
         assert device == device
         assert not (device != device)

@@ -17,6 +17,10 @@ The :class:`InputDevice` class
 
    .. automethod:: find_devices_with_property
 
+   .. attribute:: display
+
+      The :class:`~synaptiks.xlib.Display` on which this device is defined
+
    .. attribute:: id
 
       The device id as integer
