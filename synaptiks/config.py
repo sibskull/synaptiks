@@ -116,6 +116,9 @@ def get_configuration_directory():
     The configuration directory is a sub-directory of ``$XDG_CONFIG_HOME``
     (which defaults to ``$HOME/.config``).
 
+    Raise :exc:`~exceptions.EnvironmentError`, if the creation of the
+    configuration directory fails.
+
     .. _`XDG base directory specification`: http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
     """
     xdg_config_home = os.environ.get('XDG_CONFIG_HOME', os.path.expandvars(
