@@ -241,6 +241,7 @@ class RecordingKeyboardMonitor(AbstractKeyboardMonitor):
 
     def __init__(self, parent=None):
         AbstractKeyboardMonitor.__init__(self, parent)
+        self.display = Display.from_qt()
         # this timer is started on every keyboard event, its timeout signals,
         # that the keyboard is to be considered inactive again
         self._idle_timer = QTimer(self)
@@ -254,7 +255,7 @@ class RecordingKeyboardMonitor(AbstractKeyboardMonitor):
         self._recorder.started.connect(self.started)
         self._recorder.finished.connect(self.stopped)
         # a set of all known modifier keycodes
-        modifier_mapping = xlib.get_modifier_mapping(Display.from_qt())
+        modifier_mapping = xlib.get_modifier_mapping(self.display)
         self._modifiers = frozenset(keycode for modifiers in modifier_mapping
                                     for keycode in modifiers if keycode != 0)
         # a set holding all pressed, but not yet released modifier keys
@@ -395,7 +396,7 @@ class PollingKeyboardMonitor(AbstractKeyboardMonitor):
     def _setup_mask(self):
         mask = array(b'B', b'\xff' * 32)
         if self._keys_to_ignore >= self.IGNORE_MODIFIER_KEYS:
-            modifier_mappings = xlib.get_modifier_mapping(Display.from_qt())
+            modifier_mappings = xlib.get_modifier_mapping(self.display)
             for modifier_keys in modifier_mappings:
                 for keycode in modifier_keys:
                     mask[keycode // 8] &= ~(1 << (keycode % 8))
@@ -405,7 +406,7 @@ class PollingKeyboardMonitor(AbstractKeyboardMonitor):
     def keyboard_active(self):
         is_active = False
 
-        _, raw_keymap = xlib.query_keymap(Display.from_qt())
+        _, raw_keymap = xlib.query_keymap(self.display)
         keymap = array(b'B', raw_keymap)
 
         is_active = keymap != self._old_keymap
