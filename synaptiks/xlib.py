@@ -189,7 +189,7 @@ class Atom(object):
     Atoms are unique internal, display-specific identifiers in the X11
     protocol.  They are created by :meth:`Display.intern_atom()`.
 
-    Atoms are comparable to other atoms and to integers.
+    Atoms are hashable and comparable to other atoms and to integers.
     """
 
     def __init__(self, display, value):
@@ -228,6 +228,9 @@ class Atom(object):
 
     def __repr__(self):
         return '{0!r} ({1})'.format(self.name, self.value)
+
+    def __hash__(self):
+        return hash(self.value)
 
     def __eq__(self, other):
         if isinstance(other, Atom):

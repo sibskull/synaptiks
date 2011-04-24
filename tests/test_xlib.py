@@ -107,6 +107,14 @@ class TestAtom(object):
         float_atom = display.intern_atom('FLOAT')
         assert repr(float_atom) == "u'FLOAT' ({0})".format(float_atom.value)
 
+    def test_hash(self, display):
+        float_atom = display.intern_atom('FLOAT')
+        int_atom = display.intern_atom('INTEGER')
+        assert hash(int_atom) == hash(int_atom.value)
+        from synaptiks._bindings.xlib import INTEGER
+        assert hash(int_atom) == hash(INTEGER)
+        assert hash(float_atom) == hash(float_atom.value)
+
     def test_eq(self, display):
         float_atom = display.intern_atom('FLOAT')
         other_atom = display.intern_atom('FLOAT')
