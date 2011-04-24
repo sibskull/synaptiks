@@ -34,97 +34,90 @@ import pytest
 from synaptiks.xlib import Display, DisplayError
 
 
-def test_display_open_close():
-    display = Display.from_name()
-    assert display
-    display.close()
-    assert not display
+class TestDisplay(object):
 
-
-def test_display_context():
-    with Display.from_name() as display:
+    def test_open_close(self):
+        display = Display.from_name()
         assert display
-    assert not display
+        display.close()
+        assert not display
+
+    def test_context(self):
+        with Display.from_name() as display:
+            assert display
+        assert not display
+
+    def test_error(self):
+        with mock.patch.dict(os.environ, {}, clear=True):
+            with pytest.raises(DisplayError):
+                Display.from_name()
+
+    def test_qt(self, qtapp):
+        assert Display.from_qt()
+
+    def test_standard_types(self, display):
+        from synaptiks._bindings import xlib
+        float_atom = display.intern_atom('FLOAT')
+        int_atom = display.intern_atom('INTEGER')
+        atom_atom = display.intern_atom('ATOM')
+        assert display.types.float == float_atom
+        assert display.types.integer == int_atom
+        assert display.types.integer == xlib.INTEGER
+        assert display.types.atom == atom_atom
+        assert display.types.atom == xlib.ATOM
+
+    def test_intern_atom(self, display):
+        float_atom = display.intern_atom('FLOAT')
+        int_atom = display.intern_atom('INTEGER')
+        non_existing_atom = display.intern_atom('non-existing-atom')
+        assert float_atom
+        assert int_atom
+        assert non_existing_atom is None
 
 
-def test_display_error():
-    with mock.patch.dict(os.environ, {}, clear=True):
-        with pytest.raises(DisplayError):
-            Display.from_name()
+class TestAtom(object):
 
+    def test_display(self, display):
+        float_atom = display.intern_atom('FLOAT')
+        assert float_atom.display is display
 
-def test_display_qt(qtapp):
-    assert Display.from_qt()
+    def test_value(self, display):
+        float_atom = display.intern_atom('FLOAT')
+        assert float_atom.value == float_atom._as_parameter_
+        int_atom = display.intern_atom('INTEGER')
+        from synaptiks._bindings.xlib import INTEGER
+        assert int_atom.value == INTEGER
 
+    def test_name(self, display):
+        float_atom = display.intern_atom('FLOAT')
+        assert isinstance(float_atom.name, unicode)
+        assert float_atom.name == 'FLOAT'
 
-def test_standard_types(display):
-    from synaptiks._bindings import xlib
-    float_atom = display.intern_atom('FLOAT')
-    int_atom = display.intern_atom('INTEGER')
-    atom_atom = display.intern_atom('ATOM')
-    assert display.types.float == float_atom
-    assert display.types.integer == int_atom
-    assert display.types.integer == xlib.INTEGER
-    assert display.types.atom == atom_atom
-    assert display.types.atom == xlib.ATOM
+    def test_str_unicode(self, display):
+        float_atom = display.intern_atom('FLOAT')
+        assert str(float_atom) == b'FLOAT'
+        assert isinstance(str(float_atom), bytes)
+        assert unicode(float_atom) == 'FLOAT'
+        assert isinstance(unicode(float_atom), unicode)
 
+    def test_repr(self, display):
+        float_atom = display.intern_atom('FLOAT')
+        assert repr(float_atom) == "u'FLOAT' ({0})".format(float_atom.value)
 
-def test_intern_atom(display):
-    float_atom = display.intern_atom('FLOAT')
-    int_atom = display.intern_atom('INTEGER')
-    non_existing_atom = display.intern_atom('non-existing-atom')
-    assert float_atom
-    assert int_atom
-    assert non_existing_atom is None
+    def test_eq(self, display):
+        float_atom = display.intern_atom('FLOAT')
+        other_atom = display.intern_atom('FLOAT')
+        int_atom = display.intern_atom('INTEGER')
+        assert not (float_atom == None)
+        assert float_atom == float_atom
+        assert float_atom == other_atom
+        assert not (float_atom == int_atom)
 
-
-def test_atom_display(display):
-    float_atom = display.intern_atom('FLOAT')
-    assert float_atom.display is display
-
-
-def test_atom_value(display):
-    float_atom = display.intern_atom('FLOAT')
-    assert float_atom.value == float_atom._as_parameter_
-    int_atom = display.intern_atom('INTEGER')
-    from synaptiks._bindings.xlib import INTEGER
-    assert int_atom.value == INTEGER
-
-
-def test_atom_name(display):
-    float_atom = display.intern_atom('FLOAT')
-    assert isinstance(float_atom.name, unicode)
-    assert float_atom.name == 'FLOAT'
-
-
-def test_atom_str_unicode(display):
-    float_atom = display.intern_atom('FLOAT')
-    assert str(float_atom) == b'FLOAT'
-    assert isinstance(str(float_atom), bytes)
-    assert unicode(float_atom) == 'FLOAT'
-    assert isinstance(unicode(float_atom), unicode)
-
-
-def test_atom_repr(display):
-    float_atom = display.intern_atom('FLOAT')
-    assert repr(float_atom) == "u'FLOAT' ({0})".format(float_atom.value)
-
-
-def test_atom_eq(display):
-    float_atom = display.intern_atom('FLOAT')
-    other_atom = display.intern_atom('FLOAT')
-    int_atom = display.intern_atom('INTEGER')
-    assert not (float_atom == None)
-    assert float_atom == float_atom
-    assert float_atom == other_atom
-    assert not (float_atom == int_atom)
-
-
-def test_atom_ne(display):
-    float_atom = display.intern_atom('FLOAT')
-    other_atom = display.intern_atom('FLOAT')
-    int_atom = display.intern_atom('INTEGER')
-    assert float_atom != None
-    assert not (float_atom != float_atom)
-    assert not (float_atom != other_atom)
-    assert float_atom != int_atom
+    def test_ne(self, display):
+        float_atom = display.intern_atom('FLOAT')
+        other_atom = display.intern_atom('FLOAT')
+        int_atom = display.intern_atom('INTEGER')
+        assert float_atom != None
+        assert not (float_atom != float_atom)
+        assert not (float_atom != other_atom)
+        assert float_atom != int_atom
