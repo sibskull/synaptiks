@@ -41,7 +41,6 @@ from itertools import islice, izip
 from ctypes import (Structure, POINTER, string_at, create_string_buffer,
                     c_uint32, c_int, c_void_p, c_char_p, c_char, c_ubyte,
                     c_ulong)
-from contextlib import contextmanager
 
 from synaptiks._bindings.util import load_library, scoped_pointer
 
@@ -132,56 +131,8 @@ SIGNATURES = dict(
 libX11 = load_library('X11', SIGNATURES)
 
 
-class DisplayError(EnvironmentError):
-    """
-    Raised if a display could not be opened.
-    """
-    pass
-
-
-def open_display(name=None):
-    """
-    Open the display with the given ``name``.
-
-    ``name`` is a byte string with the display name, or ``None``, in which case
-    the display name is lookup up in the `$DISPLAY` environment variable.
-
-    Return a :class:`Display_p` pointer to the display.  Raise
-    :exc:`DisplayError`, if the display could not be opened.
-    """
-    display = libX11.XOpenDisplay(name)
-    if not display:
-        raise DisplayError()
-    return display
-
-
-def close_display(display):
-    """
-    Close the given ``display`` (a :class:`Display_p` object).
-    """
-    if display:
-        libX11.XCloseDisplay(display)
-
-
-@contextmanager
-def display(name=None):
-    """
-    Connect to a X11 display using :func:`open_display`.
-
-    The connection is wrapped in a context manager, which closes the display
-    automatically, once the context is left::
-
-       with xlib.display() as display:
-           # work with the display here
-
-    ``name`` is passed to :func:`open_display`.
-
-    Return a :class:`Display_p` object with the new connection to the X11
-    display.  Raise :exc:`DisplayError`, if the display could not be opened.
-    """
-    display = open_display(name)
-    yield display
-    close_display(display)
+open_display = libX11.XOpenDisplay
+close_display = libX11.XCloseDisplay
 
 
 # add libX11 functions to top-level namespace under pythonic names

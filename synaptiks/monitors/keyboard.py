@@ -43,7 +43,7 @@ from itertools import izip
 from PyQt4.QtCore import QObject, QTimer, QTime, QThread, pyqtSignal
 from PyQt4.QtGui import QApplication
 
-from synaptiks.qx11 import QX11Display
+from synaptiks.xlib import Display
 from synaptiks._bindings import xlib
 from synaptiks._bindings import xrecord
 from synaptiks._bindings.util import scoped_pointer
@@ -214,7 +214,7 @@ class EventRecorder(QThread):
         if not self.isRunning():
             return
         self._started.wait()
-        xrecord.disable_context(QX11Display(), self._context)
+        xrecord.disable_context(Display.from_qt(), self._context)
         # immediately process the end of data event.  This allows us to wait
         # for this thread to terminate in the next line, thus making this
         # method synchronous.
@@ -254,7 +254,7 @@ class RecordingKeyboardMonitor(AbstractKeyboardMonitor):
         self._recorder.started.connect(self.started)
         self._recorder.finished.connect(self.stopped)
         # a set of all known modifier keycodes
-        modifier_mapping = xlib.get_modifier_mapping(QX11Display())
+        modifier_mapping = xlib.get_modifier_mapping(Display.from_qt())
         self._modifiers = frozenset(keycode for modifiers in modifier_mapping
                                     for keycode in modifiers if keycode != 0)
         # a set holding all pressed, but not yet released modifier keys
@@ -395,7 +395,7 @@ class PollingKeyboardMonitor(AbstractKeyboardMonitor):
     def _setup_mask(self):
         mask = array(b'B', b'\xff' * 32)
         if self._keys_to_ignore >= self.IGNORE_MODIFIER_KEYS:
-            modifier_mappings = xlib.get_modifier_mapping(QX11Display())
+            modifier_mappings = xlib.get_modifier_mapping(Display.from_qt())
             for modifier_keys in modifier_mappings:
                 for keycode in modifier_keys:
                     mask[keycode // 8] &= ~(1 << (keycode % 8))
@@ -405,7 +405,7 @@ class PollingKeyboardMonitor(AbstractKeyboardMonitor):
     def keyboard_active(self):
         is_active = False
 
-        _, raw_keymap = xlib.query_keymap(QX11Display())
+        _, raw_keymap = xlib.query_keymap(Display.from_qt())
         keymap = array(b'B', raw_keymap)
 
         is_active = keymap != self._old_keymap
@@ -457,7 +457,7 @@ def create_keyboard_monitor(parent=None):
     Return an implementation of :class:`AbstractKeyboardMonitor`.
     """
     if xrecord:
-        success, _ = xrecord.query_version(QX11Display())
+        success, _ = xrecord.query_version(Display.from_qt())
         if success:
             return RecordingKeyboardMonitor(parent)
     return PollingKeyboardMonitor(parent)

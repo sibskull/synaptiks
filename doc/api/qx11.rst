@@ -1,9 +1,0 @@
-:mod:`synaptiks.qx11` – Bridge between Qt and X11
-=================================================
-
-.. module:: synaptiks.qx11
-   :synopsis: Bridge between Qt and X11
-   :platform: X11
-
-.. autoclass:: QX11Display
-

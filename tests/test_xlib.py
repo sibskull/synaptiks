@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -23,41 +23,48 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-
-"""
-    synaptiks.qx11
-    ==============
-
-    Qt-based API around libX11
-
-    .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
-"""
-
 from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
-import ctypes
+import os
+from contextlib import nested
 
-import sip
-from PyQt4.QtGui import QX11Info
+import mock
+import pytest
 
-from synaptiks._bindings import xlib
+from synaptiks.xlib import Display, DisplayError
 
 
-class QX11Display(object):
-    """
-    Wrapper around the Qt X11 Display (as returned by
-    :meth:`PyQt4.QtGui.QX11Info.display()`) to make the display available as
-    argument for ctypes-wrapped foreign functions from Xlib.
+def test_display_open_close():
+    display = Display.from_name()
+    assert display
+    display.close()
+    assert not display
 
-    If used as argument to a foreign function, this object is cast into a
-    proper Display pointer.
-    """
 
-    def __init__(self):
-        display = QX11Info.display()
-        if not display:
-            raise ValueError('A Qt X11 display connection is required. '
-                             'Create a QApplication object')
-        display_address = sip.unwrapinstance(display)
-        self._as_parameter_ = ctypes.cast(display_address, xlib.Display_p)
+def test_display_context():
+    with Display.from_name() as display:
+        assert display
+    assert not display
+
+
+def test_display_error():
+    with mock.patch.dict(os.environ, {}, clear=True):
+        with pytest.raises(DisplayError):
+            Display.from_name()
+
+
+def test_display_qt(qtapp):
+    assert Display.from_qt()
+
+
+def test_display_mock():
+    open_display = 'synaptiks._bindings.xlib.open_display'
+    close_display = 'synaptiks._bindings.xlib.close_display'
+    with nested(mock.patch(open_display),
+                mock.patch(close_display)) as (open_display, close_display):
+        with Display.from_name() as display:
+            assert display
+            open_display.assert_called_with(None)
+            assert not close_display.called
+        close_display.assert_called_with(display)

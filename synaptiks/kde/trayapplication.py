@@ -47,7 +47,7 @@ from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem,
                           KHelpMenu, KIcon, KIconLoader,
                           KNotification, KConfigSkeleton)
 
-from synaptiks.qx11 import QX11Display
+from synaptiks.xlib import Display
 from synaptiks.touchpad import Touchpad
 from synaptiks.management import TouchpadManager
 from synaptiks.config import TouchpadConfiguration, ManagerConfiguration
@@ -136,7 +136,7 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
         self._config = SynaptiksTrayConfiguration(self)
 
         try:
-            self.touchpad = Touchpad.find_first(QX11Display())
+            self.touchpad = Touchpad.find_first(Display.from_qt())
         except Exception as error:
             # show an error message
             from synaptiks.kde.error import get_localized_error_message

@@ -413,8 +413,8 @@ def main():
     from argparse import ArgumentParser
 
     from synaptiks import __version__
+    from synaptiks.xlib import Display, DisplayError
     from synaptiks.touchpad import Touchpad, NoTouchpadError
-    from synaptiks._bindings import xlib
 
     parser = ArgumentParser(
         description='synaptiks touchpad configuration utility',
@@ -452,7 +452,7 @@ distributed under the terms of the BSD License""")
     args = parser.parse_args()
 
     try:
-        with xlib.display() as display:
+        with Display.from_name() as display:
             touchpad = Touchpad.find_first(display)
 
             if args.action == 'init':
@@ -463,7 +463,7 @@ distributed under the terms of the BSD License""")
             if args.action == 'save':
                 current_config = TouchpadConfiguration(touchpad)
                 current_config.save(filename=args.filename)
-    except xlib.DisplayError:
+    except DisplayError:
         parser.error('could not connect to X11 display')
     except NoTouchpadError:
         parser.error('no touchpad found')

@@ -27,9 +27,7 @@ from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
 import os
-from contextlib import nested
 
-import pytest
 import mock
 
 from synaptiks._bindings import xlib
@@ -37,29 +35,10 @@ from synaptiks._bindings import xlib
 
 def test_open_display_no_display():
     with mock.patch.dict(os.environ, {}, clear=True):
-        # clear out $DISPLAY from environment
-        with pytest.raises(xlib.DisplayError):
-            xlib.open_display()
+        assert not xlib.open_display(None)
 
 
 def test_open_display():
-    display = xlib.open_display()
+    display = xlib.open_display(None)
     assert display
     xlib.close_display(display)
-
-
-def test_display():
-    with xlib.display() as display:
-        assert display
-
-
-def test_display_mock():
-    open_display = 'synaptiks._bindings.xlib.open_display'
-    close_display = 'synaptiks._bindings.xlib.close_display'
-    with nested(mock.patch(open_display),
-                mock.patch(close_display)) as (open_display, close_display):
-        with xlib.display() as display:
-            assert display
-            open_display.assert_called_with(None)
-            assert not close_display.called
-        close_display.assert_called_with(display)

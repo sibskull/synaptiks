@@ -106,11 +106,20 @@ Event type constants
 Functions
 ---------
 
-.. autofunction:: open_display
+.. function:: open_display(name)
 
-.. autofunction:: close_display
+   Open the display with the given ``name``.
 
-.. autofunction:: display(name=None)
+   ``name`` is a byte string containing the display name, or ``None``, in which
+   case the display name is taken from the environment variable ``DISPLAY``.
+
+   Return a :class:`Display_p`` object.  The object is ``False`` in a boolean
+   context, if opening the display failed.
+
+.. function:: close_display(display)
+
+   Close the given ``display`` (a :class:`Display_p` object).  ``display`` must
+   *not* be ``None``.
 
 .. autofunction:: free
 
@@ -142,9 +151,3 @@ Functions
    :members:
 
 .. autofunction:: get_modifier_mapping
-
-
-Exceptions
-----------
-
-.. autoexception:: DisplayError

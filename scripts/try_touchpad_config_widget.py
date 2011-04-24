@@ -34,7 +34,7 @@ from PyKDE4.kdecore import KCmdLineArgs, KAboutData, ki18n
 from PyKDE4.kdeui import KApplication, KMainWindow
 
 import synaptiks
-from synaptiks.qx11 import QX11Display
+from synaptiks.xlib import Display
 from synaptiks.touchpad import Touchpad
 from synaptiks.config import TouchpadConfiguration
 from synaptiks.kde.widgets.touchpad import TouchpadConfigurationWidget
@@ -58,7 +58,7 @@ def main():
     KCmdLineArgs.init(sys.argv, about)
     app = KApplication()
     window = KMainWindow()
-    touchpad = Touchpad.find_first(QX11Display())
+    touchpad = Touchpad.find_first(Display.from_qt())
     config = TouchpadConfiguration(touchpad)
     config_widget = TouchpadConfigurationWidget(config)
     config_widget.configurationChanged.connect(

@@ -45,9 +45,9 @@
     The :class:`InputDevice` class is a read-only mapping of property names to
     property values:
 
-    >>> from synaptiks.qx11 import QX11Display
+    >>> from synaptiks.xlib import Display
     >>> devices = list(InputDevice.find_devices_with_property(
-    ...     QX11Display(), 'Synaptics Off'))
+    ...     Display.from_qt(), 'Synaptics Off'))
     >>> devices
     [<synaptiks.xinput.InputDevice object at 0xa599bcc>]
     >>> devices[0].name
@@ -133,8 +133,7 @@ def assert_xinput_version(display):
 
     Currently, at least version 2.0 is required.
 
-    ``display`` is X11 display object (see :class:`synaptiks.qx11.QX11Display`
-    or :func:`synaptiks._bindings.xlib.display`).
+    ``display`` is a :class:`~synaptiks.xlib.Display` object.
 
     Raise :exc:`XInputVersionError`, if the version isn't sufficient.
     """
@@ -147,10 +146,9 @@ def is_property_defined(display, name):
     """
     Check, if the given property is defined on the server side.
 
-    ``display`` is X11 display object (see :class:`synaptiks.qx11.QX11Display`
-    or :func:`synaptiks._bindings.xlib.display`).  ``name`` is the property
-    name as byte or unicode string.  A unicode string is converted into a byte
-    string according to the encoding of the current locale.
+    ``display`` is a :class:`~synaptiks.xlib.Display` object.  ``name`` is the
+    property name as byte or unicode string.  A unicode string is converted
+    into a byte string according to the encoding of the current locale.
 
     Return ``True``, if the property is defined, ``False`` otherwise.
     """
@@ -176,10 +174,9 @@ def _get_property_atom(display, name):
     """
     Get a :class:`~synaptiks._bindings.xlib.Atom` for the given property.
 
-    ``display`` is X11 display object (see :class:`synaptiks.qx11.QX11Display`
-    or :func:`synaptiks._bindings.xlib.display`).  ``name`` is the property
-    name as byte or unicode string.  A unicode string is converted into a byte
-    string according to the encoding of the current locale.
+    ``display`` is a :class:`~synaptiks.xlib.Display` object.  ``name`` is the
+    property name as byte or unicode string.  A unicode string is converted
+    into a byte string according to the encoding of the current locale.
 
     Return the :class:`~synaptiks._bindings.xlib.Atom` for the given
     property.
@@ -306,9 +303,7 @@ class InputDevice(Mapping):
         """
         Iterate over all input devices registered on the given ``display``.
 
-        ``display`` is X11 display object (see
-        :class:`synaptiks.qx11.QX11Display` or
-        :func:`synaptiks._bindings.xlib.display`).
+        ``display`` is a :class:`~synaptiks.xlib.Display` object.
 
         Return an iterator over :class:`InputDevice` objects.
 
@@ -329,11 +324,9 @@ class InputDevice(Mapping):
         """
         Find all devices with the given ``name`` on the given ``display``.
 
-        ``display`` is X11 display object (see
-        :class:`synaptiks.qx11.QX11Display` or
-        :func:`synaptiks._bindings.xlib.display`).  ``name`` is either a
-        string, which has to match the device name literally, or a regular
-        expression pattern, which is searched in the device name.
+        ``display`` is a :class:`~synaptiks.xlib.Display` object.  ``name`` is
+        either a string, which has to match the device name literally, or a
+        regular expression pattern, which is searched in the device name.
 
         Return an iterator over all :class:`InputDevice` objects with a
         matching name.
@@ -352,10 +345,8 @@ class InputDevice(Mapping):
         """
         Find all devices which have the given property.
 
-        ``display`` is X11 display object (see
-        :class:`synaptiks.qx11.QX11Display` or
-        :func:`synaptiks._bindings.xlib.display`).  ``name`` is a string with
-        the property name.
+        ``display`` is a :class:`~synaptiks.xlib.Display` object.  ``name`` is
+        a string with the property name.
 
         Return an iterator over all :class:`InputDevice` objects, which have
         this property defined.

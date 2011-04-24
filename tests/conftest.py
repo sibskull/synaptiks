@@ -33,6 +33,8 @@ from subprocess import Popen, PIPE
 
 import pytest
 
+from synaptiks.xlib import Display
+
 
 DEVICE_PATTERN = re.compile(
     r'(\W|\s)*(?P<name>.+?)\s+id=(?P<id>\d+)\s\[[^]]+\]', re.UNICODE)
@@ -116,15 +118,13 @@ def pytest_funcarg__qxdisplay(request):
     """
     Qt X11 display wrapper.
     """
-    qx11 = pytest.importorskip('synaptiks.qx11')
-    return qx11.QX11Display()
+    # need a qt application before connecting to the Qt display
+    request.getfuncargvalue('qtapp')
+    return Display.from_qt()
 
 
 def pytest_funcarg__display(request):
     """
     A direct X11 display connection.
     """
-    from synaptiks._bindings import xlib
-    return request.cached_setup(
-        lambda: xlib.open_display(),
-        xlib.close_display)
+    return request.cached_setup(Display.from_name, lambda d: d.close())
