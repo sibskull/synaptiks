@@ -73,6 +73,7 @@ class Display(object):
         if not display_pointer:
             raise DisplayError()
         self._as_parameter_ = display_pointer
+        self._atom_cache = {}
         self.types = StandardTypes(self)
 
     @classmethod
@@ -140,10 +141,14 @@ class Display(object):
         Return an :class:`Atom` with the given ``name``, or ``None``, if the
         ``only_if_exists`` was ``True`` and the atom did not exist.
         """
+        name = ensure_byte_string(name)
+        atom = self._atom_cache.get(name)
+        if atom:
+            return atom
         atom = xlib.intern_atom(self, ensure_byte_string(name), only_if_exists)
         if atom == xlib.NONE:
             return None
-        return Atom(self, atom)
+        return self._atom_cache.setdefault(name, Atom(self, atom))
 
     def is_atom_defined(self, name):
         """

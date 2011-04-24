@@ -73,6 +73,9 @@ class TestDisplay(object):
         assert float_atom
         assert int_atom
         assert non_existing_atom is None
+        assert display._atom_cache[b'FLOAT'] is float_atom
+        assert display._atom_cache[b'INTEGER'] is int_atom
+        assert b'non-existing_atom' not in display._atom_cache
 
 
 class TestAtom(object):
