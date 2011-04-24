@@ -46,7 +46,7 @@ the following native libraries and tools:
 
 Moreover some Python modules are required:
 
-- pyudev_ (at least 0.6)
+- pyudev_ (at least 0.8)
 - argparse_ (at least 1.1, not required, if Python 2.7 is installed)
 
 All these libraries must be available before installing **synaptiks**.  It is

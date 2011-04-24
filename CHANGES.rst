@@ -1,6 +1,8 @@
 0.7 (in development)
 ====================
 
+- Require pyudev 0.8 or newer now
+
 
 0.6.2 (in development)
 ======================
