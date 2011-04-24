@@ -194,7 +194,7 @@ class EventRecorder(QThread):
 
     def run(self):
         # create a special display connection for recording
-        with xlib.display() as recording_display:
+        with Display.from_name() as recording_display:
             # record all key presses and releases, as these events indicate
             # keyboard activity
             key_events = (xlib.KEY_PRESS, xlib.KEY_RELEASE)
