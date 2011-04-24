@@ -42,3 +42,15 @@ def test_open_display():
     display = xlib.open_display(None)
     assert display
     xlib.close_display(display)
+
+
+def test_intern_atom_existing(display):
+    int_atom = xlib.intern_atom(display, 'INTEGER', True)
+    assert int_atom == xlib.INTEGER
+    float_atom = xlib.intern_atom(display, 'FLOAT', True)
+    assert float_atom != xlib.NONE
+
+
+def test_intern_atom_non_existing(display):
+    atom = xlib.intern_atom(display, 'this-atom-certainly-not-exists', True)
+    assert atom == xlib.NONE
