@@ -76,7 +76,8 @@ from operator import eq
 
 from synaptiks._bindings import xlib, xinput
 from synaptiks._bindings.util import scoped_pointer
-from synaptiks.util import ensure_byte_string, ensure_unicode_string
+from synaptiks.xlib import Atom
+from synaptiks.util import ensure_unicode_string
 
 
 class XInputVersion(namedtuple('_XInputVersion', 'major minor')):
@@ -142,20 +143,6 @@ def assert_xinput_version(display):
         raise XInputVersionError((2, 0), actual_version)
 
 
-def is_property_defined(display, name):
-    """
-    Check, if the given property is defined on the server side.
-
-    ``display`` is a :class:`~synaptiks.xlib.Display` object.  ``name`` is the
-    property name as byte or unicode string.  A unicode string is converted
-    into a byte string according to the encoding of the current locale.
-
-    Return ``True``, if the property is defined, ``False`` otherwise.
-    """
-    atom = xlib.intern_atom(display, ensure_byte_string(name), True)
-    return atom != xlib.NONE
-
-
 class UndefinedPropertyError(KeyError):
     """
     Raised if a property is undefined on the server side.  Subclass of
@@ -172,20 +159,19 @@ class UndefinedPropertyError(KeyError):
 
 def _get_property_atom(display, name):
     """
-    Get a :class:`~synaptiks._bindings.xlib.Atom` for the given property.
+    Get a :class:`~synaptiks.xlib.Atom` for the given property.
 
     ``display`` is a :class:`~synaptiks.xlib.Display` object.  ``name`` is the
     property name as byte or unicode string.  A unicode string is converted
     into a byte string according to the encoding of the current locale.
 
-    Return the :class:`~synaptiks._bindings.xlib.Atom` for the given
-    property.
+    Return the :class:`~synaptiks.xlib.Atom` for the given property.
 
     Raise :exc:`UndefinedPropertyError`, if there is no atom for the given
     property.
     """
-    atom = xlib.intern_atom(display, ensure_byte_string(name), True)
-    if atom == xlib.NONE:
+    atom = display.intern_atom(name)
+    if not atom:
         raise UndefinedPropertyError(name)
     return atom
 
@@ -398,7 +384,7 @@ class InputDevice(Mapping):
             self.display, self.id)
         with scoped_pointer(property_atoms, xlib.free):
             for i in xrange(number_of_properties):
-                yield property_atoms[i]
+                yield Atom(self.display, property_atoms[i])
 
     def __iter__(self):
         """
@@ -407,8 +393,7 @@ class InputDevice(Mapping):
         Return a generator yielding the names of all properties of this
         device as unicode strings
         """
-        return (ensure_unicode_string(xlib.get_atom_name(self.display, a))
-                for a in self._iter_property_atoms())
+        return (a.name for a in self._iter_property_atoms())
 
     def __contains__(self, name):
         """
@@ -419,9 +404,8 @@ class InputDevice(Mapping):
         Return ``True``, if the property is defined on this device,
         ``False`` otherwise.
         """
-        atom = xlib.intern_atom(
-            self.display, ensure_byte_string(name), True)
-        if atom == xlib.NONE:
+        atom = self.display.intern_atom(name)
+        if atom is None:
             return False
         return any(a == atom for a in self._iter_property_atoms())
 
@@ -431,9 +415,9 @@ class InputDevice(Mapping):
 
         Input device properties have multiple items and are of different
         types.  This method returns all items in a tuple, and tries to
-        convert them into the appropriate Python type.  Consequently, the
-        conversion may fail, if the property has an unsupported type.
-        Currently, integer and float types are supported, any other type
+        convert them into the appropriate Python property_type.  Consequently, the
+        conversion may fail, if the property has an unsupported property_type.
+        Currently, integer and float types are supported, any other property_type
         raises :exc:`PropertyTypeError`.
 
         ``name`` is the property name as string.
@@ -443,19 +427,22 @@ class InputDevice(Mapping):
         device.  Raise :exc:`UndefinedPropertyError` (which is a subclass of
         :exc:`~exceptions.KeyError`), if the property is not defined on the
         server at all.  Raise :exc:`PropertyTypeError`, if the property has
-        an unsupported type.
+        an unsupported property_type.
         """
         atom = _get_property_atom(self.display, name)
-        type, format, data = xinput.get_property(self.display, self.id, atom)
-        if type == xlib.NONE and format == 0:
+        property_type, property_format, data = xinput.get_property(
+            self.display, self.id, atom)
+        property_type = Atom(self.display, property_type)
+        if not property_type and property_format == 0:
             raise KeyError(name)
-        number_of_items = (len(data) * 8) // format
-        if type in (xlib.INTEGER, xlib.ATOM):
-            type_code = _TYPE_CODE_MAPPING[format]
-        elif type == xlib.intern_atom(self.display, 'FLOAT', True):
+        number_of_items = (len(data) * 8) // property_format
+        if property_type in (self.display.types.integer,
+                             self.display.types.atom):
+            type_code = _TYPE_CODE_MAPPING[property_format]
+        elif property_type == self.display.types.float:
             type_code = 'f'
         else:
-            raise PropertyTypeError(type)
+            raise PropertyTypeError(property_type)
         return _unpack_property_data(type_code, number_of_items, data)
 
     def __gt__(self, other):
@@ -486,7 +473,7 @@ class InputDevice(Mapping):
         defined on the server.
         """
         data = _pack_property_data('L', values)
-        self._set_raw(property, xlib.INTEGER, 32, data)
+        self._set_raw(property, self.display.types.integer, 32, data)
 
     def set_byte(self, property, values):
         """
@@ -500,7 +487,7 @@ class InputDevice(Mapping):
         defined on the server.
         """
         data = _pack_property_data('B', values)
-        self._set_raw(property, xlib.INTEGER, 8, data)
+        self._set_raw(property, self.display.types.integer, 8, data)
 
     set_bool = set_byte
 
@@ -516,5 +503,4 @@ class InputDevice(Mapping):
         defined on the server
         """
         data = _pack_property_data('f', values)
-        type = xlib.intern_atom(self.display, 'FLOAT', True)
-        self._set_raw(property, type, 32, data)
+        self._set_raw(property, self.display.types.float, 32, data)

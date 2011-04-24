@@ -121,11 +121,6 @@ def test_assert_xinput_version(display):
         pass
 
 
-def test_is_property_defined_existing_property(display):
-    assert xinput.is_property_defined(display, 'Device Enabled')
-    assert xinput.is_property_defined(display, u'Device Enabled')
-
-
 def test_make_struct_format():
     data = xinput._make_struct_format('f', 1)
     assert isinstance(data, str)

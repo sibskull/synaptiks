@@ -39,7 +39,7 @@ from __future__ import (print_function, division, unicode_literals,
 from ctypes import cast
 
 from synaptiks._bindings import xlib
-from synaptiks.util import ensure_byte_string
+from synaptiks.util import ensure_byte_string, ensure_unicode_string
 
 
 class DisplayError(EnvironmentError):
@@ -73,6 +73,7 @@ class Display(object):
         if not display_pointer:
             raise DisplayError()
         self._as_parameter_ = display_pointer
+        self.types = StandardTypes(self)
 
     @classmethod
     def from_name(cls, name=None):
@@ -128,6 +129,32 @@ class Display(object):
         """
         return bool(self._as_parameter_)
 
+    def intern_atom(self, name, only_if_exists=True):
+        """
+        Create a new X11 atom with the given ``name``.
+
+        ``name`` is a byte or unicode string with the name of the atom.  If
+        ``only_if_exists`` is ``True``, the atom is only created, if it already
+        exists.  If it does not exist, ``None`` is returned.
+
+        Return an :class:`Atom` with the given ``name``, or ``None``, if the
+        ``only_if_exists`` was ``True`` and the atom did not exist.
+        """
+        atom = xlib.intern_atom(self, ensure_byte_string(name), only_if_exists)
+        if atom == xlib.NONE:
+            return None
+        return Atom(self, atom)
+
+    def is_atom_defined(self, name):
+        """
+        Check, if the atom with the given ``name`` is defined on this display.
+
+        ``name`` is a byte or unicode string with the name of the atom.
+
+        Return ``True``, if the atom is defined, ``False`` otherwise.
+        """
+        return self.intern_atom(name) is not None
+
     def __nonzero__(self):
         return self.open
 
@@ -136,3 +163,71 @@ class Display(object):
 
     def __exit__(self, _exc_type, _exc_value, _traceback):
         self.close()
+
+
+class StandardTypes(object):
+    """
+    Standard type atoms defined on all X11 displays.
+    """
+
+    def __init__(self, display):
+        self.display = display
+        self.integer = Atom(display, xlib.INTEGER)
+        self.float = display.intern_atom('FLOAT')
+        self.atom = Atom(display, xlib.ATOM)
+
+
+class Atom(object):
+    """
+    An xlib atom.
+
+    Atoms are unique internal, display-specific identifiers in the X11
+    protocol.  They are created by :meth:`Display.intern_atom()`.
+
+    Atoms are comparable to other atoms and to integers.
+    """
+
+    def __init__(self, display, value):
+        """
+        Create a new atom on the given ``display`` with the given atom ``value``.
+
+        ``display`` is a :class:`Display`.  ``value`` is an integral atom
+        value.
+
+        Normally you should create atoms by :meth:`Display.intern_atom`.  Use
+        this only to wrap integral atoms you retrieve from other xlib
+        functions.
+        """
+        self.display = display
+        self._as_parameter_ = value
+
+    @property
+    def value(self):
+        """
+        The integral value of this atom.
+        """
+        return self._as_parameter_
+
+    @property
+    def name(self):
+        """
+        The name of this atom as unicode string.
+        """
+        return ensure_unicode_string(xlib.get_atom_name(self.display, self))
+
+    def __unicode__(self):
+        return self.name
+
+    def __str__(self):
+        return ensure_byte_string(self.name)
+
+    def __repr__(self):
+        return '{0!r} ({1})'.format(self.name, self.value)
+
+    def __eq__(self, other):
+        if isinstance(other, Atom):
+            other = other._as_parameter_
+        return self._as_parameter_ == other
+
+    def __ne__(self, other):
+        return not (self == other)

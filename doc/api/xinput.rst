@@ -56,8 +56,6 @@ The :class:`InputDevice` class
 Miscellaneous stuff
 -------------------
 
-.. autofunction:: is_property_defined
-
 .. autofunction:: assert_xinput_version
 
 .. autoexception:: XInputVersionError
