@@ -12,9 +12,8 @@ Package contents
 .. toctree::
 
    bindings/index
+   x11/index
    util
-   xlib
-   xinput
    touchpad
    monitors
    management

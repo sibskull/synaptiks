@@ -413,7 +413,7 @@ def main():
     from argparse import ArgumentParser
 
     from synaptiks import __version__
-    from synaptiks.xlib import Display, DisplayError
+    from synaptiks.x11 import Display, DisplayError
     from synaptiks.touchpad import Touchpad, NoTouchpadError
 
     parser = ArgumentParser(

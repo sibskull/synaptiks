@@ -1,7 +1,7 @@
-:mod:`synaptiks.xlib` – Basic X11 API
-=====================================
+:mod:`synaptiks.x11` – Basic X11 API
+====================================
 
-.. module:: synaptiks.xlib
+.. module:: synaptiks.x11
    :synopsis: Basic X11 API
    :platform: X11
 
@@ -48,3 +48,11 @@
    .. autoattribute:: value
 
    .. autoattribute:: name
+
+
+Submodules
+----------
+
+.. toctree::
+
+   input

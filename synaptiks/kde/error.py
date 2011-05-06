@@ -94,7 +94,7 @@ def get_localized_error_message(error):
     Return a :func:`unicode` object containing the localized error message.
     """
     from synaptiks.touchpad import NoTouchpadError
-    from synaptiks.xinput import XInputVersionError
+    from synaptiks.x11.input import XInputVersionError
     if isinstance(error, NoTouchpadError):
         return NO_TOUCHPAD_ERROR_MESSAGE.toString()
     elif isinstance(error, XInputVersionError):

@@ -33,7 +33,7 @@ from functools import partial
 
 import pytest
 
-from synaptiks import xinput
+from synaptiks.x11 import input as xinput
 
 
 def pytest_generate_tests(metafunc):

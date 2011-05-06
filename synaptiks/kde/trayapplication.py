@@ -47,7 +47,7 @@ from PyKDE4.kdeui import (KUniqueApplication, KStatusNotifierItem,
                           KHelpMenu, KIcon, KIconLoader,
                           KNotification, KConfigSkeleton)
 
-from synaptiks.xlib import Display
+from synaptiks.x11 import Display
 from synaptiks.touchpad import Touchpad
 from synaptiks.management import TouchpadManager
 from synaptiks.config import TouchpadConfiguration, ManagerConfiguration

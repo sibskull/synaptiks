@@ -31,7 +31,7 @@ import os
 import mock
 import pytest
 
-from synaptiks.xlib import Display, DisplayError
+from synaptiks.x11 import Display, DisplayError
 
 
 class TestDisplay(object):

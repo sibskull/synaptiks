@@ -43,7 +43,7 @@ from itertools import izip
 from PyQt4.QtCore import QObject, QTimer, QTime, QThread, pyqtSignal
 from PyQt4.QtGui import QApplication
 
-from synaptiks.xlib import Display
+from synaptiks.x11 import Display
 from synaptiks._bindings import xlib
 from synaptiks._bindings import xrecord
 from synaptiks._bindings.util import scoped_pointer

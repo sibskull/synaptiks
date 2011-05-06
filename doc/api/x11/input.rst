@@ -1,7 +1,7 @@
-:mod:`synaptiks.xinput` – XInput device management
-==================================================
+:mod:`synaptiks.x11.input` – X11 input device management
+========================================================
 
-.. automodule:: synaptiks.xinput
+.. automodule:: synaptiks.x11.input
    :synopsis: Input device access
    :platform: Xorg
 
@@ -19,7 +19,7 @@ The :class:`InputDevice` class
 
    .. attribute:: display
 
-      The :class:`~synaptiks.xlib.Display` on which this device is defined
+      The :class:`~synaptiks.x11.Display` on which this device is defined
 
    .. attribute:: id
 

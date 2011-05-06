@@ -36,7 +36,7 @@
     :class:`~touchpad.Touchpad` class to access and configured the touchpad.
     This class uses the XInput API provided by Xorg to access the properties of
     the touchpad driver.  This API is wrapped in a pythonic interface by the
-    :mod:`~synaptiks.xinput` module.
+    :mod:`~synaptiks.x11.input` module.
 
     Event monitoring
     ----------------

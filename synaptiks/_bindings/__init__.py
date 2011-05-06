@@ -35,8 +35,8 @@
        All contents of this package are internal, and should not be used by 3rd
        parties.  Even inside the **synaptiks** sources, these bindings should
        only be used directly when necessary, in most cases, the higher level
-       API provided by :mod:`synaptiks.xlib`, :mod:`synaptiks.xinput` and
-       :mod:`synaptiks.touchpad` is the right choice.
+       API provided by :mod:`synaptiks.x11` and :mod:`synaptiks.touchpad` is
+       the right choice.
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """

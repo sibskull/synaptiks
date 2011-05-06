@@ -48,7 +48,7 @@
 
     The touchpad settings are configured through properties of the
     :class:`Touchpad` object.  Though the underlying property API of
-    :class:`~synaptiks.xinput.InputDevice` is also available, it is strongly
+    :class:`~synaptiks.x11.input.InputDevice` is also available, it is strongly
     recommended, that you use the much more convenient property layer of the
     :class:`Touchpad` class:
 
@@ -70,7 +70,7 @@ import math
 from functools import partial
 from collections import namedtuple
 
-from synaptiks.xinput import InputDevice
+from synaptiks.x11.input import InputDevice
 
 
 PhysicalButtons = namedtuple('PhysicalButtons', 'left middle right')
@@ -138,7 +138,7 @@ class Touchpad(InputDevice):
     """
     A touchpad registered on the X11 server.
 
-    This class is a child of :class:`~synaptiks.xinput.InputDevice`,
+    This class is a child of :class:`~synaptiks.x11.input.InputDevice`,
     consequently all of the input device methods are available on this class as
     well.  Additionally this class provides special methods and properties
     specific to touchpads.
@@ -157,8 +157,8 @@ class Touchpad(InputDevice):
         Return an iterator over all :class:`Touchpad` objects present on this
         system.
 
-        Raise :exc:`synaptiks.xinput.XInputVersionError`, if the XInput version
-        isn't sufficient to support input device management.
+        Raise :exc:`synaptiks.x11.input.XInputVersionError`, if the XInput
+        version isn't sufficient to support input device management.
         """
         return cls.find_devices_with_property(display, 'Synaptics Off')
 
@@ -171,7 +171,7 @@ class Touchpad(InputDevice):
         ``display`` is a :class:`~synaptiks.xlib.Display` object.
 
         Raise :exc:`NoTouchpadError`, if no touchpad was found.  Raise
-        :exc:`synaptiks.xinput.XInputVersionError`, if the XInput version isn't
+        :exc:`synaptiks.x11.input.XInputVersionError`, if the XInput version isn't
         sufficient to support input device management.
         """
         touchpad = next(cls.find_all(display), None)

@@ -33,7 +33,7 @@ from subprocess import Popen, PIPE
 
 import pytest
 
-from synaptiks.xlib import Display
+from synaptiks.x11 import Display
 
 
 DEVICE_PATTERN = re.compile(

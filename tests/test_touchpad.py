@@ -30,7 +30,7 @@ import math
 
 import pytest
 
-from synaptiks.xinput import InputDevice
+from synaptiks.x11.input import InputDevice
 from synaptiks.touchpad import Touchpad, NoTouchpadError
 
 

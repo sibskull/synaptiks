@@ -24,8 +24,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-    synaptiks.qxinput
-    =================
+    synaptiks.x11.input
+    ===================
 
     This module mainly provides the :class:`InputDevice` class, which gives
     access to properties of input devices registered on the X11 server.
@@ -45,11 +45,11 @@
     The :class:`InputDevice` class is a read-only mapping of property names to
     property values:
 
-    >>> from synaptiks.xlib import Display
+    >>> from synaptiks.x11 import Display
     >>> devices = list(InputDevice.find_devices_with_property(
     ...     Display.from_qt(), 'Synaptics Off'))
     >>> devices
-    [<synaptiks.xinput.InputDevice object at 0xa599bcc>]
+    [<synaptiks.x11.input.InputDevice object at 0xa599bcc>]
     >>> devices[0].name
     u'AlpsPS/2 ALPS GlidePoint'
     >>> devices[0]['Synaptics Off']
@@ -76,7 +76,7 @@ from operator import eq
 
 from synaptiks._bindings import xlib, xinput
 from synaptiks._bindings.util import scoped_pointer
-from synaptiks.xlib import Atom
+from synaptiks.x11 import Atom
 from synaptiks.util import ensure_unicode_string
 
 
@@ -134,7 +134,7 @@ def assert_xinput_version(display):
 
     Currently, at least version 2.0 is required.
 
-    ``display`` is a :class:`~synaptiks.xlib.Display` object.
+    ``display`` is a :class:`~synaptiks.x11.Display` object.
 
     Raise :exc:`XInputVersionError`, if the version isn't sufficient.
     """
@@ -159,13 +159,13 @@ class UndefinedPropertyError(KeyError):
 
 def _get_property_atom(display, name):
     """
-    Get a :class:`~synaptiks.xlib.Atom` for the given property.
+    Get a :class:`~synaptiks.x11.Atom` for the given property.
 
-    ``display`` is a :class:`~synaptiks.xlib.Display` object.  ``name`` is the
+    ``display`` is a :class:`~synaptiks.x11.Display` object.  ``name`` is the
     property name as byte or unicode string.  A unicode string is converted
     into a byte string according to the encoding of the current locale.
 
-    Return the :class:`~synaptiks.xlib.Atom` for the given property.
+    Return the :class:`~synaptiks.x11.Atom` for the given property.
 
     Raise :exc:`UndefinedPropertyError`, if there is no atom for the given
     property.
@@ -201,7 +201,7 @@ class PropertyTypeError(ValueError):
     @property
     def type_atom(self):
         """
-        The property type that caused this error as Xlib atom.
+        The property type that caused this error as X11 atom.
         """
         return self.args[0]
 
@@ -289,7 +289,7 @@ class InputDevice(Mapping):
         """
         Iterate over all input devices registered on the given ``display``.
 
-        ``display`` is a :class:`~synaptiks.xlib.Display` object.
+        ``display`` is a :class:`~synaptiks.x11.Display` object.
 
         Return an iterator over :class:`InputDevice` objects.
 
@@ -310,7 +310,7 @@ class InputDevice(Mapping):
         """
         Find all devices with the given ``name`` on the given ``display``.
 
-        ``display`` is a :class:`~synaptiks.xlib.Display` object.  ``name`` is
+        ``display`` is a :class:`~synaptiks.x11.Display` object.  ``name`` is
         either a string, which has to match the device name literally, or a
         regular expression pattern, which is searched in the device name.
 
@@ -331,8 +331,8 @@ class InputDevice(Mapping):
         """
         Find all devices which have the given property.
 
-        ``display`` is a :class:`~synaptiks.xlib.Display` object.  ``name`` is
-        a string with the property name.
+        ``display`` is a :class:`~synaptiks.x11.Display` object.  ``name`` is a
+        string with the property name.
 
         Return an iterator over all :class:`InputDevice` objects, which have
         this property defined.

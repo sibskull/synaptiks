@@ -30,7 +30,7 @@ import pytest
 
 from synaptiks import ISSUE_TRACKER_URL
 from synaptiks.touchpad import NoTouchpadError
-from synaptiks.xinput import XInputVersionError
+from synaptiks.x11.input import XInputVersionError
 
 error = pytest.importorskip('synaptiks.kde.error')
 

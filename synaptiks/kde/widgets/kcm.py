@@ -150,7 +150,7 @@ def make_kcm_widget(component_data, parent=None):
     Otherwise a :class:`TouchpadErrorKCM` is returned, which gives the user a
     description of the error and its cause.
     """
-    from synaptiks.xlib import Display
+    from synaptiks.x11 import Display
     from synaptiks.touchpad import Touchpad
     from synaptiks.config import TouchpadConfiguration
     try:

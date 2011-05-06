@@ -25,8 +25,8 @@
 
 
 """
-    synaptiks.xlib
-    ==============
+    synaptiks.x11
+    =============
 
     X11 API used by synaptiks
 
