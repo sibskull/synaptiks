@@ -49,7 +49,7 @@
     >>> devices = list(InputDevice.find_devices_with_property(
     ...     Display.from_qt(), 'Synaptics Off'))
     >>> devices
-    [<synaptiks.x11.input.InputDevice object at 0xa599bcc>]
+    [<InputDevice(14, u'AlpsPS/2 ALPS GlidePoint')>]
     >>> devices[0].name
     u'AlpsPS/2 ALPS GlidePoint'
     >>> devices[0]['Synaptics Off']
