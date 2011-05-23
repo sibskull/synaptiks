@@ -34,7 +34,7 @@ from PyKDE4.kdecore import KCmdLineArgs, KAboutData, ki18n
 from PyKDE4.kdeui import KApplication, KMainWindow
 
 import synaptiks
-from synaptiks.xlib import Display
+from synaptiks.x11 import Display
 from synaptiks.touchpad import Touchpad
 from synaptiks.config import TouchpadConfiguration
 from synaptiks.kde.widgets.touchpad import TouchpadConfigurationWidget
