@@ -2,6 +2,7 @@
 ====================
 
 - Require pyudev 0.8 or newer now
+- #10: Increased maximum for minimum and maximum speed to 10.0
 
 
 0.6.2 (in development)

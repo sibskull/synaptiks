@@ -26,7 +26,7 @@
          <string comment="@label:slider">Minimum speed</string>
         </property>
         <property name="maximum">
-         <double>2.000000000000000</double>
+         <double>10.000000000000000</double>
         </property>
         <property name="singleStep">
          <double>0.100000000000000</double>
@@ -42,7 +42,7 @@
          <string comment="@label:slider">Maximum speed</string>
         </property>
         <property name="maximum">
-         <double>2.000000000000000</double>
+         <double>10.000000000000000</double>
         </property>
         <property name="singleStep">
          <double>0.100000000000000</double>
