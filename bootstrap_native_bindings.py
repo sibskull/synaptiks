@@ -151,10 +151,10 @@ class PyQtBuild(SipBuild):
 RIVERBANK_DOWNLOAD_URL = 'http://www.riverbankcomputing.com/static/Downloads/{0}'
 
 PYQT4_SOURCES = [
-    SourcePackage('sip', '4.12.1', SipBuild,
+    SourcePackage('sip', '4.12.3', SipBuild,
                   RIVERBANK_DOWNLOAD_URL.format(
                       'sip4/{name}-{version}.tar.gz')),
-    SourcePackage('PyQt-x11-gpl', '4.8.3', PyQtBuild,
+    SourcePackage('PyQt-x11-gpl', '4.8.4', PyQtBuild,
                   RIVERBANK_DOWNLOAD_URL.format(
                       'PyQt4/{name}-{version}.tar.gz'))]
 
