@@ -47,7 +47,7 @@ NO_TOUCHPAD_ERROR_MESSAGE = ki18nc(
     '@info NoTouchpadError error message',
     '<title>No touchpad found</title>'
     '<para>No touchpad was found in this system.  If the system has a '
-    'touchpad, please make sure, that the '
+    'touchpad, please make sure that the '
     '<application>synaptics</application> driver is properly installed and '
     'configured.</para>'
     '<para>If your touchpad is not found, though the driver is installed and '

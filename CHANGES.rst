@@ -5,8 +5,10 @@
 - #10: Increased maximum for minimum and maximum speed to 10.0
 
 
-0.6.2 (in development)
-======================
+0.6.2 (Jun 9, 2011)
+===================
+
+- #11: Fixed punctuation
 
 
 0.6.1 (Apr 23, 2011)
