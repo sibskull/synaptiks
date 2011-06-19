@@ -73,8 +73,9 @@ setup(
         'Topic :: System :: Hardware',
         'Topic :: Utilities',
         ],
-    packages=['synaptiks', 'synaptiks.kde', 'synaptiks.kde.widgets',
-              'synaptiks.monitors', 'synaptiks._bindings'],
+    packages=['synaptiks', 'synaptiks.x11', 'synaptiks.kde',
+              'synaptiks.kde.widgets', 'synaptiks.monitors',
+              'synaptiks._bindings'],
     package_data={
         'synaptiks.kde.widgets': ['ui/*.ui'],
         },
