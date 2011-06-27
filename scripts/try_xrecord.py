@@ -39,6 +39,7 @@ from __future__ import (print_function, division, unicode_literals,
 
 import signal
 
+from synaptiks.x11 import Display
 from synaptiks._bindings import xlib, xrecord
 from synaptiks._bindings.util import scoped_pointer
 
@@ -57,13 +58,13 @@ def handle_event(_, data):
 
 def disable_context_handler(context):
     def handler(signum, frame):
-        with xlib.display() as dpy:
-            xrecord.disable_context(dpy, context)
+        with Display.from_name() as display:
+            xrecord.disable_context(display, context)
     return handler
 
 
 def main():
-    with xlib.display() as display:
+    with Display.from_name() as display:
         _, xrecord_version = xrecord.query_version(display)
         print('xrecord version:', '.'.join(map(str, xrecord_version)))
         key_events = (xlib.KEY_PRESS, xlib.KEY_RELEASE)
