@@ -71,7 +71,7 @@ from __future__ import (print_function, division, unicode_literals,
                         absolute_import)
 
 
-__version__ = '0.7.0'
+__version__ = '0.8.0'
 __version_info__ = tuple(map(int, __version__.split('.')))
 
 WEBSITE_URL = 'http://synaptiks.lunaryorn.de'
