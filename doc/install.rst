@@ -130,20 +130,8 @@ of these distributions at a regular basis.
 Arch linux
 ----------
 
-Install the dependencies::
-
-   sudo pacman -S pyqt kdebindings-python python-pip gettext docbook-xsl dbus-python
-
-Install **synaptiks**::
-
-   sudo pip install synaptiks
-
-Optionally remove the installation-only requirements again::
-
-   sudo pacman -R python-pip gettext docbook-xsl
-
-Alternatively you can use the `synaptiks PKGBUILD`_ from the `Arch User
-Repository`_, which is however not supported by the **synaptiks** developers.
+A `PKGBUILD`_ for **synaptiks** is provided in the `Arch User Repository`_.  It
+is maintained and supported by the **synaptiks** developers.
 
 
 .. _python: http://www.python.org
@@ -157,5 +145,5 @@ Repository`_, which is however not supported by the **synaptiks** developers.
 .. _dbus-python: http://www.freedesktop.org/wiki/Software/DBusBindings#Python
 .. _UPower: http://upower.freedesktop.org
 .. _Downloads: http://pypi.python.org/pypi/synaptiks
-.. _synaptiks PKGBUILD: http://aur.archlinux.org/packages.php?ID=32204
+.. _PKGBUILD: http://aur.archlinux.org/packages.php?ID=32204
 .. _Arch User Repository: http://aur.archlinux.org/
