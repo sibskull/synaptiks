@@ -79,7 +79,7 @@ setup(
         'console_scripts': ['synaptikscfg = synaptiks.config:main']},
     zip_safe=False,
     install_requires=requirements,
-    kde_handbook = 'doc/handbook/index.docbook',
+    kde_handbook='doc/handbook/index.docbook',
     kde_files={
         'xdgdata-apps': ['synaptiks.desktop'],
         'services': ['services/kcm_synaptiks.desktop'],
