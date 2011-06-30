@@ -1,6 +1,8 @@
 0.8 (in development)
 ====================
 
+- Removed build-time dependency against kdesdk-scripts
+
 
 0.7 (Jun 27, 2011)
 ==================
