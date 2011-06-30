@@ -2,6 +2,7 @@ include tox.ini bootstrap_native_bindings.py
 include COPYING README.rst CHANGES.rst
 include synaptiks.desktop synaptiks.notifyrc
 global-include requirements.txt
+recursive-include kdedistutils/ *.py
 recursive-include synaptiks/ *.py *.ui
 recursive-include autostart/ *.desktop
 recursive-include services/ *.py *.desktop

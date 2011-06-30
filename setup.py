@@ -28,10 +28,10 @@
 import sys
 from codecs import open
 
-from setuptools import setup
+from kdedistutils import setup
+from kdedistutils.kde import ThemeIcon, StandAloneIcon
 
 import synaptiks
-from synaptiks.setup import kde, l10n
 
 
 if sys.version_info[0] >= 3:
@@ -46,12 +46,7 @@ with open('README.rst', encoding='utf-8') as stream:
     long_description = stream.read()
 
 
-cmdclass = dict(kde.CMDCLASS)
-cmdclass.update(l10n.CMDCLASS)
-
 setup(
-    distclass=kde.Distribution,
-    cmdclass=cmdclass,
     name='synaptiks',
     version=str(synaptiks.__version__),
     url=str(synaptiks.WEBSITE_URL),
@@ -92,6 +87,6 @@ setup(
         'xdgconf-autostart': ['autostart/synaptiks_init_config.desktop'],
         'autostart': ['autostart/synaptiks_autostart.desktop']},
     kde_icons=[
-        kde.ThemeIcon('hicolor', 'scalable', 'apps', 'pics/synaptiks.svgz'),
-        kde.StandAloneIcon('pics/off-overlay.svgz')]
+        ThemeIcon('hicolor', 'scalable', 'apps', 'pics/synaptiks.svgz'),
+        StandAloneIcon('pics/off-overlay.svgz')]
     )

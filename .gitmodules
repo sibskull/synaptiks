@@ -1,0 +1,3 @@
+[submodule "kdedistutils"]
+	path = kdedistutils
+	url = git://github.com/lunaryorn/kdedistutils.git
