@@ -90,14 +90,13 @@ class ConfigurationWidgetMixin(object):
             raise TypeError(
                 'The given configuration does not provide defaults')
         self.__config = config
-        self.__changed_keys = set()
         for widget in self._find_configuration_widgets():
             signalname = self._get_signal_name_for_widget(widget)
             signal = getattr(widget, signalname)
-            signal.connect(partial(self._check_for_changes, widget))
+            signal.connect(self._check_for_changes)
         self.load_configuration()
 
-    def _check_for_changes(self, sender, changed_value):
+    def _check_for_changes(self):
         """
         Used as slot for changed signals of configuration widgets.
 
