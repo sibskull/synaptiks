@@ -40,6 +40,7 @@ import errno
 import posixpath
 import subprocess
 import logging
+from multiprocessing import cpu_count
 from optparse import OptionParser
 from collections import namedtuple
 
@@ -113,7 +114,9 @@ class Build(SubprocessMixin):
 
     def build(self):
         self.log.info('building in %s', self.build_directory)
-        self._check_call(['make'], cwd=self.build_directory)
+        number_of_cpus = cpu_count()
+        self._check_call(['make', '-j', str(number_of_cpus)],
+                         cwd=self.build_directory)
 
     def install(self):
         self.log.info('installing from %s', self.build_directory)
