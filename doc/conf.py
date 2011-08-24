@@ -58,7 +58,7 @@ intersphinx_mapping = {'http://docs.python.org/': None}
 handbook_source_directory = 'handbook'
 
 issuetracker = 'github'
-issuetracker_user = 'lunaryorn'
+issuetracker_project = 'lunaryorn/synaptiks'
 
 def setup(app):
     from sphinx.ext.autodoc import cut_lines
