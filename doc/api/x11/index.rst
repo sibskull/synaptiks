@@ -25,6 +25,10 @@
 
 .. autoclass:: StandardTypes
 
+   .. attribute:: string
+
+      An :class:`Atom` representing a string type
+
    .. attribute:: integer
 
       An :class:`Atom` representing an integer type

@@ -28,6 +28,7 @@ from __future__ import (print_function, division, unicode_literals,
 
 import sys
 import re
+from ast import literal_eval
 from collections import namedtuple
 from subprocess import Popen, PIPE
 
@@ -57,15 +58,13 @@ def _read_device_properties(device_id):
         values = []
         for value_string in value_strings:
             value_string = value_string.strip()
-            if '.' in value_string:
-                value = float(value_string)
-            elif '(' in value_string:
+            if '(' in value_string:
                 value = int(ATOM_PATTERN.search(value_string).group('value'))
             elif value_string == '<no items>':
                 # property without any items, simply ignore it
                 continue
             else:
-                value = int(value_string)
+                value = literal_eval(value_string)
             values.append(value)
         properties[match.group('name')] = values
     return properties

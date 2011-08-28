@@ -95,6 +95,8 @@ Constants
 
 .. autodata:: INTEGER
 
+.. autodata:: STRING
+
 Event type constants
 ^^^^^^^^^^^^^^^^^^^^
 

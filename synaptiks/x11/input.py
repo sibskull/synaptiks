@@ -435,6 +435,9 @@ class InputDevice(Mapping):
         property_type = Atom(self.display, property_type)
         if not property_type and property_format == 0:
             raise KeyError(name)
+        if property_type == self.display.types.string:
+            # string types means to return the string data unchanged
+            return [data]
         number_of_items = (len(data) * 8) // property_format
         if property_type in (self.display.types.integer,
                              self.display.types.atom):

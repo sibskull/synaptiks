@@ -81,6 +81,8 @@ NONE = 0
 ATOM = 4
 #: :class:`Atom` for an Integer type
 INTEGER = 19
+#: :class:`Atom` for a String type
+STRING = 31
 
 # event constants
 #: type code for key press event

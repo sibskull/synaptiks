@@ -177,6 +177,7 @@ class StandardTypes(object):
 
     def __init__(self, display):
         self.display = display
+        self.string = Atom(display, xlib.STRING)
         self.integer = Atom(display, xlib.INTEGER)
         self.float = display.intern_atom('FLOAT')
         self.atom = Atom(display, xlib.ATOM)
