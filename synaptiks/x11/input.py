@@ -413,21 +413,21 @@ class InputDevice(Mapping):
         """
         Get the given property.
 
-        Input device properties have multiple items and are of different
-        types.  This method returns all items in a tuple, and tries to
-        convert them into the appropriate Python property_type.  Consequently, the
-        conversion may fail, if the property has an unsupported property_type.
-        Currently, integer and float types are supported, any other property_type
-        raises :exc:`PropertyTypeError`.
+        Input device properties have multiple items and are of different types.
+        This method returns all items in a list, and tries to convert them into
+        the appropriate Python property_type.  Consequently, the conversion may
+        fail, if the property has an unsupported property_type.  Currently,
+        integer and float types are supported, any other property_type raises
+        :exc:`PropertyTypeError`.
 
         ``name`` is the property name as string.
 
-        Return all items of the given property as tuple, or raise
+        Return all items of the given property as list, or raise
         :exc:`~exceptions.KeyError`, if the property is not defined on this
         device.  Raise :exc:`UndefinedPropertyError` (which is a subclass of
         :exc:`~exceptions.KeyError`), if the property is not defined on the
-        server at all.  Raise :exc:`PropertyTypeError`, if the property has
-        an unsupported property_type.
+        server at all.  Raise :exc:`PropertyTypeError`, if the property has an
+        unsupported property_type.
         """
         atom = _get_property_atom(self.display, name)
         property_type, property_format, data = xinput.get_property(
