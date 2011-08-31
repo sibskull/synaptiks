@@ -13,7 +13,7 @@ To actually work with the translations, you need a copy of the latest sources
 of **synaptiks**.  If you are familar with git, just clone the whole
 repository::
 
-   git clone git://github.com/lunaryorn/synaptiks.git
+   git clone --recursive git://github.com/lunaryorn/synaptiks.git
 
 Alternatively, you can download and extract an archive containing the latest
 sources from `archives page

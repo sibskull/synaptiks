@@ -75,11 +75,11 @@ Contribution and development
 All development of synaptiks happens on GitHub_.  The complete source code is
 available in a git_ repository::
 
-   git clone git://github.com/lunaryorn/synaptiks
+   git clone --recursive git://github.com/lunaryorn/synaptiks
 
-Just clone this repository and want to fix some issue in **synaptiks** or
-add some new features.  Feel free to send pull requests with your work, or
-provide patches by email or in the issue tracker.
+Just clone this repository to fix some issue in **synaptiks** or add some new
+features.  Feel free to send pull requests with your work, or provide patches
+by email or in the issue tracker.
 
 If you want to translate **synaptiks** into other languages, please read the
 :doc:`translation_guide`.  It explains, how translations are handled in
