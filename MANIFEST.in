@@ -1,4 +1,4 @@
-include tox.ini bootstrap_native_bindings.py
+include tox.ini
 include COPYING README.rst CHANGES.rst
 include synaptiks.desktop synaptiks.notifyrc
 global-include requirements.txt
@@ -10,4 +10,4 @@ recursive-include pics/ *.svgz
 recursive-include po/ *.po *.pot
 recursive-include doc/ *.py *.rst *.ico *.png *.conf *.css_t
 recursive-include doc/handbook *.docbook *.png
-recursive-include tests/ *.py
+recursive-include tests/ *.py Makefile *.mk
