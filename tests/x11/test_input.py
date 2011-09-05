@@ -136,8 +136,7 @@ def test_pack_property_data(type_code, item_size):
 
 def test_unpack_property_data(type_code, item_size):
     if type_code == 'f':
-        # need some test for floating point packing too
-        raise NotImplementedError()
+        pytest.xfail('Floating point packing test not implemented')
 
     pad_bytes = [b for b in repeat('\x00', item_size - 1)]
     value_byte = '\x01'
@@ -286,7 +285,7 @@ class TestInputDevice(object):
         assert test_keyboard[property] == [1]
 
     def test_set_int(self):
-        raise NotImplementedError()
+        pytest.xfail('not implemented')
 
     def test_set_float(self):
-        raise NotImplementedError()
+        pytest.xfail('Not implemented')
