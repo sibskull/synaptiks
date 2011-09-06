@@ -11,10 +11,10 @@ Package contents
 
 .. toctree::
 
-   bindings/index
    x11/index
    util
    touchpad
    monitors
    management
    config
+   bindings/index
