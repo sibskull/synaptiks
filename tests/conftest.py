@@ -73,30 +73,31 @@ def _read_device_properties(device_id):
 def _read_device_database():
     proc = Popen(['xinput', 'list'], stdout=PIPE)
     output = proc.communicate()[0].decode(sys.getfilesystemencoding())
-    devices = {}
+    devices = []
     for line in output.splitlines():
         line = line.strip()
         match = DEVICE_PATTERN.match(line)
         device_id = int(match.group('id'))
-        device = Device(device_id, match.group('name'),
-                        _read_device_properties(device_id))
-        devices[device_id] = device
+        is_master = match.group('use') == 'master'
+        attachment = int(match.group('attachment'))
+        properties = _read_device_properties(device_id)
+        device = TestDevice(device_id, match.group('name'), is_master,
+                            match.group('type'), attachment, properties)
+        devices.append(device)
     return devices
 
 
 def pytest_configure(config):
     config.xinput_device_database = _read_device_database()
-    for device in config.xinput_device_database.itervalues():
-        if 'Synaptics Off' in device.properties:
-            config.xinput_has_touchpad = True
-            break
-    else:
-        config.xinput_has_touchpad = False
+    devices = config.xinput_device_database
+    config.xinput_has_touchpad = any(
+        'Synaptics Off' in d.properties for d in devices)
 
 
 def pytest_funcarg__device_database(request):
     """
-    The device database as returned by the "xinput" utility.
+    The device database as returned by the "xinput" utility as list of
+    :class:`TestDevice` objects.
     """
     return request.config.xinput_device_database
 

@@ -37,21 +37,21 @@ from synaptiks.x11 import input as xinput
 
 
 def pytest_generate_tests(metafunc):
-    if any(n in metafunc.funcargnames for n in
-           ('device_id', 'device_name', 'device_properties', 'device')):
+    if any(a in metafunc.funcargnames for a in ('test_device', 'device',
+                                                'device_property')):
         devices = metafunc.config.xinput_device_database
-        for device in sorted(devices.itervalues()):
+        for device in devices:
             if 'device_property' in metafunc.funcargnames:
                 # single test for each property defined on a device
                 for property in device.properties:
                     test_id = '{0},id={1},property={2}'.format(
                         device.name, device.id, property)
                     funcargs = dict(device_property=property)
-                    metafunc.addcall(param=device.id, funcargs=funcargs,
+                    metafunc.addcall(param=device, funcargs=funcargs,
                                      id=test_id)
             else:
                 test_id = '{0},id={1}'.format(device.name, device.id)
-                metafunc.addcall(param=device.id, id=test_id)
+                metafunc.addcall(param=device, id=test_id)
     if metafunc.function.__name__ in ('test_pack_property_data',
                                       'test_unpack_property_data'):
         type_codes = [('B', 1), ('H', 2), ('L', 4), ('f', 4)]
@@ -65,33 +65,20 @@ def pytest_generate_tests(metafunc):
             metafunc.addcall(funcargs=funcargs, id=testid)
 
 
-def pytest_funcarg__device_id(request):
+def pytest_funcarg__test_device(request):
     return request.param
 
 
-def pytest_funcarg__device_name(request):
-    device_id = request.getfuncargvalue('device_id')
-    devices = request.getfuncargvalue('device_database')
-    return devices[device_id].name
-
-
-def pytest_funcarg__device_properties(request):
-    device_id = request.getfuncargvalue('device_id')
-    devices = request.getfuncargvalue('device_database')
-    return devices[device_id].properties
-
-
 def pytest_funcarg__device_property_value(request):
-    device_id = request.getfuncargvalue('device_id')
-    devices = request.getfuncargvalue('device_database')
+    test_device = request.getfuncargvalue('test_device')
     device_property = request.getfuncargvalue('device_property')
-    return devices[device_id].properties[device_property]
+    return test_device.properties[device_property]
 
 
 def pytest_funcarg__device(request):
     display = request.getfuncargvalue('display')
-    device_id = request.getfuncargvalue('device_id')
-    return xinput.InputDevice(display, device_id)
+    test_device = request.getfuncargvalue('test_device')
+    return xinput.InputDevice(display, test_device.id)
 
 
 def pytest_funcarg__test_keyboard(request):
@@ -186,26 +173,26 @@ class TestXInputVersionError(object):
 
 class TestInputDevice(object):
 
-    def test_all_devices(self, display, device_database):
+    def test_all_devices_return_type(self, display):
         devices = list(xinput.InputDevice.all_devices(display))
-        assert set(d.id for d in devices) == set(device_database)
-        assert set(d.name for d in devices) == \
-               set(d.name for d in device_database.itervalues())
-        # assert type
         assert all(isinstance(d, xinput.InputDevice) for d in devices)
 
-    def test_find_devices_by_name(self, display, device_name, device_id):
-        devices = list(xinput.InputDevice.find_devices_by_name(
-            display, device_name))
-        assert devices
-        assert any(d.name == device_name for d in devices)
-        assert any(d.id == device_id for d in devices)
+    def test_all_devices(self, display, device_database):
+        ids = set(d.id for d in device_database)
+        all_devices = xinput.InputDevice.all_devices(display)
+        assert set(d.id for d in all_devices) == ids
 
-    def test_find_devices_with_property(self, display, device,
-                                        device_property):
-        devices = set(xinput.InputDevice.find_devices_with_property(
-            display, device_property))
-        assert device in devices
+    def test_find_devices_by_name(self, display, test_device, device_database):
+        device_ids = set(d.id for d in device_database
+                         if d.name == test_device.name)
+        devices = xinput.InputDevice.find_devices_by_name(
+            display, test_device.name)
+        assert set(d.id for d in devices) == device_ids
+
+    def test_find_devices_with_property(self, display, device_property):
+        devices = xinput.InputDevice.find_devices_with_property(
+            display, device_property)
+        assert all(device_property in d for d in devices)
 
     def test_find_devices_with_property_non_defined(self, display):
         devices = list(xinput.InputDevice.find_devices_with_property(
@@ -232,7 +219,8 @@ class TestInputDevice(object):
         assert not (device != device)
 
     def test_eq_ne(self, display, device_database):
-        device_combinations = product(device_database, device_database)
+        all_ids = set(d.id for d in device_database)
+        device_combinations = product(all_ids, all_ids)
         device = partial(xinput.InputDevice, display)
         for left_id, right_id in device_combinations:
             if left_id == right_id:
@@ -240,18 +228,18 @@ class TestInputDevice(object):
             else:
                 assert device(left_id) != device(right_id)
 
-    def test_repr(self, device, device_id, device_name):
-        assert repr(device) == '<InputDevice({0}, name={1!r})>'.format(
-            device_id, device_name)
+    def test_repr(self, device, test_device):
+        rep = '<InputDevice({0.id}, name={0.name!r})>'.format(test_device)
+        assert repr(device) == rep
 
-    def test_hash(self, device, device_id):
-        assert hash(device) == hash(device_id)
+    def test_hash(self, device, test_device):
+        assert hash(device) == hash(test_device.id)
 
-    def test_iter(self, device, device_properties):
-        assert set(device) == set(device_properties)
+    def test_iter(self, device, test_device):
+        assert set(device) == set(test_device.properties)
 
-    def test_len(self, device, device_properties):
-        assert len(device) == len(device_properties)
+    def test_len(self, device, test_device):
+        assert len(device) == len(test_device.properties)
 
     def test_contains(self, device, device_property):
         assert device_property in device
