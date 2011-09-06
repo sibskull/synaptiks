@@ -36,6 +36,7 @@
     :class:`InputDevice` provides various class methods to find input devices.
     You can iterate over all devices using :meth:`InputDevice.all_devices()`,
     or you can get a filtered list of devices using
+    :meth:`InputDevice.find_devices_by_type()`,
     :meth:`InputDevice.find_devices_by_name()` or
     :meth:`InputDevice.find_devices_with_property()`.
 
@@ -50,11 +51,14 @@
     ...     Display.from_qt(), 'Synaptics Off'))
     >>> devices
     [<InputDevice(14, u'AlpsPS/2 ALPS GlidePoint')>]
-    >>> devices[0].name
+    >>> device = devices[0]
+    >>> device.name
     u'AlpsPS/2 ALPS GlidePoint'
-    >>> devices[0]['Synaptics Off']
+    >>> device.type
+    u'pointer'
+    >>> device['Synaptics Off']
     [0]
-    >>> devices[0]['Synaptics Edge Scrolling']
+    >>> device['Synaptics Edge Scrolling']
     [0, 1, 0]
 
     To change properties, this interface can't be used, because properties
@@ -71,6 +75,7 @@ from __future__ import (print_function, division, unicode_literals,
 
 import struct
 from functools import partial
+from contextlib import contextmanager
 from collections import Mapping, namedtuple
 from operator import eq
 
@@ -284,26 +289,72 @@ class InputDevice(Mapping):
     and the corresponding operators >, <, <= and >= raise TypeError.
     """
 
+    #: ``use`` values of master devices
+    MASTER_USES = frozenset([xinput.MASTER_POINTER, xinput.MASTER_KEYBOARD])
+
+    #: map ``use`` struct field to device type
+    USE_TO_TYPE = {xinput.MASTER_POINTER: 'pointer',
+                   xinput.SLAVE_POINTER: 'pointer',
+                   xinput.MASTER_KEYBOARD: 'keyboard',
+                   xinput.SLAVE_KEYBOARD: 'keyboard',
+                   xinput.FLOATING_SLAVE: 'floating'}
+
+    #: set of valid device types
+    TYPES = frozenset(['pointer', 'keyboard', 'floating'])
+
+
     @classmethod
-    def all_devices(cls, display):
+    def all_devices(cls, display, master_only=False):
         """
         Iterate over all input devices registered on the given ``display``.
 
-        ``display`` is a :class:`~synaptiks.x11.Display` object.
+        ``display`` is a :class:`~synaptiks.x11.Display` object.  If
+        ``master_only`` is ``True``, only master devices are returned.  In this
+        case, the returned iterator yields only two devices in most cases, a
+        master keyboard and a master slave (the exact order is undefined).
 
         Return an iterator over :class:`InputDevice` objects.
 
         Raise :exc:`XInputVersionError`, if the XInput version isn't sufficient
         to support input device management.
+
+        .. seealso:: :attr:`is_master`
         """
         assert_xinput_version(display)
-        number_of_devices, devices = xinput.query_device(
-            display, xinput.ALL_DEVICES)
+        if master_only:
+            device_id = xinput.ALL_MASTER_DEVICES
+        else:
+            device_id = xinput.ALL_DEVICES
+        number_of_devices, devices = xinput.query_device(display, device_id)
         with scoped_pointer(devices, xinput.free_device_info) as devices:
             if not devices:
                 raise EnvironmentError('Failed to query devices')
             for i in xrange(number_of_devices):
                 yield cls(display, devices[i].deviceid)
+
+    @classmethod
+    def find_devices_by_type(cls, display, type, master_only=False):
+        """
+        Find all devices of the given ``type``.
+
+        ``display`` is a :class:`~synaptiks.x11.Display` object.  ``type`` is a
+        one of ``'keyboard'``, ``'pointer'`` or ``'floating'`` and denotes the
+        device type to look for.  ``master_only`` indicates whether to only
+        look for master devices (see :meth:`all_devices()`).
+
+        Return an iterator over all :class:`InputDevices` with the given
+        ``type``.
+
+        Raise :exc:`XInputVersionError`, if the XInput version isn't sufficient
+        to support input device management.  Raise
+        :exc:`~exceptions.ValueError`, if an invalid ``type`` was given.
+
+        .. seealso:: :attr:`type`, :meth:`all_devices()`
+        """
+        if type not in cls.TYPES:
+            raise ValueError(type)
+        return (d for d in cls.all_devices(display, master_only=master_only)
+                if d.type == type)
 
     @classmethod
     def find_devices_by_name(cls, display, name):
@@ -319,6 +370,8 @@ class InputDevice(Mapping):
 
         Raise :exc:`XInputVersionError`, if the XInput version isn't sufficient
         to support input device management.
+
+        .. seealso:: :attr:`name`
         """
         if isinstance(name, basestring):
             matches = partial(eq, name)
@@ -339,6 +392,9 @@ class InputDevice(Mapping):
 
         Raise :exc:`XInputVersionError`, if the XInput version isn't sufficient
         to support input device management.
+
+        .. seealso:: :meth:`__iter__`, :meth:`__contains__`,
+           :meth:`__getitem__`
         """
         return (d for d in cls.all_devices(display) if name in d)
 
@@ -346,16 +402,80 @@ class InputDevice(Mapping):
         self.id = deviceid
         self.display = display
 
+    @contextmanager
+    def _query_device(self):
+        """
+        Query this device from the X11 server.
+
+        Return a pointer to the device info struct
+        (:class:`~synaptiks._bindings.xinput.XIDeviceInfo`).
+        """
+        _, device = xinput.query_device(self.display, self.id)
+        if not device:
+            raise InputDeviceNotFoundError(self.id)
+        yield device
+        xinput.free_device_info(device)
+
     @property
     def name(self):
         """
         The name of this device as unicode string.
         """
-        _, device = xinput.query_device(self.display, self.id)
-        with scoped_pointer(device, xinput.free_device_info) as device:
-            if not device:
-                raise InputDeviceNotFoundError(self.id)
+        with self._query_device() as device:
             return ensure_unicode_string(device.contents.name)
+
+    @property
+    def is_master(self):
+        """
+        ``True``, if this device is a master device, ``False`` otherwise.
+
+        .. seealso:: :meth:`all_devices()`
+        """
+        with self._query_device() as device:
+            return device.contents.use in self.MASTER_USES
+
+    @property
+    def type(self):
+        """
+        The device type as string.
+
+        If ``'keyboard'`` or ``'pointer'``, the device is a keyboard or
+        pointing device respectively which is currently in use by the X server,
+        either as master or slave.  Otherwise, the type is ``'floating'``.  A
+        floating device is a slave device without master which is currently not
+        used by the X server.
+
+        .. seealso:: :attr:`is_master`
+        """
+        with self._query_device() as device:
+            return self.USE_TO_TYPE[device.contents.use]
+
+    @property
+    def attachment_device(self):
+        """
+        The attachment  or pairing for this device  as :class:`InputDevice`, or
+        ``None``,  if there is  neither an  attachment nor  a pairing  for this
+        device.
+
+        If this device is a slave device, this property refers to the master
+        device this device is attached to.  The master device always has the
+        same type, e.g. a slave keyboard is always attached to a master
+        keyboard.
+
+        If this device is a master device, this property refers to the paired
+        master device.  The paired device has exactly the other type, e.g. a
+        master keyboard is always paired with a master pointer and vice versa.
+
+        A floating device is never paired with or attached to any other device.
+        In this case, this property is ``None``.
+
+        .. seealso:: :attr:`is_master`, :attr:`type`
+        """
+        if self.type == 'floating':
+            return None
+        else:
+            with self._query_device() as device:
+                return self.__class__(self.display, device.contents.attachment)
 
     def __repr__(self):
         return '<{0}({1}, name={2!r})>'.format(self.__class__.__name__,

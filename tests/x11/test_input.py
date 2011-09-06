@@ -182,6 +182,31 @@ class TestInputDevice(object):
         all_devices = xinput.InputDevice.all_devices(display)
         assert set(d.id for d in all_devices) == ids
 
+    def test_all_devices_master_only(self, display, device_database):
+        master_ids = set(d.id for d in device_database if d.is_master)
+        master_devices = xinput.InputDevice.all_devices(
+            display, master_only=True)
+        assert set(d.id for d in master_devices) == master_ids
+
+    def test_find_devices_by_type_invalid_type(self, display):
+        with pytest.raises(ValueError) as excinfo:
+            xinput.InputDevice.find_devices_by_type(display, 'foo')
+        assert str(excinfo.value) == 'foo'
+
+    def test_find_devices_by_type_keyboard(self, display, device_database):
+        keyboard_ids = set(d.id for d in device_database
+                           if d.type == 'keyboard')
+        keyboards = xinput.InputDevice.find_devices_by_type(
+            display, 'keyboard')
+        assert set(k.id for k in keyboards) == keyboard_ids
+
+    def test_find_devices_by_type_pointer(self, display, device_database):
+        pointer_ids = set(d.id for d in device_database
+                           if d.type == 'pointer')
+        pointers = xinput.InputDevice.find_devices_by_type(
+            display, 'pointer')
+        assert set(k.id for k in pointers) == pointer_ids
+
     def test_find_devices_by_name(self, display, test_device, device_database):
         device_ids = set(d.id for d in device_database
                          if d.name == test_device.name)
@@ -213,6 +238,28 @@ class TestInputDevice(object):
 
     def test_display(self, display, device):
         assert device.display is display
+
+    def test_name(self, device, test_device):
+        assert device.name == test_device.name
+
+    def test_is_master(self, device, test_device):
+        assert device.is_master == test_device.is_master
+
+    def test_type(self, device, test_device):
+        assert device.type == test_device.type
+
+    def test_attachment_device(self, device, test_device):
+        if test_device.type == 'floating':
+            assert device.attachment_device is None
+        else:
+            assert isinstance(device.attachment_device, xinput.InputDevice)
+            assert device.attachment_device.id == test_device.attachment
+            assert device.attachment_device.is_master
+            if not test_device.is_master:
+                assert device.attachment_device.type == device.type
+            else:
+                inverse = {'keyboard': 'pointer', 'pointer': 'keyboard'}
+                assert device.attachment_device.type == inverse[device.type]
 
     def test_self_identity(self, device):
         assert device == device

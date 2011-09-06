@@ -37,14 +37,30 @@ import pytest
 from synaptiks.x11 import Display
 
 
-DEVICE_PATTERN = re.compile(
-    r'(\W|\s)*(?P<name>.+?)\s+id=(?P<id>\d+)\s\[[^]]+\]', re.UNICODE)
+DEVICE_PATTERN = re.compile(r"""
+# initial whitespace and list symbols
+(\W|\s)*
+# the device name
+(?P<name>.+?)
+# separating white space
+\s+
+# device id
+id=(?P<id>\d+)
+# another separating white space and opening bracket
+\s+\[
+# a word describing the use: "master" or "slave"
+(?P<use>\w+)\s+
+# a word describing the type: "keyboard" or "pointer"
+(?P<type>\w+)\s+
+# an integer for the attachment
+\((?P<attachment>\d+)\)\]""", re.UNICODE | re.VERBOSE)
 PROPERTY_PATTERN = re.compile(
     r'(?P<name>[^(]+) \((?P<id>\d+)\):\s+(?P<values>.*)', re.UNICODE)
 ATOM_PATTERN = re.compile(
     r'\((?P<value>\d+)\)', re.UNICODE)
 
-Device = namedtuple('Device', 'id name properties')
+TestDevice = namedtuple(
+    'TestDevice', 'id name is_master type attachment properties')
 
 
 def _read_device_properties(device_id):

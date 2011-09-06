@@ -70,11 +70,41 @@ class XIDeviceInfo(Structure):
 
 XIDeviceInfo_p = POINTER(XIDeviceInfo)
 
-# XInput defines as python constants
-#: a "magic" device id, identifying all devices in :func:`query_device`
-ALL_DEVICES = 0
-ANY_PROPERTY_TYPE = 0
+# Misc constants
 PROP_MODE_REPLACE = 0
+ANY_PROPERTY_TYPE = 0
+
+# Special device IDs
+#: Device id for all devices
+ALL_DEVICES = 0
+#: Device id for all master devices
+ALL_MASTER_DEVICES = 1
+
+# type types
+#: Master pointer.
+#:
+#: With his type, :attr:`XIDeviceInfo.attachment` contains the device ID of the
+#: paired master keyboard.
+MASTER_POINTER = 1
+#: Master keyboard
+#:
+#: With this type, :attr:`XIDeviceInfo.attachment` contains the device ID of the
+#: paired master pointer.
+MASTER_KEYBOARD = 2
+#: Slave pointer
+#:
+#: With this type, :attr:`XIDeviceInfo.attachment` contains the device ID of the
+#: the master pointer this device is attached to.
+SLAVE_POINTER = 3
+#: Slave keyboard
+#:
+#: With this type, :attr:`XIDeviceInfo.attachment` contains the device ID of the
+#: the master keyboard this device is attached to.
+SLAVE_KEYBOARD = 4
+#: A slave device not attached to any master.
+#:
+#: With this type, :attr:`XIDeviceInfo.attachment` has an undefined value.
+FLOATING_SLAVE = 5
 
 
 SIGNATURES = dict(
@@ -118,8 +148,9 @@ def query_device(display, deviceid):
     Query the device with the given ``deviceid``.
 
     ``display`` is a :class:`~synaptiks._bindings.xlib.Display_p` providing the
-    server connection.  ``deviceid`` is an integer with a device id, or
-    :data:`ALL_DEVICES` to query all devices.
+    server connection.  ``deviceid`` is either a integral device id to query a
+    single device, or a :ref:`special ID <xinput-special-ids>` to query
+    multiple devices at once.
 
     Return a tuple ``(number_of_devices, devices)``.  ``number_of_devices``
     is an integer with the number of devices, ``devices`` is a

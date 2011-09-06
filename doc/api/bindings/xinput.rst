@@ -20,7 +20,21 @@ Data types
 
    .. attribute:: use
 
+      The usage of this device inside the X server as :ref:`device type
+      <xinput-device-types>`.
+
    .. attribute:: attachment
+
+      The device ID of the attached device.
+
+      If :attr:`use` is :data:`MASTER_POINTER` or :data:`MASTER_KEYBOARD`, this
+      contains the device ID of the paired master keyboard or pointer
+      respectively.  If :attr:`use` is :data:`SLAVE_POINTER` or
+      :data:`SLAVE_KEYBOARD`, this contains the device ID of the master pointer
+      or keyboard respectively, this device is attached to.
+
+      If :attr:`use` is :data:`FLOATING_SLAVE`, the value of this attribute is
+      undefined.
 
    .. attribute:: enabled
 
@@ -29,10 +43,34 @@ Data types
    Pointer to :class:`XIDeviceInfo`
 
 
-Constants
----------
+.. _xinput-device-types:
+
+Device types
+------------
+
+Constants for :attr:`XIDeviceInfo.use`.
+
+.. autodata:: MASTER_POINTER
+
+.. autodata:: MASTER_KEYBOARD
+
+.. autodata:: SLAVE_POINTER
+
+.. autodata:: SLAVE_KEYBOARD
+
+.. autodata:: FLOATING_SLAVE
+
+
+.. _xinput-special-ids:
+
+Special device IDs
+------------------
+
+Special device IDs for :func:`query_device`
 
 .. autodata:: ALL_DEVICES
+
+.. autodata:: ALL_MASTER_DEVICES
 
 
 Functions
@@ -53,4 +91,3 @@ Functions
 .. autofunction:: get_property
 
 .. autofunction:: change_property
-

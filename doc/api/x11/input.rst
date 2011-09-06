@@ -13,6 +13,8 @@ The :class:`InputDevice` class
 
    .. automethod:: all_devices
 
+   .. automethod:: find_devices_by_type
+
    .. automethod:: find_devices_by_name
 
    .. automethod:: find_devices_with_property
@@ -26,6 +28,12 @@ The :class:`InputDevice` class
       The device id as integer
 
    .. autoattribute:: name
+
+   .. autoattribute:: is_master
+
+   .. autoattribute:: type
+
+   .. autoattribute:: attachment_device
 
    .. automethod:: __len__
 
