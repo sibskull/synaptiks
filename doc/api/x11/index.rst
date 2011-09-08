@@ -21,6 +21,8 @@
 
    .. automethod:: intern_atom
 
+   .. automethod:: is_atom_defined
+
 .. autoexception:: DisplayError
 
 .. autoclass:: StandardTypes
