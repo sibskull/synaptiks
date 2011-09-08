@@ -19,6 +19,8 @@
 
    .. automethod:: close
 
+   .. automethod:: flush
+
    .. automethod:: intern_atom
 
    .. automethod:: is_atom_defined

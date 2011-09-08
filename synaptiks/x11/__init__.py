@@ -130,6 +130,12 @@ class Display(object):
         """
         return bool(self._as_parameter_)
 
+    def flush(self):
+        """
+        Flush the output buffer of this display.
+        """
+        xlib.flush(self)
+
     def intern_atom(self, name, only_if_exists=True):
         """
         Create a new X11 atom with the given ``name``.

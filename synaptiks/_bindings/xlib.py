@@ -122,6 +122,7 @@ SIGNATURES = dict(
     XFree=([c_void_p], c_int),
     XOpenDisplay=([c_char_p], Display_p),
     XCloseDisplay=([Display_p], c_int),
+    XFlush=([Display_p], c_int),
     XInternAtom=([Display_p, c_char_p, Bool], Atom),
     XGetAtomName=([Display_p, Atom], c_void_p, _convert_x11_char_p),
     XQueryKeymap=([Display_p, c_char * 32], c_int),
@@ -135,6 +136,7 @@ libX11 = load_library('X11', SIGNATURES)
 
 open_display = libX11.XOpenDisplay
 close_display = libX11.XCloseDisplay
+flush = libX11.XFlush
 
 
 # add libX11 functions to top-level namespace under pythonic names
