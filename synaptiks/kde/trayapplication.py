@@ -91,7 +91,7 @@ class SynaptiksConfigDialog(KConfigDialog):
                 any(w.is_configuration_changed for w in self.config_widgets))
 
     def isDefault(self):
-        return (KConfigDialog.isDefault(self) or
+        return (KConfigDialog.isDefault(self) and
                 any(w.shows_defaults() for w in self.config_widgets))
 
     def updateWidgetsDefault(self):
