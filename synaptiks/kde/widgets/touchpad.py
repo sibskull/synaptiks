@@ -206,16 +206,21 @@ class TouchpadConfigurationWidget(KTabWidget, ConfigurationWidgetMixin):
         KIntNumInput='valueChanged', KDoubleNumInput='valueChanged'
         )
 
-    def __init__(self, config, parent=None):
+    def __init__(self, config, touchpad, parent=None):
         """
-        Create a new configuration widget for the given ``touchpad``.
+        Create a new touchpad configuration widget based on given ``config``.
+
+        ``touchpad`` is the touchpad configured by ``config``.  Based it's
+        capabilities settings which are not available are disabled.
 
         ``config`` is the :class:`~synaptiks.config.TouchpadConfiguration`
-        object displayed by this widget.  ``parent`` is the parent
+        object displayed by this widget.  ``touchpad`` is a
+        :class:`~synaptiks.touchpad.Touchpad` object.  ``parent`` is the parent
         :class:`~PyQt4.QtGui.QWidget` (can be ``None``).
         """
         KTabWidget.__init__(self, parent)
         self.touchpad_config = config
+        self.touchpad = touchpad
         pages = [HardwarePage(self.touchpad, self), MotionPage(self),
                  ScrollingPage(self.touchpad, self),
                  TappingPage(self.touchpad, self)]
@@ -224,11 +229,3 @@ class TouchpadConfigurationWidget(KTabWidget, ConfigurationWidgetMixin):
         self.setWindowTitle(
             i18nc('@title:window', 'Touchpad configuration'))
         self._setup(self.touchpad_config)
-
-    @property
-    def touchpad(self):
-        """
-        The :class:`~synaptiks.touchpad.Touchpad` object associated with this
-        widget.
-        """
-        return self.touchpad_config.touchpad

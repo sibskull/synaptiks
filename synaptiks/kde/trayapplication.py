@@ -65,13 +65,16 @@ class SynaptiksConfigDialog(KConfigDialog):
 
     def __init__(self, touchpad, touchpad_manager, tray_config, parent=None):
         KConfigDialog.__init__(self, parent, self.DIALOG_NAME, tray_config)
-        self.touchpad_config = TouchpadConfiguration(touchpad)
-        self.management_config = ManagerConfiguration(touchpad_manager)
+        self.touchpad = touchpad
+        self.touchpad_manager = touchpad_manager
+        self.touchpad_config = TouchpadConfiguration.load_from_touchpad(
+            self.touchpad)
+        self.management_config = ManagerConfiguration.load()
 
         self.setFaceType(self.List)
 
         self.touchpad_config_widget = TouchpadConfigurationWidget(
-            self.touchpad_config, self)
+            self.touchpad_config, touchpad, self)
         self.management_config_widget = TouchpadManagementWidget(
             self.management_config, self)
 
@@ -108,8 +111,10 @@ class SynaptiksConfigDialog(KConfigDialog):
         KConfigDialog.updateSettings(self)
         for widget in self.config_widgets:
             widget.apply_configuration()
-        self.touchpad_config.save()
-        self.management_config.save()
+        for config in (self.touchpad_config, self.management_config):
+            config.save()
+        self.touchpad_config.apply_to(self.touchpad)
+        self.management_config.apply_to(self.touchpad_manager)
 
 
 class SynaptiksTrayConfiguration(KConfigSkeleton):
@@ -183,7 +188,8 @@ class SynaptiksNotifierItem(KStatusNotifierItem):
 
     def setup_manager(self, touchpad):
         self.touchpad_manager = TouchpadManager(touchpad, self)
-        ManagerConfiguration.load(self.touchpad_manager)
+        config = ManagerConfiguration.load()
+        config.apply_to(self.touchpad_manager)
         # transition upon touchpad_on_action
         self.touchpad_manager.add_touchpad_switch_action(
             self.touchpad_on_action)

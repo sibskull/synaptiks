@@ -41,6 +41,7 @@ from PyQt4.QtGui import QHBoxLayout, QLabel, QSizePolicy
 from PyKDE4.kdecore import ki18nc, i18nc, KGlobal
 from PyKDE4.kdeui import KCModule, KIconLoader
 
+from synaptiks.config import TouchpadConfiguration
 from synaptiks.kde import make_about_data
 from synaptiks.kde.widgets.touchpad import TouchpadConfigurationWidget
 
@@ -101,19 +102,20 @@ class TouchpadConfigurationKCM(SynaptiksKCMBase):
     Synaptiks system settings module.
     """
 
-    def __init__(self, touchpad_config, component_data, parent=None):
+    def __init__(self, touchpad, component_data, parent=None):
         """
         Create a new synaptiks module.
 
-        ``touchpad_config`` is the
-        :class:`synaptiks.config.TouchpadConfiguration`, which is handled by
-        this module.  ``component_data`` and ``parent`` come from the
-        ``KCModule`` constructor and are passed from the plugin entry point.
+        ``touchpad`` is the :class:~`synaptiks.touchpad.Touchpad` to
+        configure.``component_data`` and ``parent`` come from the ``KCModule``
+        constructor and are passed from the plugin entry point.
         """
         SynaptiksKCMBase.__init__(self, component_data, parent)
-        self.touchpad_config = touchpad_config
+        self.touchpad = touchpad
+        self.config = TouchpadConfiguration.load_from_touchpad(touchpad)
         self.setLayout(QHBoxLayout(self))
-        self.config_widget = TouchpadConfigurationWidget(self.touchpad_config)
+        self.config_widget = TouchpadConfigurationWidget(
+            self.config, self.touchpad)
         self.config_widget.configurationChanged.connect(
             self.unmanagedWidgetChangeState)
         self.layout().addWidget(self.config_widget)
@@ -135,7 +137,8 @@ class TouchpadConfigurationKCM(SynaptiksKCMBase):
         Apply and save touchpad configuration.
         """
         self.config_widget.apply_configuration()
-        self.touchpad_config.save()
+        self.config.apply_to(self.touchpad)
+        self.config.save()
 
 
 def make_kcm_widget(component_data, parent=None):
@@ -152,10 +155,8 @@ def make_kcm_widget(component_data, parent=None):
     """
     from synaptiks.x11 import Display
     from synaptiks.touchpad import Touchpad
-    from synaptiks.config import TouchpadConfiguration
     try:
         touchpad = Touchpad.find_first(Display.from_qt())
-        config = TouchpadConfiguration(touchpad)
-        return TouchpadConfigurationKCM(config, component_data, parent)
+        return TouchpadConfigurationKCM(touchpad, component_data, parent)
     except Exception as error:
         return TouchpadErrorKCM(error, component_data, parent)

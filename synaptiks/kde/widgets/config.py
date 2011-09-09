@@ -200,7 +200,7 @@ class ConfigurationWidgetMixin(object):
         """
         Load the default values from the underlying configuration.
         """
-        self._update_widgets_from_mapping(self.__config.defaults)
+        self._update_widgets_from_mapping(self.__config.defaults())
 
     def shows_defaults(self):
         """
@@ -211,7 +211,7 @@ class ConfigurationWidgetMixin(object):
         ``False`` otherwise.
         """
         current = self._get_mapping_from_widgets()
-        return current == self.__config.defaults
+        return current == self.__config.defaults()
 
     def load_configuration(self):
         """

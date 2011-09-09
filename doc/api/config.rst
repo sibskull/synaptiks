@@ -5,44 +5,37 @@
    :synopsis: Configuration handling
 
 
-Standard configuration directories and files
---------------------------------------------
+Standard configuration directory
+--------------------------------
 
 .. autofunction:: get_configuration_directory
 
-.. autofunction:: get_touchpad_config_file_path
 
-.. autofunction:: get_touchpad_defaults_file_path
-
-.. autofunction:: get_management_config_file_path
-
-
-Touchpad configuration
-----------------------
-
-.. autofunction:: get_touchpad_defaults
+Configuration classes
+---------------------
 
 .. autoclass:: TouchpadConfiguration
 
+   .. automethod:: defaults
+
    .. automethod:: load
 
-   .. automethod:: __init__
-
-   .. autoattribute:: defaults
+   .. automethod:: load_from_touchpad
 
    .. automethod:: save
 
+   .. automethod:: apply_to
 
-Manager Configuration
----------------------
+   .. automethod:: update_from_touchpad
+
 
 .. autoclass:: ManagerConfiguration
+   :show-inheritance:
+
+   .. automethod:: defaults
 
    .. automethod:: load
 
-   .. automethod:: __init__
-
-   .. autoattribute:: defaults
-
    .. automethod:: save
 
+   .. automethod:: apply_to

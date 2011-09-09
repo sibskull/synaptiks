@@ -32,23 +32,12 @@
     ---------------------
 
     This module provides the configuration classes for the touchpad and the
-    touchpad manager.  These configuration classes are simply mappings, which
-    expose the *current* state of the associated objects (and *not* the state
-    of the configuration on disk).  This allows the user to configure the live
-    state of these objects, which is especially important for touchpad
-    configuration, which can be changed from outside of **synaptiks** using
-    utilities like :program:`xinput`.
+    touchpad manager.  These configuration classes are just mappings with some
+    convenience methods to load/save the configuration, and to handle default
+    values.
 
-    To save the configuration permanently, these mappings, and consequently the
-    current configuration state of the associated objects, is simply dumped in
-    JSON format to the configuration directory (see
-    :func:`get_configuration_directory()`).
-
-    To apply a dumped configuration, it is loaded as standard dict from the
-    JSON dump, and then the corresponding configuration mapping is updated with
-    this dict.  All configuration mappings provide a convenient
-    :meth:`~TouchpadConfiguration.load()` method to create a new configuration
-    mapping updated with the dumped configuration.
+    Configuration is saved in JSON files (to retain type information) in the
+    configuration directory (see :func:`get_configuration_directory()`).
 
     Handling of default values
     --------------------------
@@ -63,14 +52,12 @@
 
     Unfortunately the touchpad driver does not provide special access to these
     default values.  To work around this restriction, **synaptiks** saves the
-    touchpad configuration to disc (see
-    :func:`get_touchpad_defaults_file_path()`) right after session startup
-    (through an autostart command ``synaptikscfg init``, see
-    :ref:`script_usage`), before loading the actual configuration.  At this
-    point, the driver properties haven't yet been modified, and thus still
-    contain the default values.  These dumped defaults can later be loaded
-    through :func:`get_touchpad_defaults()` and are also returned by
-    :attr:`TouchpadConfiguration.defaults`.
+    touchpad configuration to disc right after session startup (through an
+    autostart command ``synaptikscfg init``, see :ref:`script_usage`), before
+    loading the actual configuration.  At this point, the driver properties
+    haven't yet been modified, and thus still contain the default values.
+    These dumped defaults can later be loaded through
+    :meth:`TouchpadConfiguration.defaults()`.
 
     .. _script_usage:
 
@@ -127,51 +114,80 @@ def get_configuration_directory():
     return ensure_directory(os.path.join(xdg_config_home, 'synaptiks'))
 
 
-def get_touchpad_config_file_path():
-    """
-    Get the path to the file which stores the touchpad configuration.
-    """
-    return os.path.join(get_configuration_directory(), 'touchpad-config.json')
+class AbstractConfiguration(dict):
+
+    @classmethod
+    def default_filename(cls):
+        """
+        Get the default filename for this configuration.
+
+        Return the filename as string.
+        """
+        raise NotImplementedError()
+
+    @classmethod
+    def defaults(cls):
+        """
+        Get the default configuration.
+        """
+        return cls()
+
+    @classmethod
+    def load(cls, filename=None):
+        """
+        Load the configuration from disc.
+
+        If no ``filename`` is given, the configuration is loaded from the
+        default configuration file as returned by :meth:`default_filename()`.
+        Otherwise the configuration is loaded from the given file.
+
+        The configuration is initialized with the defaults provided by
+        :meth:`defaults()`.
+
+        Return the configuration object.  Raise
+        :exc:`~exceptions.EnvironmentError`, if the file could not be loaded,
+        but *not* in case of a non-existing file.
+        """
+        if not filename:
+            filename = cls.default_filename()
+        config = cls()
+        config.update(cls.defaults())
+        config.update(load_json(filename, default={}))
+        return config
+
+    def save(self, filename=None):
+        """
+        Save the configuration.
+
+        If no ``filename`` is given, the configuration is saved to the default
+        configuration file as returned by :meth:`default_filename()`.
+        Otherwise the configuration is saved to the given file.
+
+        ``filename`` is either ``None`` or a string containing the path to a
+        file.
+
+        Raise :exc:`~exceptions.EnvironmentError`, if the file could not be
+        written.
+        """
+        if not filename:
+            filename = self.default_filename()
+        save_json(filename, dict(self))
+
+    def apply_to(self, target):
+        """
+        Apply this configuration to the given target.
+
+        Default implementation raises :exc:`~exceptions.NotImplementedError()`.
+        """
+        raise NotImplementedError()
 
 
-def get_touchpad_defaults_file_path():
+class TouchpadConfiguration(AbstractConfiguration):
     """
-    Get the path to the file which stores the default touchpad configuration as
-    setup by the touchpad driver.
-    """
-    return os.path.join(get_configuration_directory(),
-                        'touchpad-defaults.json')
-
-
-def get_management_config_file_path():
-    """
-    Get the path to the file which stores the touchpad management
-    configuration.
-    """
-    return os.path.join(get_configuration_directory(), 'management.json')
-
-
-def get_touchpad_defaults(filename=None):
-    """
-    Get the default touchpad settings as :func:`dict` *without* applying it to
-    the touchpad.
-    """
-    if not filename:
-        filename = get_touchpad_defaults_file_path()
-    return load_json(filename, default={})
-
-
-class TouchpadConfiguration(MutableMapping):
-    """
-    A mutable mapping class representing the current configuration of the
-    touchpad.
-
-    As a special case, deleting a key (e.g. ``del config['minimum_speed']``)
-    resets the setting back to its default value (as provided by
-    :attr:`defaults`).
+    Touchpad configuration.
     """
 
-    CONFIG_KEYS = frozenset([
+    CONFIGURABLE_TOUCHPAD_PROPERTIES = frozenset([
         'minimum_speed', 'maximum_speed', 'acceleration_factor',
         'edge_motion_always', 'fast_taps',
         'rt_tap_action', 'rb_tap_action', 'lt_tap_action', 'lb_tap_action',
@@ -184,111 +200,81 @@ class TouchpadConfiguration(MutableMapping):
         'circular_scrolling', 'circular_scrolling_trigger',
         'circular_scrolling_distance', 'circular_touchpad'])
 
+    @staticmethod
+    def default_filename():
+        return os.path.join(get_configuration_directory(),
+                            'touchpad-config.json')
+
+    @staticmethod
+    def defaults_file():
+        return os.path.join(get_configuration_directory(),
+                            'touchpad-defaults.json')
+
     @classmethod
-    def load(cls, touchpad, filename=None):
+    def defaults(cls):
         """
-        Load the configuration for the given ``touchpad`` from disc.
+        Load the default touchpad configuration.
 
-        If no ``filename`` is given, the configuration is loaded from the
-        default configuration file as returned by
-        :func:`get_touchpad_config_file_path`.  Otherwise the configuration is
-        loaded from the given file.  If the file doesn't exist, an empty
-        configuration is loaded.
+        The default touchpad configuration is dumped to disk as session
+        startup, and can be loaded by this method.
 
-        After the configuration is loaded, it is applied to the given
+        Return a :class:`TouchpadConfiguration` object with the default
+        configuration.
+        """
+        return cls(load_json(cls.defaults_file(), default={}))
+
+    @classmethod
+    def load_from_touchpad(cls, touchpad, filename=None):
+        """
+        Load configuration and initialize it with the state of the given
         ``touchpad``.
 
         ``touchpad`` is a :class:`~synaptiks.touchpad.Touchpad` object.
-        ``filename`` is either ``None`` or a string containing the path to a
-        file.
+        ``filename`` is a string with the filename to load.  If unset, the
+        default configuration file is loaded.
 
-        Return a :class:`TouchpadConfiguration` object.  Raise
-        :exc:`~exceptions.EnvironmentError`, if the file could not be loaded,
-        but *not* in case of a non-existing file.
+        Return a :class:`TouchpadConfiguration` which resembles the sate of the
+        given ``touchpad``.
         """
-        if not filename:
-            filename = get_touchpad_config_file_path()
-        config = cls(touchpad)
-        config.update(load_json(filename, default={}))
+        config = cls.load(filename=filename)
+        config.update_from_touchpad(touchpad)
         return config
 
-    def __init__(self, touchpad):
+    def save_as_defaults(self):
         """
-        Create a new configuration from the given ``touchpad``.
+        Save this configuration as default.
+
+        Raise :attr:`~exceptions.EnvironmentError`, if saving failed.
+        """
+        self.save(self.defaults_file())
+
+    def update_from_touchpad(self, touchpad):
+        """
+        Update this configuration with the state of the given ``touchpad``.
 
         ``touchpad`` is a :class:`~synaptiks.touchpad.Touchpad` object.
         """
-        self.touchpad = touchpad
+        for key in self.CONFIGURABLE_TOUCHPAD_PROPERTIES:
+            value = getattr(touchpad, key)
+            if isinstance(value, float):
+                # round floats to make comparison safe
+                value = round(value, 5)
+            self[key] = value
 
-    @property
-    def defaults(self):
+    def apply_to(self, touchpad):
         """
-        A dictionary of default values for this configuration.
+        Apply this configuration to of the given ``touchpad``.
 
-        The default values of this configuration are dynamically loaded from
-        disc, where the have been dumped to at session startup.
-
-        Use ``config.update(config.defaults)`` to restore the configuration to
-        its default values.
+        ``touchpad`` is a :class:`~synaptiks.touchpad.Touchpad` object.
         """
-        return get_touchpad_defaults()
-
-    def __contains__(self, key):
-        return key in self.CONFIG_KEYS
-
-    def __len__(self):
-        return len(self.CONFIG_KEYS)
-
-    def __iter__(self):
-        return iter(self.CONFIG_KEYS)
-
-    def __getitem__(self, key):
-        if key not in self:
-            raise KeyError(key)
-        value = getattr(self.touchpad, key)
-        if isinstance(value, float):
-            # round floats for the sake of comparability and readability
-            value = round(value, 5)
-        return value
-
-    def __setitem__(self, key, value):
-        if key not in self:
-            raise KeyError(key)
-        setattr(self.touchpad, key, value)
-
-    def __delitem__(self, key):
-        default = self.defaults.get(key)
-        if default is not None:
-            self[key] = default
-
-    def save(self, filename=None):
-        """
-        Save the configuration.
-
-        If no ``filename`` is given, the configuration is saved to the default
-        configuration file as returned by
-        :func:`get_touchpad_config_file_path`.  Otherwise the configuration is
-        saved to the given file.
-
-        ``filename`` is either ``None`` or a string containing the path to a
-        file.
-
-        Raise :exc:`~exceptions.EnvironmentError`, if the file could not be
-        written.
-        """
-        if not filename:
-            filename = get_touchpad_config_file_path()
-        save_json(filename, dict(self))
+        for key in self.CONFIGURABLE_TOUCHPAD_PROPERTIES:
+            setattr(touchpad, key, self[key])
 
 
-class ManagerConfiguration(MutableMapping):
+class ManagerConfiguration(AbstractConfiguration):
     """
-    A mutable mapping class representing the configuration of a
-    :class:`~synaptiks.management.TouchpadManager`.
-
-    As a special case, deleting a key (e.g. ``del config['minimum_speed']``)
-    resets the setting back to its default value (as provided by
-    :attr:`defaults`).
+    A mutable mapping class representing the configuration of a touchpad
+    manager.
     """
 
     #: A mapping with the default values for all configuration keys
@@ -296,117 +282,29 @@ class ManagerConfiguration(MutableMapping):
                 'monitor_keyboard': False, 'idle_time': 2.0,
                 'keys_to_ignore': 2}
 
-    #: config keys to be applied to the mouse_manager
-    MOUSE_MANAGER_KEYS = frozenset(['ignored_mouses'])
-    #: config keys to be applied to the keyboard monitor
-    KEYBOARD_MONITOR_KEYS = frozenset(['idle_time', 'keys_to_ignore'])
+    @staticmethod
+    def default_filename():
+        return os.path.join(get_configuration_directory(), 'management.json')
 
     @classmethod
-    def load(cls, touchpad_manager, filename=None):
+    def defaults(cls):
         """
-        Load the configuration for the given ``touchpad_manager`` from disc.
-
-        If no ``filename`` is given, the configuration is loaded from the
-        default configuration file as returned by
-        :func:`get_management_config_file_path`.  Otherwise the configuration
-        is loaded from the given file.  If the file doesn't exist, the default
-        config as given by :attr:`defaults` is loaded.
-
-        After the configuration is loaded, it is applied to the given
-        ``touchpad_manager``.
-
-        ``touchpad_manager`` is a
-        :class:`~synaptiks.management.TouchpadManager` object.  ``filename`` is
-        either ``None`` or a string containing the path to a file.
-
-        Return a :class:`ManagerConfiguration` object.  Raise
-        :exc:`~exceptions.EnvironmentError`, if the file could not be loaded,
-        but *not* in case of a non-existing file.
+        Return the default configuration as :class:`ManagerConfiguration`
+        object.
         """
-        if not filename:
-            filename = get_management_config_file_path()
-        config = cls(touchpad_manager)
-        # use defaults for all non-existing settings
-        loaded_config = dict(cls._DEFAULTS)
-        loaded_config.update(load_json(filename, default={}))
-        config.update(loaded_config)
-        return config
+        return cls(cls._DEFAULTS)
 
-    def __init__(self, touchpad_manager):
-        self.touchpad_manager = touchpad_manager
-
-    @property
-    def defaults(self):
+    def apply_to(self, manager):
         """
-        A dictionary of default values for this configuration.
+        Apply the configuration to the given ``manager``.
 
-        This dictionary is a copy, modifications do not affect future access to
-        this attribute.  Consequently you are free to modify this dictionary as
-        you like.
-
-        Use ``config.update(config.defaults)`` to restore the configuration to
-        its default values.
+        ``manager`` is a :class:`~synaptiks.management.TouchpadManager`.
         """
-        return dict(self._DEFAULTS)
-
-    @property
-    def mouse_manager(self):
-        return self.touchpad_manager.mouse_manager
-
-    @property
-    def keyboard_monitor(self):
-        return self.touchpad_manager.keyboard_monitor
-
-    def __contains__(self, key):
-        return key in self._DEFAULTS
-
-    def __len__(self):
-        return len(self._DEFAULTS)
-
-    def __iter__(self):
-        return iter(self._DEFAULTS)
-
-    def __getitem__(self, key):
-        if key not in self:
-            raise KeyError(key)
-        target = self.touchpad_manager
-        if key in self.MOUSE_MANAGER_KEYS:
-            target = self.mouse_manager
-        elif key in self.KEYBOARD_MONITOR_KEYS:
-            target = self.keyboard_monitor
-        return getattr(target, key)
-
-    def __setitem__(self, key, value):
-        if key not in self:
-            raise KeyError(key)
-        target = self.touchpad_manager
-        if key in self.MOUSE_MANAGER_KEYS:
-            target = self.mouse_manager
-        elif key in self.KEYBOARD_MONITOR_KEYS:
-            target = self.keyboard_monitor
-        setattr(target, key, value)
-
-    def __delitem__(self, key):
-        self[key] = self._DEFAULTS[key]
-
-    def save(self, filename=None):
-        """
-        Save the configuration.
-
-        If no ``filename`` is given, the configuration is saved to the default
-        configuration file as returned by
-        :func:`get_management_config_file_path`.  Otherwise the configuration
-        is saved to the given file.
-
-        ``filename`` is either ``None`` or a string containing the path to a
-        file.
-
-        Raise :exc:`~exceptions.EnvironmentError`, if the file could not be
-        written.
-        """
-        if not filename:
-            filename = get_management_config_file_path()
-        save_json(filename, dict(self))
+        manager.mouse_manager.ignored_mouses = self['ignored_mouses']
+        for key in ('idle_time', 'keys_to_ignore'):
+            setattr(manager.keyboard_monitor, key, self[key])
+        for key in ('monitor_mouses', 'monitor_keyboard'):
+            setattr(manager, key, self[key])
 
 
 def main():
@@ -456,12 +354,15 @@ distributed under the terms of the BSD License""")
             touchpad = Touchpad.find_first(display)
 
             if args.action == 'init':
-                driver_defaults = TouchpadConfiguration(touchpad)
+                driver_defaults = TouchpadConfiguration()
+                driver_defaults.update_from_touchpad(touchpad)
                 driver_defaults.save(get_touchpad_defaults_file_path())
             if args.action in ('init', 'load'):
-                TouchpadConfiguration.load(touchpad, filename=args.filename)
+                config = TouchpadConfiguration.load(filename=args.filename)
+                config.apply_to(touchpad)
             if args.action == 'save':
-                current_config = TouchpadConfiguration(touchpad)
+                current_config = TouchpadConfiguration.load_from_touchpad(
+                    touchpad)
                 current_config.save(filename=args.filename)
     except DisplayError:
         parser.error('could not connect to X11 display')
