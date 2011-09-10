@@ -229,8 +229,9 @@ class EventRecorder(QThread):
                 self._started.set()
             elif data.contents.category == xrecord.FROM_SERVER:
                 event_type, keycode = data.contents.event
-                signal = self._event_signal_map[event_type]
-                signal.emit(keycode)
+                signal = self._event_signal_map.get(event_type)
+                if signal is not None:
+                    signal.emit(keycode)
             # all other client side events are ignored (e.g. END_OF_DATA)
 
 
