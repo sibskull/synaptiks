@@ -31,7 +31,7 @@ import math
 import pytest
 
 from synaptiks.x11.input import InputDevice
-from synaptiks.touchpad import Touchpad, NoTouchpadError
+from synaptiks.touchpad import FakeTouchpad, Touchpad, NoTouchpadError
 
 
 def pytest_funcarg__touchpad(request):
@@ -59,8 +59,38 @@ def pytest_funcarg__touchpad_capabilities(request):
     return touchpad_properties['Synaptics Capabilities']
 
 
+def pytest_funcarg__fake_touchpad_id(request):
+    return request.param
+
+
+def pytest_funcarg__fake_touchpad(request):
+    display = request.getfuncargvalue('display')
+    fake_touchpad_id = request.getfuncargvalue('fake_touchpad_id')
+    return FakeTouchpad(display, fake_touchpad_id)
+
+
+def pytest_funcarg__test_fake_touchpad(request):
+    fake_touchpad_id = request.getfuncargvalue('fake_touchpad_id')
+    devices = request.getfuncargvalue('device_database')
+    return next(d for d in devices if d.id == fake_touchpad_id)
+
+
+def pytest_funcarg__fake_touchpad_properties(request):
+    test_fake_touchpad = request.getfuncargvalue('test_fake_touchpad')
+    return test_fake_touchpad.properties
+
+
+def pytest_generate_tests(metafunc):
+    if 'fake_touchpad' in metafunc.funcargnames:
+        devices = metafunc.config.xinput_device_database
+        pointers = (d for d in devices if d.type == 'pointer')
+        for pointer in pointers:
+            metafunc.addcall(id=pointer.name, param=pointer.id)
+
+
 def test_inheritance():
     assert issubclass(Touchpad, InputDevice)
+    assert issubclass(FakeTouchpad, InputDevice)
 
 
 @pytest.mark.skipif(b'config.xinput_has_touchpad')
@@ -234,3 +264,19 @@ class TestTouchpad(object):
         assert isinstance(touchpad.has_two_finger_emulation, bool)
         assert touchpad.has_two_finger_emulation == \
                all(touchpad_capabilities[5:7])
+
+
+class TestFakeTouchpad(object):
+
+    def test_find_all(self, display):
+        devices = list(FakeTouchpad.find_all(display))
+        assert all(d.type == 'pointer' for d in devices)
+        assert any(d.is_master for d in devices)
+        assert all(isinstance(d, FakeTouchpad) for d in devices)
+
+    def test_enabled(self, fake_touchpad, fake_touchpad_properties):
+        assert fake_touchpad.enabled == \
+            fake_touchpad_properties['Device Enabled'][0]
+
+    def test_off(self, fake_touchpad):
+        assert fake_touchpad.off == (not fake_touchpad.enabled)

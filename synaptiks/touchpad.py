@@ -376,3 +376,41 @@ generate a single scroll event.
         detecting the width of a finger and the pressure upon a touch.
         """
         return all(self.capabilities[5:7])
+
+
+class FakeTouchpad(InputDevice):
+    """
+    A fake touchpad.
+
+    A fake touchpad is a ordinary mouse device which is handled as touchpad.
+    Fake touchpad do not support configuration, but can still be switched on
+    and off.
+    """
+
+    @classmethod
+    def find_all(cls, display):
+        """
+        Find all possible fake touchpads.
+
+        ``display`` is a :class:`synaptiks.x11.Display` object.
+
+        Return an iterator over :class:`FakeTouchpad` objects.
+
+        Raise :exc:`synaptiks.x11.input.XInputVersionError`, if the XInput
+        version isn't sufficient to support input device management.
+        """
+        return cls.find_devices_by_type(display, 'pointer')
+
+    enabled = device_property('Device Enabled', 'byte', 0, """\
+``True``, if the device is enabled, ``False`` otherwise.""")
+
+    @property
+    def off(self):
+        """
+        ```True``, if the device is disabled, ``False`` otherwise.
+        """
+        return not self.enabled
+
+    @off.setter
+    def off(self, is_off):
+        self.enabled = not is_off
