@@ -356,7 +356,7 @@ distributed under the terms of the BSD License""")
             if args.action == 'init':
                 driver_defaults = TouchpadConfiguration()
                 driver_defaults.update_from_touchpad(touchpad)
-                driver_defaults.save(get_touchpad_defaults_file_path())
+                driver_defaults.save(TouchpadConfiguration.defaults_file())
             if args.action in ('init', 'load'):
                 config = TouchpadConfiguration.load(filename=args.filename)
                 config.apply_to(touchpad)
