@@ -38,7 +38,7 @@
     :meth:`Touchpad.find_first()` to get a :class:`Touchpad` object for this
     touchpad:
 
-    >>> from synaptiks.xlib import Display
+    >>> from synaptiks.x11 import Display
     >>> touchpad = Touchpad.find_first(Display.from_qt())
     >>> touchpad.name
     u'AlpsPS/2 ALPS GlidePoint'
@@ -152,7 +152,7 @@ class Touchpad(InputDevice):
         """
         Find all touchpad devices registered on the given ``display``.
 
-        ``display`` is a :class:`~synaptiks.xlib.Display` object.
+        ``display`` is a :class:`~synaptiks.x11.Display` object.
 
         Return an iterator over all :class:`Touchpad` objects present on this
         system.
@@ -168,7 +168,7 @@ class Touchpad(InputDevice):
         Find the first usable touchpad device on this system and return it as
         :class:`Touchpad` object.
 
-        ``display`` is a :class:`~synaptiks.xlib.Display` object.
+        ``display`` is a :class:`~synaptiks.x11.Display` object.
 
         Raise :exc:`NoTouchpadError`, if no touchpad was found.  Raise
         :exc:`synaptiks.x11.input.XInputVersionError`, if the XInput version isn't
