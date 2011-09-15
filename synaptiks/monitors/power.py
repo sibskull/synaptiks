@@ -38,7 +38,7 @@ from __future__ import (print_function, division, unicode_literals,
 from PyQt4.QtCore import QObject, pyqtSignal
 try:
     import dbus
-    from  dbus.mainloop.glib import DBusGMainLoop
+    from dbus.mainloop.glib import DBusGMainLoop as DBusMainLoop
 except ImportError:
     dbus = None
 
@@ -76,9 +76,9 @@ class UPowerResumeMonitor(AbstractResumeMonitor):
     UPOWER_INTERFACE = 'org.freedesktop.UPower'
     UPOWER_OBJECT_PATH = '/org/freedesktop/UPower'
 
-    def __init__(self, parent=None):
+    def __init__(self, bus, parent=None):
         AbstractResumeMonitor.__init__(self, parent)
-        self._bus = dbus.SystemBus(mainloop=DBusGMainLoop())
+        self._bus = bus
         self._bus.add_signal_receiver(
             self.resuming.emit, 'Resuming', self.UPOWER_SERVICE_NAME,
             self.UPOWER_INTERFACE, self.UPOWER_OBJECT_PATH)
@@ -106,10 +106,11 @@ def create_resume_monitor(parent=None):
     this system does not support monitoring of power state.
     """
     if dbus:
-        bus = dbus.SystemBus(mainloop=DBusGMainLoop())
+        mainloop = DBusMainLoop()
+        bus = dbus.SystemBus(mainloop=mainloop)
         activatable_names = bus.list_activatable_names()
         if 'org.freedesktop.UPower' in activatable_names:
             # UPower is available on the system bus
-            return UPowerResumeMonitor(parent)
+            return UPowerResumeMonitor(bus, parent)
     # no power state monitoring available
     return None
