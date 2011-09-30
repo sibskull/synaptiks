@@ -49,7 +49,7 @@ __all__ = ['MouseDevicesManager', 'MouseDevicesMonitor', 'MouseDevice']
 
 
 def _is_mouse(device):
-    return (device.sys_name.startswith('mouse') and
+    return (device.sys_name.startswith('event') and
             device.get('ID_INPUT_MOUSE') == '1' and
             not device.get('ID_INPUT_TOUCHPAD') == '1')
 
