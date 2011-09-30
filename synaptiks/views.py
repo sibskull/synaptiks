@@ -38,7 +38,9 @@ from __future__ import (print_function, division, unicode_literals,
 from PyQt4.QtCore import pyqtProperty, pyqtSignal, QStringList
 from PyQt4.QtGui import QListView
 
+from synaptiks.x11 import Display
 from synaptiks.models import MouseDevicesModel
+from synaptiks.touchpad import FakeTouchpad
 
 
 class MouseDevicesView(QListView):
@@ -66,3 +68,15 @@ class MouseDevicesView(QListView):
     @checkedDevices.setter
     def checkedDevices(self, devices):
         self.model().checkedDevices = devices
+
+
+class FakeTouchpadView(QListView):
+    """
+    A view which shows all mouse devices which may serve as fake touchpad.
+    """
+
+    def __init__(self, parent=None):
+        QListView.__init__(self, parent)
+        display = Display.from_qt()
+        mouse_devices = [d.name for d in FakeTouchpad.find_all(Display.from)]
+        model = QStringListModel(self)
