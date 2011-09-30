@@ -270,6 +270,21 @@ class TouchpadConfiguration(AbstractConfiguration):
         for key in self.CONFIGURABLE_TOUCHPAD_PROPERTIES:
             setattr(touchpad, key, self[key])
 
+    def get_configured_touchpad(self, display):
+        from synaptiks.touchpad import Touchpad, NoTouchpadError
+        try:
+            return Touchpad.find_first(display)
+        except NoTouchpadError:
+            from synaptiks.touchpad import FakeTouchpad
+            fake_touchpad_name = self.get('fake_touchpad_name')
+            if fake_touchpad_name is None:
+                raise
+            fake_touchpad = next(FakeTouchpad.find_devices_by_name(
+                display, fake_touchpad_name), None)
+            if fake_touchpad is None:
+                raise
+            return fake_touchpad
+
 
 class ManagerConfiguration(AbstractConfiguration):
     """
