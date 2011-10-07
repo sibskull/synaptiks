@@ -1,5 +1,5 @@
-0.8 (in development)
-====================
+0.8 (Oct 7, 2011)
+=================
 
 - Removed build-time dependency against kdesdk-scripts
 - Fixed "Defaults" button in configuration dialog of tray application
