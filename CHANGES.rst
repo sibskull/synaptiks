@@ -6,6 +6,7 @@
 - Fixed KeyError on unknown event types in keyboard monitor
 - #21: Fixed crash after resume from suspend
 - #17: Fixed support for non-usb devices
+- Added Danish translation (thanks to Martin Schlander)
 
 
 0.7 (Jun 27, 2011)
