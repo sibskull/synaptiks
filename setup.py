@@ -25,8 +25,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+import os
 import sys
 from codecs import open
+
+sys.path.append(os.path.abspath('kdedistutils'))
 
 from kdedistutils import setup
 from kdedistutils.kde import ThemeIcon, StandAloneIcon
