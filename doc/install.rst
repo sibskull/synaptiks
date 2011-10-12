@@ -1,30 +1,10 @@
 Installation instructions
 =========================
 
-Previous versions of **synaptiks**
-----------------------------------
+.. warning::
 
-Please remove any previously installed version of **synaptiks** 0.4 or earlier.
-Files from earlier versions of **synaptiks** conflict with those from the
-current version, and will cause confusion and errors.
-
-If you installed **synaptiks** through the package manager of your
-distribution, simply uninstall the corresponding package.  Please beware, that
-some distributions use a different name for the package, for instance in Debian
-and Ubuntu it is called ``kde-config-touchpad`` instead of ``synaptiks``.
-
-If you compiled **synaptiks** from source, change to the build directory and
-execute the following command with root privileges::
-
-   rm -r $(< install_manifest.txt)
-
-Alternatively you can remove all files listed in :file:`install_manifest`
-manually.
-
-To re-create this file, if you have already removed the build directory, simply
-re-install the older **synaptiks** version with *excately* the same build
-configuration.  Refer to the installation instructions the release you have
-installed, if you do not remember the installation procedure.
+   Please remove any previously installed version of **synaptiks** 0.4 or
+   earlier first.
 
 
 .. _requirements:
@@ -71,17 +51,7 @@ generic mouse device driver like xf86-input-evdev.
 Installation
 ------------
 
-If all dependencies are installed, you can proceed to the installation of
-**synaptiks** itself.  There are two different ways of installing
-**synaptiks**, depending on what python module installer is availabe on your
-distribution.
-
-
-The modern way
-^^^^^^^^^^^^^^
-
-If the modern python installer tool pip_ is available on your distribution,
-just run::
+Just install **synaptiks** with pip_::
 
    sudo pip install synaptiks
 
@@ -90,33 +60,16 @@ python modules required by **synaptiks**.  It will however *not* install native
 libraries and bindings, so make sure, that you have installed all those
 libraries, which are mentioned in the :ref:`requirements` section.
 
-If you have already downloaded **synaptiks**, you can also just extract the
-archive, change into the directory and run::
+.. note::
 
-   sudo pip install .
+   If `pip`_ is not present on your system, download **synaptiks** manually
+   from the `Python Package Index`_, extract the archive and run the following
+   command in the extracted directory::
 
-This works just like the above command, except that it does of course not
-download **synaptiks** again.
+      sudo python setup.py install --single-version-externally-managed
 
-
-The legacy way
-^^^^^^^^^^^^^^
-
-If your distribution is still stuck with the old and legacy ``easy_install``
-tool, installation is slightly more complicated.
-
-Download **synaptiks** manually (see `Downloads`_), extract the archive, change
-into the directory and run the following command::
-
-   sudo python2 setup.py install --single-version-externally-managed
-
-Make *absolutely* sure, that you pass the option
-``--single-version-externally-managed``, otherwise synaptiks will not be
-installed correctly.  Especially all KDE-specific files and all translations
-will be missing, consequently you will neither see **synaptiks** in the
-application menu, nor will the System Settings module be available.
-
-For the same reason you can *not* use the automatic ``easy_install`` script.
+   Do *not* omit ``--single-version-externally-managed``, and do *not* use
+   ``easy_install``!
 
 
 Distribution-specific instructions
@@ -134,6 +87,20 @@ A `PKGBUILD`_ for **synaptiks** is provided in the `Arch User Repository`_.  It
 is maintained and supported by the **synaptiks** developers.
 
 
+Ubuntu
+------
+
+**synaptiks** is contained in the Ubuntu repositories by the name
+  ``kde-config-touchpad``.
+
+
+Gentoo
+------
+
+An ebuild for **synaptiks** is contained in the main portage tree as
+``kde-misc/synaptiks``.
+
+
 .. _python: http://www.python.org
 .. _PyQt4: http://riverbankcomputing.co.uk/software/pyqt/intro
 .. _PyKDE4: http://techbase.kde.org/Development/Languages/Python
@@ -144,6 +111,6 @@ is maintained and supported by the **synaptiks** developers.
 .. _docbook xsl stylesheets: http://docbook.sourceforge.net/
 .. _dbus-python: http://www.freedesktop.org/wiki/Software/DBusBindings#Python
 .. _UPower: http://upower.freedesktop.org
-.. _Downloads: http://pypi.python.org/pypi/synaptiks
+.. _Python Package Index: http://pypi.python.org/pypi/synaptiks
 .. _PKGBUILD: http://aur.archlinux.org/packages.php?ID=32204
 .. _Arch User Repository: http://aur.archlinux.org/

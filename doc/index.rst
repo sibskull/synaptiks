@@ -54,11 +54,10 @@ for more information on how to contribute to **synaptiks**), or if you are just
 interested in the internals.
 
 
-Issues and feedback
-===================
+Issues, questions and feedback
+==============================
 
-If you like or dislike synaptiks or if you have any problems with synaptiks,
-feel free to send an email with compliments or blame or with some questions.
+Please join the `Google group`_ to ask questions and give feedback.
 
 If you have found a bug in synaptiks, if miss a certain feature or if have any
 proposals concerning synaptiks, please report them to the `issue tracker`_.  To
@@ -92,6 +91,7 @@ If you want to translate **synaptiks** into other languages, please read the
 .. _simplified BSD licence: http://www.opensource.org/licenses/bsd-license.php
 .. _complete changelog: https://github.com/lunaryorn/synaptiks/commits/master
 .. _issue tracker: https://github.com/lunaryorn/synaptiks/issues
+.. _google group: https://groups.google.com/group/synaptiks
 .. _GitHub: https://github.com/lunaryorn/synaptiks
 .. _git: http://git-scm.com/
 

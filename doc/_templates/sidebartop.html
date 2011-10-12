@@ -1,0 +1,30 @@
+{% macro link(title, link, internal=true) -%}
+<a class="reference {{ 'internal' if internal else 'external' }}"
+   href="{{ link }}">{{ title }}</a>
+{%- endmacro %}
+
+<p>Current version: <strong>{{release}}</strong></p>
+<ul>
+  <li>{{link('Install <strong>synaptiks</strong>', pathto('install'))}}</li>
+  <li>{{link('Downloads on PyPI', 'https://pypi.python.org/pypi/synaptiks',
+  internal=false)}}</li>
+  <li>{{link('GitHub project', 'https://github.com/lunaryorn/synaptiks',
+  internal=false)}}</li>
+  <li>{{link('KDE Apps',
+  'http://kde-apps.org/content/show.php/synaptiks?content=114270', internal=false)}}</li>
+</ul>
+
+<hr/>
+
+<ul>
+  <li>{{link('Installation instructions', pathto('install'))}}</li>
+  <li>{{link('Handbook', 'handbook/index.html')}}
+    <ul>
+    <li>{{link('Usage', 'handbook/usage.html')}}</li>
+    <li>{{link('Reference', 'handbook/commands.html')}}</li>
+  </ul>
+  </li>
+  <li>{{link('Translation guide', pathto('translation_guide'))}}</li>
+  <li>{{link('API documentation', pathto('api/index'))}}</li>
+  <li>{{link('Changelog', pathto('changes'))}}</li>
+</ul>

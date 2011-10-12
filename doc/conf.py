@@ -47,12 +47,18 @@ copyright = u'2010, 2011 Sebastian Wiesner'
 version = '.'.join(synaptiks.__version__.split('.')[:2])
 release = synaptiks.__version__
 
+templates_path = ['_templates']
 html_theme = 'synaptiks'
 html_theme_path = ['_themes']
 html_static_path = ['_static']
 html_title = 'synaptiks {0}'.format(version)
 html_favicon = 'favicon.ico'
 html_logo = '_static/synaptiks.png'
+html_sidebars = {
+    '**': ['sidebartop.html', 'localtoc.html', 'relations.html',
+           'searchbox.html'],
+    'index': ['sidebartop.html', 'issues.html', 'searchbox.html'],
+}
 
 intersphinx_mapping = {'http://docs.python.org/': None}
 handbook_source_directory = 'handbook'

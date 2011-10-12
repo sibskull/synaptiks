@@ -32,6 +32,21 @@ div.related {
     border-bottom: 1px solid {{ theme_bordercolor }};
 }
 
+/* -- general sidebar styles ------------------------------------------------ */
+
+div.sphinxsidebar h1,
+div.sphinxsidebar h2,
+div.sphinxsidebar h3,
+div.sphinxsidebar h4,
+div.sphinxsidebar h5,
+div.sphinxsidebar h6 {
+    font-family: {{ theme_headfont }};
+    background-color: {{ theme_headbgcolor }};
+    font-weight: normal;
+    color: {{ theme_headtextcolor }};
+}
+
+
 /* -- general body styles --------------------------------------------------- */
 
 
