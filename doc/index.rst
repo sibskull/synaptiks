@@ -57,8 +57,7 @@ interested in the internals.
 Issues, questions and feedback
 ==============================
 
-If you have any questions concerning synaptiks, please join the `Google
-group`_.
+Please join the `Google group`_ to ask questions and give feedback.
 
 If you have found a bug in synaptiks, if miss a certain feature or if have any
 proposals concerning synaptiks, please report them to the `issue tracker`_.  To
