@@ -87,6 +87,20 @@ A `PKGBUILD`_ for **synaptiks** is provided in the `Arch User Repository`_.  It
 is maintained and supported by the **synaptiks** developers.
 
 
+Ubuntu
+------
+
+**synaptiks** is contained in the Ubuntu repositories by the name
+  ``kde-config-touchpad``.
+
+
+Gentoo
+------
+
+An ebuild for **synaptiks** is contained in the main portage tree as
+``kde-misc/synaptiks``.
+
+
 .. _python: http://www.python.org
 .. _PyQt4: http://riverbankcomputing.co.uk/software/pyqt/intro
 .. _PyKDE4: http://techbase.kde.org/Development/Languages/Python
