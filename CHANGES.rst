@@ -1,6 +1,8 @@
 0.8.1 (in development)
 ======================
 
+- Added Czech translation (thanks to Pavel Fric)
+
 
 0.8 (Oct 7, 2011)
 =================
