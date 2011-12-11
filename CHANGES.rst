@@ -6,6 +6,7 @@
 ======================
 
 - Added Czech translation (thanks to Pavel Fric)
+- Fixed syntax error in ``synaptiks_init_config.desktop``
 
 
 0.8 (Oct 7, 2011)
