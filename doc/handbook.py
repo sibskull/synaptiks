@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2009, 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2009, 2010, 2011, 2012, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,7 @@
 
 
 import os
+import posixpath
 from subprocess import Popen, PIPE, check_call, CalledProcessError
 from shutil import copy
 
@@ -44,25 +45,18 @@ from sphinx.util import ensuredir, mtimes_of_files
 from sphinx.util.console import bold
 
 
-def get_kde4_path(type):
+def locate_kde4_resource(type, relative_name):
     """
-    Query the KDE paths for the given ``type``.
+    Locate a KDE resource of the given ``type`` with the given relative name.
 
-    The paths are extracted from the output of the :command:`kde4-config`
-    tool.
-
-    Returns all available paths for ``type`` as a list of strings.  Raises
-    :exc:`subprocess.CalledProcessError`, if :command:`kde4-config` failed.
+    Return the path, or ``None`` if the resource was not found.
     """
-    localprefix = Popen(['kde4-config', '--localprefix'],
-                        stdout=PIPE).communicate()[0].strip()
-    cmd = ['kde4-config', '--path', type]
+    cmd = ['kde4-config', '--path', type, '--locate', relative_name]
     kde4_config = Popen(cmd, stdout=PIPE)
-    stdout = kde4_config.communicate()[0]
+    stdout = kde4_config.communicate()[0].strip()
     if kde4_config.returncode:
         raise CalledProcessError(kde4_config.returncode, cmd)
-    return [p for p in stdout.strip().split(os.pathsep)
-            if not p.startswith(localprefix)]
+    return stdout or None
 
 
 def meinproc4(document, stylesheet, target_directory):
@@ -73,7 +67,7 @@ def meinproc4(document, stylesheet, target_directory):
     The generated html files will be written to the ``target_directory``,
     which will be created, if it does not already exist.
 
-    Raises :exc:`OSError`, if creation of ``target_directory`` or execution
+    Raise :exc:`OSError`, if creation of ``target_directory`` or execution
     of :command:`meinproc4` failed or :exc:`subprocess.CalledProcessError`
     if :command:`meinproc4` failed to build html files.
     """
@@ -86,18 +80,17 @@ def meinproc4(document, stylesheet, target_directory):
                cwd=target_directory)
 
 
-def copy_commons(commons, source, target):
+def copy_commons(commons, target):
     """
-    Copy all the given common files from ``source`` directory to ``target``
-    directory.
+    Copy all the given common files to ``target`` directory.
 
-    ``target`` is created, if it does not already exist.  Raises
-    :exc:`OSError`, if creation of ``target_directory`` failed.
+    ``target`` is created, if it does not already exist.  Raise :exc:`OSError`,
+    if creation of ``target_directory`` failed.
     """
     ensuredir(target)
     for common in commons:
         filename = os.path.basename(common)
-        sourcepath = os.path.join(source, filename)
+        sourcepath = locate_kde4_resource('html', posixpath.join('en', common))
         targetpath = os.path.join(target, filename)
         copy(sourcepath, targetpath)
 
@@ -106,8 +99,8 @@ def copy_images(source, target):
     """
     Copy all PNG images from ``source`` directory to ``target`` directory.
 
-    ``target`` is created, if it does not already exist.  Raises
-    :exc:`OSError`, if creation of ``target_directory`` failed.
+    ``target`` is created, if it does not already exist.  Raise :exc:`OSError`,
+    if creation of ``target_directory`` failed.
     """
     ensuredir(target)
     for filename in os.listdir(source):
@@ -131,7 +124,7 @@ def post_process_files(target):
     - recodes the generated files to utf-8,
     - and prettfies and fixes the generated html.
 
-    Returns a set links to common files.
+    Return a set links to common files.
     """
     commons = set()
     for filename in os.listdir(target):
@@ -189,16 +182,12 @@ def build_handbook(app, exception):
             return
 
     document = os.path.join(source, 'index.docbook')
-    customization = os.path.join(
-        get_kde4_path('data')[0], 'ksgmltools2', 'customization')
-    stylesheet = os.path.join(customization, 'kde-chunk-online.xsl')
+    stylesheet = locate_kde4_resource(
+        'data', 'ksgmltools2/customization/kde-chunk-online.xsl')
     copy_images(source, target)
     meinproc4(document, stylesheet, target)
     commons = post_process_files(target)
-    common_directory = os.path.join(get_kde4_path('html')[0],
-                                    'en', 'common')
-    copy_commons(commons, common_directory,
-                 os.path.join(target, 'common'))
+    copy_commons(commons, os.path.join(target, 'common'))
     app.builder.info('done')
 
 
