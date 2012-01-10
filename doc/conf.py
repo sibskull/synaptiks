@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2010, 2011, 2012, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -66,6 +66,16 @@ handbook_source_directory = 'handbook'
 issuetracker = 'github'
 issuetracker_project = 'lunaryorn/synaptiks'
 
+
+def configure_github_pages(app, exc):
+    if app.builder.name == 'html':
+        # inhibit github pges site processor
+        open(os.path.join(app.outdir, '.nojekyll'), 'w').close()
+        with open(os.path.join(app.outdir, 'CNAME'), 'w') as stream:
+            stream.write('synaptiks.lunaryorn.de\n')
+
+
 def setup(app):
     from sphinx.ext.autodoc import cut_lines
     app.connect('autodoc-process-docstring', cut_lines(2, what=['module']))
+    app.connect('build-finished', configure_github_pages)
