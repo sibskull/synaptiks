@@ -101,6 +101,7 @@ If you want to translate **synaptiks** into other languages, please read the
    :hidden:
 
    install
+   handbook/index
    translation_guide
    api/index
    licence

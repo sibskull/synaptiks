@@ -1,6 +1,6 @@
 #!/usr/bin/python2
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2010, 2011, 2012, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -78,7 +78,6 @@ setup(
         'console_scripts': ['synaptikscfg = synaptiks.config:main']},
     zip_safe=False,
     install_requires=requirements,
-    kde_handbook='doc/handbook/index.docbook',
     kde_files={
         'xdgdata-apps': ['synaptiks.desktop'],
         'services': ['services/kcm_synaptiks.desktop'],
