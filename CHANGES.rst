@@ -3,6 +3,7 @@
 
 - Website now hosted on http://synaptiks.readthedocs.org (thanks to the
   readthedocs.org team for this service)
+- Mailing list now hosted at synaptiks@librelist.com
 - Added Czech translation (thanks to Pavel Fric)
 - Fixed syntax error in ``synaptiks_init_config.desktop``
 
