@@ -39,8 +39,11 @@ center.
 Issues, questions and feedback
 ==============================
 
-Please join the `Google group`_ to ask questions and give feedback.  To report
-bugs and issues, please open an issue at the tracker_.
+There is a mailing list at synaptiks@librelist.com (hosted by `librelist.com`_)
+for user question and development discussions around synaptiks.  To subscribe
+to this list, just send an mail to synaptiks@librelist.com and reply to the
+configuration mail.  To report bugs and issues, please open an issue at the
+tracker_.
 
 
 Development
@@ -60,7 +63,7 @@ Patches and pull requests are welcome!
 .. _handbook: http://synaptiks.lunaryorn.de/handbook/index.html
 .. _python package index: http://pypi.python.org/pypi/synaptiks
 .. _pip: http://www.pip-installer.org/
-.. _google group: https://groups.google.com/group/synaptiks
 .. _tracker: https://github.com/lunaryorn/synaptiks/issues
 .. _GitHub: https://github.com/lunaryorn/synaptiks
 .. _git: http://git-scm.com/
+.. _librelist.com: http://librelist.com/

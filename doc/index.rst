@@ -57,7 +57,14 @@ interested in the internals.
 Issues, questions and feedback
 ==============================
 
-Please join the `Google group`_ to ask questions and give feedback.
+There is a mailing list at synaptiks@librelist.com (hosted by `librelist.com`_)
+for user question and development discussions around |synaptiks|.  All
+discussions are published in the `list archives`_.  To subscribe to this list,
+just send an mail to synaptiks@librelist.com and reply to the configuration
+mail.  The original mail is *ditched* and doesn't appear on the list.
+
+To unsubscribe, send a mail to synaptiks-unsubscribe@librelist.com and again
+reply to the configuration mail.
 
 If you have found a bug in synaptiks, if miss a certain feature or if have any
 proposals concerning synaptiks, please report them to the `issue tracker`_.  To
@@ -91,9 +98,10 @@ If you want to translate |synaptiks| into other languages, please read the
 .. _simplified BSD licence: http://www.opensource.org/licenses/bsd-license.php
 .. _complete changelog: https://github.com/lunaryorn/synaptiks/commits/master
 .. _issue tracker: https://github.com/lunaryorn/synaptiks/issues
-.. _google group: https://groups.google.com/group/synaptiks
 .. _GitHub: https://github.com/lunaryorn/synaptiks
 .. _git: http://git-scm.com/
+.. _librelist.com: http://librelist.com/
+.. _list archives: http://librelist.com/browser/synaptiks/
 
 
 .. toctree::
