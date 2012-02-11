@@ -108,15 +108,6 @@ issuetracker = 'github'
 issuetracker_project = 'lunaryorn/synaptiks'
 
 
-def configure_github_pages(app, exc):
-    if app.builder.name == 'html':
-        # inhibit github pges site processor
-        open(os.path.join(app.outdir, '.nojekyll'), 'w').close()
-        with open(os.path.join(app.outdir, 'CNAME'), 'w') as stream:
-            stream.write('synaptiks.lunaryorn.de\n')
-
-
 def setup(app):
     from sphinx.ext.autodoc import cut_lines
     app.connect('autodoc-process-docstring', cut_lines(2, what=['module']))
-    app.connect('build-finished', configure_github_pages)
