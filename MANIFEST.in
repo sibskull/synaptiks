@@ -9,5 +9,4 @@ recursive-include services/ *.py *.desktop
 recursive-include pics/ *.svgz
 recursive-include po/ *.po *.pot
 recursive-include doc/ *.py *.rst *.ico *.png *.conf *.css_t
-recursive-include doc/handbook *.docbook *.png
 recursive-include tests/ *.py Makefile *.mk
