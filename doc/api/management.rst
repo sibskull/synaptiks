@@ -38,3 +38,6 @@
    .. autoattribute:: monitor_keyboard
 
    .. automethod:: add_touchpad_switch_action
+
+
+.. include:: /substitutions.rst

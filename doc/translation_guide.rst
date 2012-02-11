@@ -1,7 +1,7 @@
 Translation Guide
 =================
 
-**synaptiks** provides complete support for localization based on the KDE
+|synaptiks| provides complete support for localization based on the KDE
 libraries and gettext.  This makes it very easy to add new translations or
 update existing ones.  Before you start, make sure that you have all required
 programs installed.  You will need:
@@ -10,8 +10,7 @@ programs installed.  You will need:
 - and an editor for translation files, like lokalize_ or poedit_.
 
 To actually work with the translations, you need a copy of the latest sources
-of **synaptiks**.  If you are familar with git, just clone the whole
-repository::
+of |synaptiks|.  If you are familar with git, just clone the whole repository::
 
    git clone --recursive git://github.com/lunaryorn/synaptiks.git
 
@@ -20,17 +19,17 @@ sources from `archives page
 <https://github.com/lunaryorn/synaptiks/archives/master>`_.
 
 
-Introduction into **synaptiks** translations
---------------------------------------------
+Introduction into |synaptiks| translations
+------------------------------------------
 
-The source directory of **synaptiks** contains a subdirectory called ``po/``,
+The source directory of |synaptiks| contains a subdirectory called ``po/``,
 which contains all translation data:
 
 - The :term:`template catalog` :file:`synaptiks.pot`
 - All :term:`message catalogs <message catalog>`
 
-The :term:`template catalog` is automatically updated from the **synaptiks**
-sources by the **synaptiks** developers.  As a translator, just care for the
+The :term:`template catalog` is automatically updated from the |synaptiks|
+sources by the |synaptiks| developers.  As a translator, just care for the
 :term:`message catalogs <message catalog>`.
 
 
@@ -63,7 +62,7 @@ settings::
    Created po/en.po.
 
 Now open the created :file:`po/en.po` with the translation editor and start
-translating **synaptiks**.
+translating |synaptiks|.
 
 To create a :term:`message catalog` for another language than the one of your
 current locale, use the ``--locale`` option.  This option takes a single
@@ -92,14 +91,13 @@ all messages, which are not translated, or marked as "fuzzy".
 Contributing your translation
 -----------------------------
 
-In order to have your translation included into **synaptiks** you have to send
-it to the developers.  You can either send it by email, or upload the
-translation somewhere (e.g. in a pastebin like http://paste.pocoo.org) and
-create a new issue in the `issue tracker`_ with a link to the uploaded
-translation.
+In order to have your translation included into |synaptiks| you have to send it
+to the developers.  You can either send it by email, or upload the translation
+somewhere (e.g. in a pastebin like http://paste.pocoo.org) and create a new
+issue in the `issue tracker`_ with a link to the uploaded translation.
 
 If you want to maintain a translation for a longer time, it will be easier for
-you, if you fork_ the **synaptiks** repository on Github_ and send `pull
+you, if you fork_ the |synaptiks| repository on Github_ and send `pull
 requests`_, whenever you updated the translation.
 
 
@@ -114,12 +112,12 @@ Terms
    message
       Anything, that needs translation, like labels in the user interface or
       the text contents of dialogs and notifications.  The original, english
-      messages are contained in the **synaptiks** sources.
+      messages are contained in the |synaptiks| sources.
 
    template catalog
       Template for new :term:`message catalogs <message catalog>`.  It contains
       all :term:`messages <message>` and is automatically updated from the
-      **synaptiks** sources.
+      |synaptiks| sources.
 
    message catalog
       A file containing translations for a specific language.  The filename
@@ -135,3 +133,6 @@ Terms
 .. _GitHub: https://github.com/lunaryorn/synaptiks
 .. _fork: http://help.github.com/forking/
 .. _pull requests: http://help.github.com/pull-requests/
+
+
+.. include:: /substitutions.rst

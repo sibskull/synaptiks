@@ -287,4 +287,4 @@ standard delay will be way to long, so decrease the :guilabel:`Time to wait
 before switching the touchpad on again`.
 
 
-.. include:: ../substitutions.rst
+.. include:: /substitutions.rst

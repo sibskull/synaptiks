@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (C) 2010, 2011, 2012 Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,7 @@
     ----------------
 
     The :mod:`~synaptiks.monitors` module provides monitor classes, which
-    listen for external events.  These monitors are used by **synaptiks** to do
+    listen for external events.  These monitors are used by |synaptiks| to do
     automatic touchpad management.  Currently it includes classes for mouse
     device and keyboard monitoring.
 
@@ -53,13 +53,13 @@
     :mod:`~synaptiks.management` module implements a sophisticated automatic
     touchpad management, which enables and disables the touchpad based on
     external events like keyboard activity and plugged mouse devices, which is
-    a core feature of **synaptiks**.
+    a core feature of |synaptiks|.
 
     Configuration
     -------------
 
-    **synaptiks** allows to configure both the touchpad and the touchpad
-    manager.  The corresponding configuration classes
+    |synaptiks| allows to configure both the touchpad and the touchpad manager.
+    The corresponding configuration classes
     :class:`~synaptiks.config.TouchpadConfiguration` and
     :class:`~synaptiks.config.ManagerConfiguration` as well as some
     configuration utilities are provided by :mod:`~synaptiks.config`.

@@ -303,4 +303,4 @@ The configuration dialog
 The touchpad configuration dialog, see :ref:`commands-touchpad-configuration`.
 
 
-.. include:: ../substitutions.rst
+.. include:: /substitutions.rst

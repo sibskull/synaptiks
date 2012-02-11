@@ -1,8 +1,8 @@
 The synaptiks handbook
 ======================
 
-**synaptiks** provides a touchpad configuration module and a touchpad
-management application for KDE.
+|synaptiks| provides a touchpad configuration module and a touchpad management
+application for KDE.
 
 .. rubric:: Table of contents
 
@@ -12,3 +12,6 @@ management application for KDE.
    introduction
    usage
    reference
+
+
+.. include:: /substitutions.rst

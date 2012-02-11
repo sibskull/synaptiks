@@ -3,7 +3,7 @@ Installation instructions
 
 .. warning::
 
-   Please remove any previously installed version of **synaptiks** 0.4 or
+   Please remove any previously installed version of |synaptiks| 0.4 or
    earlier first.
 
 
@@ -12,7 +12,7 @@ Installation instructions
 Requirements
 ------------
 
-**synaptiks** is implemented in Python_ atop of PyQt4_ and PyKDE4_ and requires
+|synaptiks| is implemented in Python_ atop of PyQt4_ and PyKDE4_ and requires
 the following native libraries and tools:
 
 - Python_ (at least 2.6, Python 3 is *not* supported)
@@ -29,14 +29,14 @@ Moreover some Python modules are required:
 - pyudev_ (at least 0.8)
 - argparse_ (at least 1.1, not required, if Python 2.7 is installed)
 
-All these libraries must be available before installing **synaptiks**.  It is
+All these libraries must be available before installing |synaptiks|.  It is
 recommended, that you install them through the package manager of your
 distribution.  However, the Python modules listed above are also automatically
-installed by the installation script of **synaptiks**.
+installed by the installation script of |synaptiks|.
 
-Additionally **synaptiks** has some optional dependencies, which are not
-strictly required, but enable some additional features or improved components
-in **synaptiks**:
+Additionally |synaptiks| has some optional dependencies, which are not strictly
+required, but enable some additional features or improved components in
+|synaptiks|:
 
 - libXtst (client side of the XRecord extension, for improved keyboard
   monitoring)
@@ -44,26 +44,26 @@ in **synaptiks**:
   and resume)
 
 Finally xf86-input-synaptics 1.3 or newer must be installed and configured as
-touchpad driver.  **synaptiks** will not work, if the touchpad is managed by a
+touchpad driver.  |synaptiks| will not work, if the touchpad is managed by a
 generic mouse device driver like xf86-input-evdev.
 
 
 Installation
 ------------
 
-Just install **synaptiks** with pip_::
+Just install |synaptiks| with pip_::
 
    sudo pip install synaptiks
 
-This will automatically download and install **synaptiks** and any missing
-python modules required by **synaptiks**.  It will however *not* install native
+This will automatically download and install |synaptiks| and any missing python
+modules required by |synaptiks|.  It will however *not* install native
 libraries and bindings, so make sure, that you have installed all those
 libraries, which are mentioned in the :ref:`requirements` section.
 
 .. note::
 
-   If `pip`_ is not present on your system, download **synaptiks** manually
-   from the `Python Package Index`_, extract the archive and run the following
+   If `pip`_ is not present on your system, download |synaptiks| manually from
+   the `Python Package Index`_, extract the archive and run the following
    command in the extracted directory::
 
       sudo python setup.py install --single-version-externally-managed
@@ -83,21 +83,21 @@ of these distributions at a regular basis.
 Arch linux
 ----------
 
-A `PKGBUILD`_ for **synaptiks** is provided in the `Arch User Repository`_.  It
-is maintained and supported by the **synaptiks** developers.
+A `PKGBUILD`_ for |synaptiks| is provided in the `Arch User Repository`_.  It
+is maintained and supported by the |synaptiks| developers.
 
 
 Ubuntu
 ------
 
-**synaptiks** is contained in the Ubuntu repositories by the name
+|synaptiks| is contained in the Ubuntu repositories by the name
   ``kde-config-touchpad``.
 
 
 Gentoo
 ------
 
-An ebuild for **synaptiks** is contained in the main portage tree as
+An ebuild for |synaptiks| is contained in the main portage tree as
 ``kde-misc/synaptiks``.
 
 
@@ -114,3 +114,6 @@ An ebuild for **synaptiks** is contained in the main portage tree as
 .. _Python Package Index: http://pypi.python.org/pypi/synaptiks
 .. _PKGBUILD: http://aur.archlinux.org/packages.php?ID=32204
 .. _Arch User Repository: http://aur.archlinux.org/
+
+
+.. include:: /substitutions.rst

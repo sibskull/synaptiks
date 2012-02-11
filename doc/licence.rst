@@ -26,4 +26,4 @@ simplified BSD license:
 .. literalinclude:: ../COPYING
 
 
-.. include:: substitutions.rst
+.. include:: /substitutions.rst

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2010, 2011, 2012, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
     expose the *current* state of the associated objects (and *not* the state
     of the configuration on disk).  This allows the user to configure the live
     state of these objects, which is especially important for touchpad
-    configuration, which can be changed from outside of **synaptiks** using
+    configuration, which can be changed from outside of |synaptiks| using
     utilities like :program:`xinput`.
 
     To save the configuration permanently, these mappings, and consequently the
@@ -62,7 +62,7 @@
     defaults provided by the touchpad driver.
 
     Unfortunately the touchpad driver does not provide special access to these
-    default values.  To work around this restriction, **synaptiks** saves the
+    default values.  To work around this restriction, |synaptiks| saves the
     touchpad configuration to disc (see
     :func:`get_touchpad_defaults_file_path()`) right after session startup
     (through an autostart command ``synaptikscfg init``, see

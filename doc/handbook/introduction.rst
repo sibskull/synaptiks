@@ -47,4 +47,4 @@ available in the |kde| menu under :menuselection:`Applications --> Utilities
 
    Screenshot of the configuration dialog of the tray application
 
-.. include:: ../substitutions.rst
+.. include:: /substitutions.rst
