@@ -1,5 +1,5 @@
-0.8.1 (in development)
-======================
+0.8.1 (Feb 11, 2012)
+====================
 
 - Website now hosted on http://synaptiks.readthedocs.org (thanks to the
   readthedocs.org team for this service)
