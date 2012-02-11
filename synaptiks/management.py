@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2011, 2012, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@
     synaptiks.management
     ====================
 
-    This module implements the touchpad management layer of **synaptiks**, the
+    This module implements the touchpad management layer of |synaptiks|, the
     central class is :class:`TouchpadManager`.
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>

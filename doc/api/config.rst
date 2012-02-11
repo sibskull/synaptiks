@@ -46,3 +46,5 @@ Manager Configuration
 
    .. automethod:: save
 
+
+.. include:: /substitutions.rst

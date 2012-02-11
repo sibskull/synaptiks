@@ -18,3 +18,6 @@ Package contents
    management
    config
    bindings/index
+
+
+.. include:: /substitutions.rst

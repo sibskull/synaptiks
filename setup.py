@@ -1,6 +1,6 @@
 #!/usr/bin/python2
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010, 2011, Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2010, 2011, 2012, Sebastian Wiesner <lunaryorn@googlemail.com>
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -25,14 +25,26 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+from __future__ import print_function
+
 import os
 import sys
 from codecs import open
 
 sys.path.append(os.path.abspath('kdedistutils'))
 
-from kdedistutils import setup
-from kdedistutils.kde import ThemeIcon, StandAloneIcon
+try:
+    from kdedistutils import setup
+    from kdedistutils.kde import ThemeIcon, StandAloneIcon
+except ImportError:
+    print('WARNING: kdedistutils not available, installation will be incomplete!')
+    print('Use the source distributions from http://pypi.python.org/pypi/synaptiks/')
+    print('or run "git submodule update --init --recursive" in your git clone.')
+
+    from setuptools import setup
+    ThemeIcon = lambda *args: None
+    StandAloneIcon = lambda *args: None
+
 
 import synaptiks
 
@@ -78,7 +90,6 @@ setup(
         'console_scripts': ['synaptikscfg = synaptiks.config:main']},
     zip_safe=False,
     install_requires=requirements,
-    kde_handbook='doc/handbook/index.docbook',
     kde_files={
         'xdgdata-apps': ['synaptiks.desktop'],
         'services': ['services/kcm_synaptiks.desktop'],
