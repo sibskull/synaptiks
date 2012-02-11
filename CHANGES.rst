@@ -1,6 +1,8 @@
 0.8.1 (in development)
 ======================
 
+- Website now hosted on http://synaptiks.readthedocs.org (thanks to the
+  readthedocs.org team for this service)
 - Added Czech translation (thanks to Pavel Fric)
 - Fixed syntax error in ``synaptiks_init_config.desktop``
 
