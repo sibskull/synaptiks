@@ -25,14 +25,26 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+from __future__ import print_function
+
 import os
 import sys
 from codecs import open
 
 sys.path.append(os.path.abspath('kdedistutils'))
 
-from kdedistutils import setup
-from kdedistutils.kde import ThemeIcon, StandAloneIcon
+try:
+    from kdedistutils import setup
+    from kdedistutils.kde import ThemeIcon, StandAloneIcon
+except ImportError:
+    print('WARNING: kdedistutils not available, installation will be incomplete!')
+    print('Use the source distributions from http://pypi.python.org/pypi/synaptiks/')
+    print('or run "git submodule update --init --recursive" in your git clone.')
+
+    from setuptools import setup
+    ThemeIcon = lambda *args: None
+    StandAloneIcon = lambda *args: None
+
 
 import synaptiks
 
