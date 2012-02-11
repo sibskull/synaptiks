@@ -59,8 +59,8 @@ Patches and pull requests are welcome!
 .. _KDE: http://www.kde.org
 .. _simplified BSD licence: http://www.opensource.org/licenses/bsd-license.php
 .. _website: http://synaptiks.lunaryorn.de
-.. _installation instructions: http://synaptiks.lunaryorn.de/install.html
-.. _handbook: http://synaptiks.lunaryorn.de/handbook/index.html
+.. _installation instructions: http://synaptiks.lunaryorn.de/en/latest/install.html
+.. _handbook: http://synaptiks.lunaryorn.de/en/latest/handbook/index.html
 .. _python package index: http://pypi.python.org/pypi/synaptiks
 .. _pip: http://www.pip-installer.org/
 .. _tracker: https://github.com/lunaryorn/synaptiks/issues
